@@ -327,3 +327,43 @@ app.get('/filter-medicines', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+// Server-side route to add a new medicine or update an existing one's quantity
+app.post('/add-medicine', async (req, res) => {
+  try {
+    // Get the medicine data from the request body
+        medicinalUse,
+        imageUrl
+        const { name, activeIngredients,medicinalUse, price, quantity,imageUrl } = req.body;
+
+    // Find the medicine in the database
+    const existingMedicine = await MedicineModel.findOne({ name });
+
+    if (existingMedicine) {
+      // If the medicine already exists, update the quantity
+      existingMedicine.quantity += quantity;
+      await existingMedicine.save();
+    } else {
+      // Otherwise, create a new medicine object
+      const newMedicine = new MedicineModel({
+        name,
+        activeIngredients,
+        medicinalUse,
+        price,
+        quantity,
+        imageUrl
+      });
+
+      // Save the new medicine to the database
+      await newMedicine.save();
+    }
+
+    // Return a success response
+    res.json({ message: 'Medicine added successfully' });
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
