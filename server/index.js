@@ -271,3 +271,41 @@ app.post('/approve-pharmacist/:id', async (req, res) => {
   });
 
 app.listen(3001, 'localhost');
+
+// Server-side route to update a medicine by ID
+app.put('/medicines/:id', async (req, res) => {
+  try {
+    // Get the medicine ID from the request parameters
+    const { id } = req.params;
+
+    // Get the updated medicine data from the request body
+    const { name, activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
+
+    // Find the medicine in the database by ID
+    const medicine = await MedicineModel.findById(id);
+
+    if (medicine) {
+      // If the medicine is found, update its attributes
+      medicine.name = name || medicine.name;
+      medicine.activeIngredients = activeIngredients || medicine.activeIngredients;
+      medicine.medicinalUse = medicinalUse || medicine.medicinalUse;
+      medicine.price = price || medicine.price;
+      medicine.quantity = quantity || medicine.quantity;
+      medicine.sales = sales || medicine.sales;
+      medicine.imageUrl = imageUrl || medicine.imageUrl;
+
+      // Save the updated medicine to the database
+      await medicine.save();
+
+      // Return a success response
+      res.json({ message: 'Medicine updated successfully' });
+    } else {
+      // Otherwise, return a 404 status code with an error message
+      res.status(404).json({ message: 'Medicine not found' });
+    }
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
