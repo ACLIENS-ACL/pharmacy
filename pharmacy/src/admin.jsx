@@ -24,20 +24,6 @@ function AdminDashboard() {
         <MDBCol md="4" className="mb-4">
           <MDBCard>
             <MDBCardBody>
-              <MDBCardTitle>Edit System Users</MDBCardTitle>
-              <MDBCardText>
-                Edit existing system users.
-              </MDBCardText>
-              <Link to="/edit-users">
-                <MDBBtn color="info">Edit Users</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
               <MDBCardTitle>View pharmacist's Requests</MDBCardTitle>
               <MDBCardText>
                 View and manage pharmacist's requests.
