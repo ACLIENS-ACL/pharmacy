@@ -367,3 +367,23 @@ app.post('/add-medicine', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+// to search for a medicine
+app.get('/search-medicine', async (req, res) => {
+  try {
+    // Get the search query from the request query parameters
+    const { searchQuery } = req.query;
+
+    // Find all medicines that match the search query
+    const medicines = await MedicineModel.find({
+      name: { $regex: searchQuery, $options: 'i' },
+    });
+
+    // Return the matched medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
