@@ -335,7 +335,7 @@ app.post('/add-medicine', async (req, res) => {
     // Get the medicine data from the request body
         medicinalUse,
         imageUrl
-        const { name, activeIngredients,medicinalUse, price, quantity,imageUrl } = req.body;
+        const { name, activeIngredients,medicinalUse, price, quantity,imageUrl,description } = req.body;
 
     // Find the medicine in the database
     const existingMedicine = await MedicineModel.findOne({ name });
@@ -352,7 +352,8 @@ app.post('/add-medicine', async (req, res) => {
         medicinalUse,
         price,
         quantity,
-        imageUrl
+        imageUrl,
+        description
       });
 
       // Save the new medicine to the database
@@ -380,6 +381,21 @@ app.get('/search-medicine', async (req, res) => {
     });
 
     // Return the matched medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Server-side route to view a list of all available medicines in the database
+app.get('/medicines', async (req, res) => {
+  try {
+    // Find all medicines in the database
+    const medicines = await MedicineModel.find({});
+
+    // Return the medicines
     res.json(medicines);
   } catch (error) {
     // Handle any errors

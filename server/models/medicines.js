@@ -35,6 +35,14 @@ const medicineSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isPrescriptionRequired: {
+    type: Boolean,
+    required: true,
+  },
+  description : {
+    type: String,
+    required: true,
+  }
 });
 
 // Pre-save hook to generate a unique identity for each new medicine object
