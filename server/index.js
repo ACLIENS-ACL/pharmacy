@@ -309,3 +309,21 @@ app.put('/medicines/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+// filter medicines by medicinalUse
+app.get('/filter-medicines', async (req, res) => {
+  try {
+    // Get the medicinalUse from the request query parameters
+    const { medicinalUse } = req.query;
+
+    // Find all medicines that match the medicinalUse
+    const medicines = await MedicineModel.find({ medicinalUse });
+
+    // Return the matched medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
