@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; 
 
 function RemovePatient() {
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [message, setMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     // Fetch patient requests from the server
     axios.get('http://localhost:3001/remove-patient')
       .then((response) => {
-        console.log(response.data)
-        setPatients(response.data);
+        const responseData = response.data;
+        if (responseData.userType === "admin"&&responseData.sessi===true) {
+          setPatients(responseData.patientRequests);
+        }
+        else{
+          navigate('/login')
+        }
       })
       .catch((error) => {
         console.error(error);
