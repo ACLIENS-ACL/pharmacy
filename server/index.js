@@ -363,3 +363,135 @@ app.post('/view-patient/:id', async (req, res) => {
 });
 
 app.listen(3001, 'localhost');
+
+// Server-side route to update a medicine by ID
+app.put('/medicines/:id', async (req, res) => {
+  try {
+    // Get the medicine ID from the request parameters
+    const { id } = req.params;
+
+    // Get the updated medicine data from the request body
+    const { name, activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
+
+    // Find the medicine in the database by ID
+    const medicine = await MedicineModel.findById(id);
+
+    if (medicine) {
+      // If the medicine is found, update its attributes
+      medicine.name = name || medicine.name;
+      medicine.activeIngredients = activeIngredients || medicine.activeIngredients;
+      medicine.medicinalUse = medicinalUse || medicine.medicinalUse;
+      medicine.price = price || medicine.price;
+      medicine.quantity = quantity || medicine.quantity;
+      medicine.sales = sales || medicine.sales;
+      medicine.imageUrl = imageUrl || medicine.imageUrl;
+
+      // Save the updated medicine to the database
+      await medicine.save();
+
+      // Return a success response
+      res.json({ message: 'Medicine updated successfully' });
+    } else {
+      // Otherwise, return a 404 status code with an error message
+      res.status(404).json({ message: 'Medicine not found' });
+    }
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// filter medicines by medicinalUse
+app.get('/filter-medicines', async (req, res) => {
+  try {
+    // Get the medicinalUse from the request query parameters
+    const { medicinalUse } = req.query;
+
+    // Find all medicines that match the medicinalUse
+    const medicines = await MedicineModel.find({ medicinalUse });
+
+    // Return the matched medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+// Server-side route to add a new medicine or update an existing one's quantity
+app.post('/add-medicine', async (req, res) => {
+  try {
+    // Get the medicine data from the request body
+        medicinalUse,
+        imageUrl
+        const { name, activeIngredients,medicinalUse, price, quantity,imageUrl,description } = req.body;
+
+    // Find the medicine in the database
+    const existingMedicine = await MedicineModel.findOne({ name });
+
+    if (existingMedicine) {
+      // If the medicine already exists, update the quantity
+      existingMedicine.quantity += quantity;
+      await existingMedicine.save();
+    } else {
+      // Otherwise, create a new medicine object
+      const newMedicine = new MedicineModel({
+        name,
+        activeIngredients,
+        medicinalUse,
+        price,
+        quantity,
+        imageUrl,
+        description
+      });
+
+      // Save the new medicine to the database
+      await newMedicine.save();
+    }
+
+    // Return a success response
+    res.json({ message: 'Medicine added successfully' });
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// to search for a medicine
+app.get('/search-medicine', async (req, res) => {
+  try {
+    // Get the search query from the request query parameters
+    const { searchQuery } = req.query;
+
+    // Find all medicines that match the search query
+    const medicines = await MedicineModel.find({
+      name: { $regex: searchQuery, $options: 'i' },
+    });
+
+    // Return the matched medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Server-side route to view a list of all available medicines in the database
+app.get('/medicines', async (req, res) => {
+  try {
+    // Find all medicines in the database
+    const medicines = await MedicineModel.find({});
+
+    // Return the medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
