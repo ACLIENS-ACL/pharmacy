@@ -425,8 +425,7 @@ app.get('/filter-medicines', async (req, res) => {
 app.post('/add-medicine', async (req, res) => {
   try {
     // Get the medicine data from the request body
-        medicinalUse,
-        imageUrl
+        
         const { name, activeIngredients,medicinalUse, price, quantity,imageUrl,description } = req.body;
 
     // Find the medicine in the database
