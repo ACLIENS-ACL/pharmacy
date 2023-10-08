@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; 
 
 function PharmacistsRequests() {
   const [requests, setRequests] = useState([]);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     // Fetch pharmacist requests from the server
     axios.get('http://localhost:3001/pharmacist-requests')
       .then((response) => {
-        setRequests(response.data);
+        const responseData = response.data;
+        if (responseData.userType === "admin"&&responseData.sessi===true) {
+          setRequests(responseData.pharmacistRequests);
+        }
+        else{
+          navigate('/login')
+        }
       })
       .catch((error) => {
         console.error(error);
         setMessage('An error occurred while fetching pharmacist requests.');
       });
-  }, []);
+  }, [navigate]);
 
   const handleApprove = (pharmacistId) => {
     // Send a request to approve the pharmacist
@@ -55,7 +63,7 @@ function PharmacistsRequests() {
             <strong>Other Properties:</strong>
             <ul>
               {Object.keys(request)
-                .filter((key) => key !== 'password' && key !== 'enrolled' && key!== '__v' )
+                .filter((key) => key !== 'password' && key !== 'enrolled' && key !== '__v')
                 .map((key) => (
                   <li key={key}>
                     {key}: {request[key]}

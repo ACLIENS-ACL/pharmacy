@@ -1,8 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React,{useEffect} from 'react';
+import { Link,useNavigate } from 'react-router-dom';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBContainer, MDBRow, MDBCol } from 'mdb-react-ui-kit';
+import axios from 'axios';
 
 function AdminDashboard() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    // Fetch pharmacist requests from the server
+    axios.get(`http://localhost:3001/admin`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type !== "admin"||responseData.in!==true) {
+          navigate('/login')
+        }
+      })})
   return (
     <MDBContainer className="mt-5">
       <MDBRow className="justify-content-center">
