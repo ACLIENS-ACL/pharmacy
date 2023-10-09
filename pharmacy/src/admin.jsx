@@ -116,7 +116,7 @@ function AdminDashboard() {
             <MDBCardBody>
               <MDBCardTitle>Add a Medicine</MDBCardTitle>
               <MDBCardText>Add a new medicine to the system.</MDBCardText>
-              <Link to="/add-medicine">
+              <Link to="/add-med">
                 <MDBBtn color="success">Add Medicine</MDBBtn>
               </Link>
             </MDBCardBody>
