@@ -130,7 +130,7 @@ function AdminDashboard() {
             <MDBCardBody>
               <MDBCardTitle>Edit a Medicine</MDBCardTitle>
               <MDBCardText>Edit an existing medicine in the system.</MDBCardText>
-              <Link to="/edit-medicine">
+              <Link to="/edit-med">
                 <MDBBtn color="success">Edit Medicine</MDBBtn>
               </Link>
             </MDBCardBody>
