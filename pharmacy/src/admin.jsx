@@ -114,7 +114,7 @@ function AdminDashboard() {
             <MDBCardBody>
               <MDBCardTitle>View All Medicines</MDBCardTitle>
               <MDBCardText>View a list of all medicines in the system.</MDBCardText>
-              <Link to="view-all-medicines">
+              <Link to="/view-all-medicines">
                 <MDBBtn color="success">View Medicines</MDBBtn>
               </Link>
             </MDBCardBody>

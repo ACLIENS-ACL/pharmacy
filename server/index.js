@@ -5,6 +5,7 @@ const cors = require('cors');
 const PatientsModel = require('./models/patients');
 const PharmacistsModel = require('./models/pharmacists');
 const AdminsModel = require('./models/admins');
+const MedicineModel = require('./models/medicines');
 var session = require("express-session");
 
 const app = express();
@@ -364,31 +365,35 @@ app.post('/view-patient/:id', async (req, res) => {
 
 app.listen(3001, 'localhost');
 
-// Server-side route to update a medicine by ID
-app.put('/medicines/:id', async (req, res) => {
+// Server-side route to update a medicine by ID// Server-side route to update a medicine by name
+app.put('/medicines/:name', async (req, res) => {
   try {
-    // Get the medicine ID from the request parameters
-    const { id } = req.params;
+    // Get the medicine name from the request parameters
+    const { name } = req.params;
 
     // Get the updated medicine data from the request body
-    const { name, activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
+    const { activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
 
-    // Find the medicine in the database by ID
-    const medicine = await MedicineModel.findById(id);
+    // Find the medicine in the database by name
+    const medicine = await MedicineModel.findOne({ name });
 
     if (medicine) {
       // If the medicine is found, update its attributes
-      medicine.name = name || medicine.name;
       medicine.activeIngredients = activeIngredients || medicine.activeIngredients;
       medicine.medicinalUse = medicinalUse || medicine.medicinalUse;
       medicine.price = price || medicine.price;
       medicine.quantity = quantity || medicine.quantity;
       medicine.sales = sales || medicine.sales;
       medicine.imageUrl = imageUrl || medicine.imageUrl;
+      console.log('Name:', name);
+console.log('Medicinal Use:', medicinalUse);
+// ... (log other fields)
 
       // Save the updated medicine to the database
       await medicine.save();
 
+      console.log('Name:', name);
+console.log('Medicinal Use:', medicinalUse);
       // Return a success response
       res.json({ message: 'Medicine updated successfully' });
     } else {
@@ -398,9 +403,10 @@ app.put('/medicines/:id', async (req, res) => {
   } catch (error) {
     // Handle any errors
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal sserver error' });
   }
 });
+
 
 // filter medicines by medicinalUse
 app.get('/filter-medicines', async (req, res) => {
@@ -425,8 +431,7 @@ app.get('/filter-medicines', async (req, res) => {
 app.post('/add-medicine', async (req, res) => {
   try {
     // Get the medicine data from the request body
-        
-        const { name, activeIngredients,medicinalUse, price, quantity,imageUrl,description } = req.body;
+        const { name, activeIngredients,medicinalUse, price, quantity,imageUrl,isPrescriptionRequired,description } = req.body;
 
     // Find the medicine in the database
     const existingMedicine = await MedicineModel.findOne({ name });
@@ -443,7 +448,7 @@ app.post('/add-medicine', async (req, res) => {
         medicinalUse,
         price,
         quantity,
-        imageUrl,
+        imageUrl,isPrescriptionRequired,
         description
       });
 
@@ -476,7 +481,7 @@ app.get('/search-medicine', async (req, res) => {
   } catch (error) {
     // Handle any errors
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internall server error' });
   }
 });
 
