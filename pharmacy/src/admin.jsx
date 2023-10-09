@@ -97,24 +97,14 @@ function AdminDashboard() {
         </MDBCol>
 
         {/* New Cards */}
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardTitle>Search for a Medicine</MDBCardTitle>
-              <MDBCardText>Search for a medicine by name or other properties.</MDBCardText>
-              <Link to="/search-medicine">
-                <MDBBtn color="primary">Search</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
+        
 
         <MDBCol md="4" className="mb-4">
           <MDBCard>
             <MDBCardBody>
-              <MDBCardTitle>View All Medicines</MDBCardTitle>
-              <MDBCardText>View a list of all medicines in the system.</MDBCardText>
-              <Link to="/view-all-medicines">
+              <MDBCardTitle>View All Medicines,search and filter by use</MDBCardTitle>
+              <MDBCardText>View a list of all medicines in the system ,search by name and filter by use</MDBCardText>
+              <Link to="/view-allmeds">
                 <MDBBtn color="success">View Medicines</MDBBtn>
               </Link>
             </MDBCardBody>
@@ -133,17 +123,7 @@ function AdminDashboard() {
           </MDBCard>
         </MDBCol>
 
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardTitle>Filter Medicines by Use</MDBCardTitle>
-              <MDBCardText>Filter medicines by their use or purpose.</MDBCardText>
-              <Link to="/filter-medicines">
-                <MDBBtn color="success">Filter Medicines</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
+        
 
         <MDBCol md="4" className="mb-4">
           <MDBCard>

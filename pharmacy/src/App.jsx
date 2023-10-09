@@ -9,7 +9,7 @@ import RemovePharmacist from './removePharmacist'
 import RemovePatient from './removePatient'
 import ViewPharmacist from './viewPharmacist'
 import ViewPatient from './viewPatient'
-import viewAllMedicines from './viewAllmedicines'
+import Meds from './meds'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
         <Route path="/remove-patient" element={<RemovePatient />} />
         <Route path="/view-pharmacist" element={<ViewPharmacist />} />
         <Route path="/view-patient" element={<ViewPatient />} />
-        <Route path="/view-all-medicines" element={<viewAllMedicines />} />
+        <Route path="/view-allmeds" element={<Meds />} />
         <Route path="*" element={<Admin />} />
       </Routes>
     </BrowserRouter>
