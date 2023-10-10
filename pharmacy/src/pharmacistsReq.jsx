@@ -59,7 +59,6 @@ function PharmacistsRequests() {
         {requests.map((request) => (
           <li key={request._id}>
             <strong>Name:</strong> {request.name}<br />
-            <strong>Specialization:</strong> {request.specialization}<br />
             <strong>Other Properties:</strong>
             <ul>
               {Object.keys(request)

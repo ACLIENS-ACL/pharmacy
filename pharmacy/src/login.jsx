@@ -36,9 +36,18 @@ function App() {
       .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {username,
       password}) // Use a dynamic endpoint based on userType
       .then(result => {
-        if (result.data === 'Success') {
+        console.log(userType)
+        console.log(result.data.message)
+        if(result.data.message==='Success But Not Enrolled'){
+          navigate('/makeReq');
+        }
+        else if (result.data.message === 'Success'||result.data === 'Success') {
           if (userType.toLowerCase() === "admin") { // Fix the comparison
             navigate('/admin');
+          }else if(userType.toLowerCase() === "pharmacist")  {
+            navigate('/pharmacist');
+          }else if(userType.toLowerCase() === "patient")  {
+            navigate('/patient');
           } else {
             navigate('/register');
           }

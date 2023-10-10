@@ -96,15 +96,12 @@ function AdminDashboard() {
           </MDBCard>
         </MDBCol>
 
-        {/* New Cards */}
-        
-
         <MDBCol md="4" className="mb-4">
           <MDBCard>
             <MDBCardBody>
-              <MDBCardTitle>View All Medicines,search and filter by use</MDBCardTitle>
-              <MDBCardText>View a list of all medicines in the system ,search by name and filter by use</MDBCardText>
-              <Link to="/view-allmeds">
+              <MDBCardTitle>View All Medicines</MDBCardTitle>
+              <MDBCardText>View a list of all medicines in the system </MDBCardText>
+              <Link to="/medicines">
                 <MDBBtn color="success">View Medicines</MDBBtn>
               </Link>
             </MDBCardBody>
@@ -114,24 +111,21 @@ function AdminDashboard() {
         <MDBCol md="4" className="mb-4">
           <MDBCard>
             <MDBCardBody>
-              <MDBCardTitle>Add a Medicine</MDBCardTitle>
-              <MDBCardText>Add a new medicine to the system.</MDBCardText>
-              <Link to="/add-med">
-                <MDBBtn color="success">Add Medicine</MDBBtn>
+              <MDBCardTitle>filter Medicines</MDBCardTitle>
+              <MDBCardText> filter Medicines  based on medical use </MDBCardText>
+              <Link to="/filter-medicines">
+                <MDBBtn color="success">filter Medicines</MDBBtn>
               </Link>
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
-
-        
-
         <MDBCol md="4" className="mb-4">
           <MDBCard>
             <MDBCardBody>
-              <MDBCardTitle>Edit a Medicine</MDBCardTitle>
-              <MDBCardText>Edit an existing medicine in the system.</MDBCardText>
-              <Link to="/edit-med">
-                <MDBBtn color="success">Edit Medicine</MDBBtn>
+              <MDBCardTitle>Search Medicines</MDBCardTitle>
+              <MDBCardText>Search medicines using name </MDBCardText>
+              <Link to="/search-medicine">
+                <MDBBtn color="success">Search Medicines</MDBBtn>
               </Link>
             </MDBCardBody>
           </MDBCard>
