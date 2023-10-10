@@ -18,6 +18,8 @@ const AddMed = () => {
         isPrescriptionRequired: false,
         description: '',
     });
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -30,9 +32,25 @@ const AddMed = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post('/api/medicines', medicine);
-            console.log(response.data);
-            navigate('/medicines');
+            if (medicine.price <= 0 || medicine.quantity <= 0) {
+                setErrorMessage('Price and quantity must be greater than 0.');
+            } else {
+                const response = await axios.post('http://localhost:3001/add-medicine', medicine);
+                console.log(response.data);
+                setSuccessMessage('Medicine added successfully');
+                setErrorMessage('');
+                setMedicine({
+                    name: '',
+                    activeIngredients: '',
+                    medicinalUse: '',
+                    price: 0,
+                    quantity: 0,
+                    imageUrl: '',
+                    isPrescriptionRequired: false,
+                    description: '',
+                });
+            }
+            navigate('/add-med');
         } catch (error) {
             console.error(error);
         }
@@ -135,6 +153,7 @@ const AddMed = () => {
                     />
                 </div>
                 <button type="submit" className="add-med-btn">Add Medicine</button>
+                {successMessage}{errorMessage}
             </form>
         </div>
     );

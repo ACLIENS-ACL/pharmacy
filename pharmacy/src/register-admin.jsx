@@ -20,7 +20,7 @@ function RegistrationForm() {
 
   useEffect(() => {
     // Fetch pharmacist requests from the server
-    axios.get('http://localhost:3001/pharmacist-requests')
+    axios.get('http://localhost:3001/add-admin')
       .then((response) => {
         const responseData = response.data;
         if (responseData.userType !== "admin"||responseData.sessi!==true) {

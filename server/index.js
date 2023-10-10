@@ -28,7 +28,7 @@ app.get('/admin', async (req, res) => {
   res.json(logged);
 })
 
-mongoose.connect('mongodb://localhost:27017/pharmacy');
+mongoose.connect('mongodb://127.0.0.1:27017/pharmacy');
 
 // Register route for patients
 
@@ -499,3 +499,4 @@ app.get('/medicines', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+

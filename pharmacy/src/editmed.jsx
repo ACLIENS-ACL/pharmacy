@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-
-
 function EditMed() {
     const [medicines, setMedicines] = useState([]);
     const [selectedMedicine, setSelectedMedicine] = useState(null);
     const [editedMedicine, setEditedMedicine] = useState(null);
-    const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
-        axios.get('/api/medicines')
+        axios.get('http://localhost:3001/medicines')
             .then(response => {
                 setMedicines(response.data);
             })
@@ -34,11 +32,13 @@ function EditMed() {
     }
 
     function handleSaveChanges() {
-        axios.put(`/api/medicines/${selectedMedicine.id}`, editedMedicine)
+        axios.put(`http://localhost:3001/medicines/${selectedMedicine.name}`, editedMedicine)
             .then(response => {
                 setSelectedMedicine(null);
                 setEditedMedicine(null);
-                navigate('/medicines');
+                setSuccessMessage('Medicine edited successfully');
+                console.log('Success message:', successMessage);
+                navigate("/medicines");
             })
             .catch(error => {
                 console.error(error);
@@ -47,14 +47,16 @@ function EditMed() {
 
     return (
         <div>
+        {successMessage && <p className="success-message">{successMessage}</p>}
             <h1>Edit Medicine</h1>
             <ul>
                 {medicines.map(medicine => (
-                    <li key={medicine.id} onClick={() => handleSelectMedicine(medicine)}>
+                    <li  key={medicine.name} onClick={() => handleSelectMedicine(medicine)}>
                         {medicine.name}
                     </li>
                 ))}
             </ul>
+
             {selectedMedicine && (
                 <div>
                     <h2>{selectedMedicine.name}</h2>
@@ -71,8 +73,9 @@ function EditMed() {
                             Quantity:
                             <input type="number" name="quantity" value={editedMedicine.quantity} onChange={handleEditMedicine} />
                         </label>
+                        {/* Add other fields that match the backend */}
+                        <button onClick={handleSaveChanges}>Save Changes</button>
                     </form>
-                    <button onClick={handleSaveChanges}>Save Changes</button>
                 </div>
             )}
         </div>
@@ -80,5 +83,3 @@ function EditMed() {
 }
 
 export default EditMed;
-
-

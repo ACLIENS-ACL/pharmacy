@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
@@ -13,22 +11,25 @@ function Meds() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('/api/meds')
-            .then(res => {
-                setMeds(res.data);
-                setFilteredMeds(res.data);
-            })
-            .catch(err => {
-                console.log(err);
+        // Define a function to fetch medicines based on the search query
+        const fetchMedicines = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/search-medicine?searchQuery=${searchInput}`);
+                setMeds(response.data);
+                setFilteredMeds(response.data);
+            } catch (error) {
+                console.error(error);
                 setMessage('Error retrieving meds');
-            });
-    }, []);
+            }
+        };
+
+        // Call the fetchMedicines function when searchInput changes
+        fetchMedicines();
+    }, [searchInput]);
 
     const handleSearch = (event) => {
         const input = event.target.value;
         setSearchInput(input);
-        const filtered = meds.filter(med => med.name.toLowerCase().includes(input.toLowerCase()));
-        setFilteredMeds(filtered);
     }
 
     const handleFilter = (event) => {
