@@ -18,6 +18,7 @@ app.use(
     secret: "anyrandomstring",
   })
 );
+mongoose.connect('mongodb://127.0.0.1:27017/pharmacy');
 var logged = {
   username: "",
   in: "",
@@ -28,7 +29,13 @@ app.get('/admin', async (req, res) => {
   res.json(logged);
 })
 
-mongoose.connect('mongodb://127.0.0.1:27017/pharmacy');
+app.get('/pharmacist', async (req, res) => {
+  res.json(logged);
+})
+
+app.get('/patient', async (req, res) => {
+  res.json(logged);
+})
 
 // Register route for patients
 
@@ -69,12 +76,30 @@ app.post('/register-pharmacist', async (req, res) => {
 
 app.post('/login-pharmacist', (req, res) => {
   const { username, password } = req.body;
+  logged.username = username;
+  logged.in = true;
+  logged.type = "pharmacist"
+  
+  if (logged.type !== "pharmacist") {
+    res.json("Success");
+    req.session.loggedIn = true;
+    console.log("foessda it go here?")
+    req.session.user = "pharmacist";
+    req.session.save();
+  }
+  else {
   PharmacistsModel.findOne({ username: username })
     .then(user => {
       console.log("idkkkk " + user)
       if (user) {
+        console.log( user.password === password)
         if (user.password === password) {
-          res.json("Success");
+          console.log(user.enrolled+"idkkkkkkkkkkkkkk")
+          if (user.enrolled === "rejected"||user.enrolled === "pending") {
+            res.status(200).json({ message: "Success But Not Enrolled", enrolledStatus: user.enrolled });
+          } else {
+            res.status(200).json({ message: "Success" });
+          }
           req.session.loggedIn = true;
           req.session.user = "pharmacist";
           req.session.save();
@@ -86,17 +111,51 @@ app.post('/login-pharmacist', (req, res) => {
       }
     })
     .catch(err => res.status(400).json(err));
+  }
+});
 
+app.get('/get-pharmacist-info', async (req, res) => {
+  try {
+    const pharmacistInfo = await PharmacistsModel.findOne({ username: logged.username });
+    res.json(pharmacistInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching pharmacist info.' });
+  }
+});
+
+app.put('/update-pharmacist-info', async (req, res) => {
+  try {
+    await PharmacistsModel.updateOne({ username: req.body.username }, req.body);
+    res.json({ message: 'pharmacist info updated successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while updating pharmacist info.' });
+  }
 });
 
 app.post('/login-patient', (req, res) => {
   const { username, password } = req.body;
+  logged.username = username;
+  logged.in = true;
+  logged.type = "patient"
+  if (logged.type = "patient") {
+    res.json("Success");
+    req.session.loggedIn = true;
+    console.log("foes it go here?")
+    req.session.user = "patient";
+    req.session.save();
+  }
+  else {
   PatientsModel.findOne({ username: username })
     .then(user => {
       console.log("idkkkk " + user)
       if (user) {
         if (user.password === password) {
           res.json("Success");
+          req.session.loggedIn = true;
+          req.session.user = "patient";
+          req.session.save();
         } else {
           res.json("Password incorrect");
         }
@@ -104,7 +163,8 @@ app.post('/login-patient', (req, res) => {
         res.json("user isn't registered");
       }
     })
-    .catch(err => res.status(400).json(err));
+    .catch(err => res.status(400).json(err));}
+    
 });
 
 app.post('/login-admin', (req, res) => {
@@ -112,7 +172,7 @@ app.post('/login-admin', (req, res) => {
   logged.username = username;
   logged.in = true;
   logged.type = "admin"
-  if (username === "admin" && password == "admin") {
+  if (logged.type = "admin") {
     res.json("Success");
     req.session.loggedIn = true;
     console.log("foes it go here?")
@@ -187,7 +247,7 @@ app.get('/pharmacist-requests', async (req, res) => {
   }
   try {
     // Find all pharmacists with "enrolled" set to false
-    const PharmacistRequests = await PharmacistsModel.find({ enrolled: false });
+    const PharmacistRequests = await PharmacistsModel.find({ enrolled: "pending" });
     console.log(PharmacistRequests)
     type = logged.type
     responseData.pharmacistRequests = PharmacistRequests
@@ -205,7 +265,7 @@ app.post('/approve-pharmacist/:id', async (req, res) => {
     const pharmacistId = req.params.id;
 
     // Update the pharmacist's "enrolled" status to true
-    await PharmacistsModel.findByIdAndUpdate(pharmacistId, { enrolled: true });
+    await PharmacistsModel.findByIdAndUpdate(pharmacistId, { enrolled: "accepted" });
 
     res.json({ message: 'pharmacist approved successfully' });
   } catch (error) {
@@ -220,7 +280,7 @@ app.post('/reject-pharmacist/:id', async (req, res) => {
     const pharmacistId = req.params.id;
 
     // Remove the pharmacist from the database
-    await PharmacistsModel.findByIdAndRemove(pharmacistId);
+    await PharmacistsModel.findByIdAndUpdate(pharmacistId, { enrolled: "rejected" });
 
     res.json({ message: 'Pharmacist rejected and removed successfully' });
   } catch (error) {
@@ -418,6 +478,8 @@ app.get('/filter-medicines', async (req, res) => {
     const medicines = await MedicineModel.find({ medicinalUse });
 
     // Return the matched medicines
+    console.log(medicinalUse)
+    console.log(medicines)
     res.json(medicines);
   } catch (error) {
     // Handle any errors
@@ -425,6 +487,7 @@ app.get('/filter-medicines', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 
 // Server-side route to add a new medicine or update an existing one's quantity
@@ -487,6 +550,19 @@ app.get('/search-medicine', async (req, res) => {
 
 // Server-side route to view a list of all available medicines in the database
 app.get('/medicines', async (req, res) => {
+  try {
+    // Find all medicines in the database
+    const medicines = await MedicineModel.find({});
+
+    // Return the medicines
+    res.json(medicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+app.get('/medicinespharmacist', async (req, res) => {
   try {
     // Find all medicines in the database
     const medicines = await MedicineModel.find({});
