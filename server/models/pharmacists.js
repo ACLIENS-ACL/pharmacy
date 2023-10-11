@@ -16,8 +16,8 @@ const UsersSchema = new mongoose.Schema({
   affiliation: String,
   educationalBackground: String,
   enrolled: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "pending",
   }
 });
 
