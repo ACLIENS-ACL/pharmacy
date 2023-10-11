@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function ViewAllMedicinesP() {
+function AllInOneMedicine() {
     const [meds, setMeds] = useState([]);
     const [message, setMessage] = useState('');
     const [medicinalUse, setMedicinalUse] = useState('');
@@ -109,13 +109,10 @@ function ViewAllMedicinesP() {
                 </div>
                 {meds.map(med => (
                     <div key={med._id} style={{ marginBottom: '20px' }}>
-                    <h2>{med.name}</h2>
-                    <img src={med.imageUrl} alt={med.name} style={{ width: '100px' }} />
-                    <p>Price: ${med.price}</p>
-                    <p>Description: {med.description}</p>
-                    <p>Medicinal Use: {med.medicinalUse}</p>
-                    <p>Available Quantity: {med.quantity}</p> 
-                    <p>Sales: {med.sales}</p> 
+                        <h3>{med.name}</h3>
+                        <img src={med.imageUrl} alt={med.name} style={{ width: '100px' }} />
+                        <p>{med.description}</p>
+                        <p>Medicinal Use: {med.medicinalUse}</p>
                     </div>
                 ))}
             </div>
@@ -124,4 +121,4 @@ function ViewAllMedicinesP() {
     );
 }
 
-export default ViewAllMedicinesP;
+export default AllInOneMedicine;

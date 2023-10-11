@@ -1,36 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 function RemovePatient() {
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [message, setMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch patient requests from the server
     axios.get('http://localhost:3001/remove-patient')
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType === "admin"&&responseData.sessi===true) {
+        if (responseData.userType === 'admin' && responseData.sessi === true) {
           setPatients(responseData.patientRequests);
-        }
-        else{
-          navigate('/login')
+          setFilteredPatients(responseData.patientRequests); // Initially set the filtered list to all patients
+        } else {
+          navigate('/login');
         }
       })
       .catch((error) => {
         console.error(error);
         setMessage('An error occurred while fetching patient requests.');
       });
-  }, []);
-
-  useEffect(() => {
-    // Whenever patients change, update filteredPatients with the initial list
-    setFilteredPatients(patients);
-  }, [patients]);
+  }, [navigate]);
 
   const handleReject = (patientId) => {
     // Send a request to reject and remove the patient
@@ -38,7 +33,7 @@ function RemovePatient() {
       .then(() => {
         // Update the local state to remove the deleted patient
         setPatients((prevRequests) => prevRequests.filter((request) => request._id !== patientId));
-        setMessage('');
+        setFilteredPatients((prevRequests) => prevRequests.filter((request) => request._id !== patientId));
       })
       .catch((error) => {
         console.error(error);
@@ -48,56 +43,64 @@ function RemovePatient() {
 
   const handleSearch = () => {
     // Filter patients based on the search input
-    const searchTerm = searchInput; // Convert searchTerm to lowercase for case-insensitive search
-    const filtered = [];
-
-    patients.forEach((patient) => {
-      // Define an array of keys to exclude from the search
-      const excludedKeys = ['id', 'password', 'enrolled', '__v'];
-      let includePatient = false; // Initialize flag to false
-
-      // Check if any property in the patient object includes the searchTerm
-      for (const key in patients) {
-        if (
-          !excludedKeys.includes(key) &&
-          patient[key] &&
-          patient[key].includes(searchTerm)
-        ) {
-          includePatient = true; // Set the flag to true if a match is found
-          break; // Exit the loop early if a match is found
-        }
-      }
-      console.log(filtered)
-      // Include the pharmacist in filtered if the flag is true
-      if (includePatient) {
-        filtered.push(patient);
-      }
+    const searchTerm = searchInput.toLowerCase();
+    const filtered = patients.filter((patient) => {
+      const name = patient.name.toLowerCase();
+      return name.includes(searchTerm);
     });
 
     setFilteredPatients(filtered);
   };
 
   return (
-    <div>
+    <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
       <h2>Patients</h2>
       {message && <div className="alert alert-danger">{message}</div>}
-      <div>
+      <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
-          placeholder="Search by username"
+          placeholder="Search by name"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
+          style={{
+            padding: '10px',
+            fontSize: '16px',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            marginRight: '10px',
+          }}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button
+          onClick={handleSearch}
+          style={{
+            backgroundColor: 'blue',
+            color: 'white',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Search
+        </button>
       </div>
       <ul>
         {filteredPatients.map((patient) => (
-          <li key={patient._id}>
+          <li key={patient._id} style={{ marginBottom: '20px' }}>
             <strong>Name:</strong> {patient.name}<br />
             <strong>Other Properties:</strong>
             <ul>
               {Object.keys(patient)
-                .filter((key) => key !== 'id' && key !== 'password' && key !== 'enrolled' && key !== '__v')
+                .filter(
+                  (key) =>
+                    key !== '_id' &&
+                    key !== 'userType' &&
+                    key !== 'name' &&
+                    key !== 'username' &&
+                    key !== 'password' &&
+                    key !== 'enrolled' &&
+                    key !== '__v'
+                )
                 .map((key) => (
                   <li key={key}>
                     {key}: {patient[key]}

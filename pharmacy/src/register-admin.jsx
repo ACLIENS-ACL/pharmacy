@@ -1,7 +1,7 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn } from 'mdb-react-ui-kit';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 function RegistrationForm() {
   const formStyle = {
@@ -13,20 +13,28 @@ function RegistrationForm() {
     fontSize: '1.2rem', // Increase font size for larger inputs
   };
 
+  const h2Style = {
+    fontSize: '2rem', // Set the font size for the h2 element
+    color: 'blue', // Set the text color to blue
+    marginBottom: '20px', // Add bottom margin for spacing
+  };
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch pharmacist requests from the server
-    axios.get('http://localhost:3001/add-admin')
+    axios.get('http://localhost:3001/register-admin')
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType !== "admin"||responseData.sessi!==true) {
+        if (responseData.type !== "admin" || !responseData.in) {
           navigate('/login')
         }
-      })})
+      })
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -36,8 +44,8 @@ function RegistrationForm() {
         password,
       };
 
-      const result = await axios.post('http://localhost:3001/add-admin', adminData);
-      
+      const result = await axios.post('http://localhost:3001/register-admin', adminData);
+
       if (result.data.message === 'Admin added successfully') {
         setMessage('Admin registered successfully.');
       } else {
@@ -51,7 +59,8 @@ function RegistrationForm() {
   return (
     <MDBContainer className="vh-100 d-flex justify-content-center align-items-center">
       <MDBRow>
-        <MDBCol md="8" lg="6">
+        <MDBCol md="20" lg="20">
+          <h2 style={h2Style}>Add Admin</h2>
           <form style={formStyle} onSubmit={handleSubmit}>
             <MDBInput
               label="Username"

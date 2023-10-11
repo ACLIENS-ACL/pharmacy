@@ -19,36 +19,12 @@ function PharmacistDashboard() {
   return (
     <MDBContainer className="mt-5">
       <MDBRow className="justify-content-center">
-        
         <MDBCol md="4" className="mb-4">
           <MDBCard>
             <MDBCardBody>
-              <MDBCardTitle>View All Medicines</MDBCardTitle>
-              <MDBCardText>View a list of all medicines in the system </MDBCardText>
-              <Link to="/medicinespharmacist">
-                <MDBBtn color="success">View Medicines</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardTitle>filter Medicines</MDBCardTitle>
-              <MDBCardText> filter Medicines  based on medical use </MDBCardText>
-              <Link to="/filter-medicines">
-                <MDBBtn color="success">filter Medicines</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardTitle>Search Medicines</MDBCardTitle>
-              <MDBCardText>Search medicines using name </MDBCardText>
-              <Link to="/search-medicine">
+              <MDBCardTitle>Medicines</MDBCardTitle>
+              <MDBCardText>Search medicines by name or filter by medicine use</MDBCardText>
+              <Link to="/ViewAllMedicinesP">
                 <MDBBtn color="success">Search Medicines</MDBBtn>
               </Link>
             </MDBCardBody>

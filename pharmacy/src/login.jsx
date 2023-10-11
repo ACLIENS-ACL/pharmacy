@@ -36,7 +36,6 @@ function App() {
       .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {username,
       password}) // Use a dynamic endpoint based on userType
       .then(result => {
-        console.log(userType)
         console.log(result.data.message)
         if(result.data.message==='Success But Not Enrolled'){
           navigate('/makeReq');

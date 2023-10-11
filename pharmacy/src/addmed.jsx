@@ -1,15 +1,48 @@
-
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const addMedContainerStyle = {
+    maxWidth: '400px',
+    margin: '0 auto',
+    padding: '20px',
+};
+
+const formGroupStyle = {
+    marginBottom: '10px',
+};
+
+const labelStyle = {
+    fontWeight: 'bold',
+    marginRight:'20px'
+};
+
+const checkboxStyle = {
+    marginLeft: '5px',
+};
+
+const addMedButtonStyle = {
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    cursor: 'pointer',
+    marginLeft:'200px'
+};
+
+const successMessageStyle = {
+    color: 'green',
+};
+
+const errorMessageStyle = {
+    color: 'red',
+};
 
 const AddMed = () => {
     const navigate = useNavigate();
     const [medicine, setMedicine] = useState({
         name: '',
-        activeIngredients: [],
+        activeIngredients: '',
         medicinalUse: '',
         price: 0,
         quantity: 0,
@@ -45,6 +78,7 @@ const AddMed = () => {
                     medicinalUse: '',
                     price: 0,
                     quantity: 0,
+                    sales: 0,
                     imageUrl: '',
                     isPrescriptionRequired: false,
                     description: '',
@@ -57,11 +91,11 @@ const AddMed = () => {
     };
 
     return (
-        <div className="add-med-container">
-            <h1>Add Medicine</h1>
-            <form onSubmit={handleSubmit} className="add-med-form">
-                <div className="form-group">
-                    <label htmlFor="name">Name:</label>
+        <div style={addMedContainerStyle}>
+            <h1 style={{margin:'20px'}}>Add Medicine</h1>
+            <form onSubmit={handleSubmit}>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="name">Name:</label>
                     <input
                         type="text"
                         id="name"
@@ -71,8 +105,8 @@ const AddMed = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="activeIngredients">Active Ingredients:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="activeIngredients">Active Ingredients:</label>
                     <input
                         type="text"
                         id="activeIngredients"
@@ -82,8 +116,8 @@ const AddMed = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="medicinalUse">Medicinal Use:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="medicinalUse">Medicinal Use:</label>
                     <input
                         type="text"
                         id="medicinalUse"
@@ -93,8 +127,8 @@ const AddMed = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="price">Price:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="price">Price:</label>
                     <input
                         type="number"
                         id="price"
@@ -104,8 +138,8 @@ const AddMed = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="quantity">Quantity:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="quantity">Quantity:</label>
                     <input
                         type="number"
                         id="quantity"
@@ -115,9 +149,8 @@ const AddMed = () => {
                         required
                     />
                 </div>
-               
-                <div className="form-group">
-                    <label htmlFor="imageUrl">Image URL:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="imageUrl">Image URL:</label>
                     <input
                         type="text"
                         id="imageUrl"
@@ -127,8 +160,8 @@ const AddMed = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="isPrescriptionRequired">Prescription Required:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="isPrescriptionRequired">Prescription Required:</label>
                     <input
                         type="checkbox"
                         id="isPrescriptionRequired"
@@ -142,8 +175,8 @@ const AddMed = () => {
                         }
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="description">Description:</label>
+                <div style={formGroupStyle}>
+                    <label style={labelStyle} htmlFor="description">Description:</label>
                     <textarea
                         id="description"
                         name="description"
@@ -152,8 +185,9 @@ const AddMed = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="add-med-btn">Add Medicine</button>
-                {successMessage}{errorMessage}
+                <button type="submit" style={addMedButtonStyle}>Add Medicine</button>
+                {successMessage && <p style={successMessageStyle}>{successMessage}</p>}
+                {errorMessage && <p style={errorMessageStyle}>{errorMessage}</p>}
             </form>
         </div>
     );

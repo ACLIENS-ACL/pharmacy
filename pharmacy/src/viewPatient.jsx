@@ -1,103 +1,101 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
-
+import { useNavigate } from 'react-router-dom';
 
 function ViewPatient() {
-    const [patients, setPatients] = useState([]);
-    const [filteredPatients, setFilteredPatients] = useState([]);
-    const [message, setMessage] = useState('');
-    const [searchInput, setSearchInput] = useState('');
-    const navigate = useNavigate(); 
-  
-    useEffect(() => {
-      // Fetch patient requests from the server
-      axios.get('http://localhost:3001/view-patient')
-        .then((response) => {
-          const responseData = response.data;
-          if (responseData.userType === "admin"&&responseData.sessi===true) {
-            setPatients(responseData.patientRequests);
-          }
-          else{
-            navigate('/login')
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          setMessage('An error occurred while fetching patient requests.');
-        });
-    }, []);
-  
-    useEffect(() => {
-      // Whenever patients change, update filteredPatients with the initial list
-      setFilteredPatients(patients);
-    }, [patients]);
-    
-    const handleSearch = () => {
-      // Filter patients based on the search input
-      const searchTerm = searchInput; // Convert searchTerm to lowercase for case-insensitive search
-      const filtered = [];
-  
-      patients.forEach((patient) => {
-        // Define an array of keys to exclude from the search
-        const excludedKeys = ['id', 'password', 'enrolled', '__v'];
-        let includePatient = false; // Initialize flag to false
-  
-        // Check if any property in the patient object includes the searchTerm
-        for (const key in patient) {
-          if (
-            !excludedKeys.includes(key) &&
-            patient[key] &&
-            patient[key].includes(searchTerm)
-          ) {
-            includePatient = true; // Set the flag to true if a match is found
-            break; // Exit the loop early if a match is found
-          }
-        }
-        console.log(filtered)
-        // Include the patient in filtered if the flag is true
-        if (includePatient) {
-          filtered.push(patient);
-        }
-      });
-  
-      setFilteredPatients(filtered);
-    };
-  
+  const [patients, setPatients] = useState([]);
+  const [filteredPatients, setFilteredPatients] = useState([]);
+  const [message, setMessage] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const navigate = useNavigate();
 
-    return (
-      <div>
-        <h2>Patients</h2>
-        {message && <div className="alert alert-danger">{message}</div>}
-      <div>
+  useEffect(() => {
+    // Fetch patient requests from the server
+    axios.get('http://localhost:3001/view-patient')
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.userType === 'admin' && responseData.sessi === true) {
+          setPatients(responseData.patientRequests);
+          setFilteredPatients(responseData.patientRequests); // Initially set the filtered list to all patients
+        } else {
+          navigate('/login');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setMessage('An error occurred while fetching patient requests.');
+      });
+  }, [navigate]);
+
+  const handleSearch = () => {
+    const searchTerm = searchInput.toLowerCase();
+    const filtered = patients.filter((patient) => {
+      const name = patient.name.toLowerCase();
+      return name.startsWith(searchTerm);
+    });
+
+    setFilteredPatients(filtered);
+  };
+
+  return (
+    <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
+      <h2>Patients</h2>
+      {message && <div className="alert alert-danger">{message}</div>}
+      <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search by Name"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
+          style={{
+            padding: '10px',
+            fontSize: '16px',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            marginRight: '10px',
+          }}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button
+          onClick={handleSearch}
+          style={{
+            backgroundColor: 'blue',
+            color: 'white',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Search
+        </button>
       </div>
-        <ul>
-          {filteredPatients.map((request) => (
-            <li key={request._id}>
-              <strong>Name:</strong> {request.name}<br />
-              <strong>Other Properties:</strong>
-              <ul>
-                {Object.keys(request)
-                  .filter((key) => key !== 'id' && key !== 'password' && key !== 'enrolled' && key!== '__v' )
-                  .map((key) => (
-                    <li key={key}>
-                      {key}: {request[key]}
-                    </li>
-                  ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-  
-  export default ViewPatient;
-  
+      <ul>
+        {filteredPatients.map((request) => (
+          <li key={request._id} style={{ marginBottom: '20px' }}>
+            <strong>Name:</strong> {request.name}<br />
+            <strong>Other Properties:</strong>
+            <ul>
+              {Object.keys(request)
+                .filter(
+                  (key) =>
+                    key !== '_id' &&
+                    key !== 'username' &&
+                    key !== 'name' &&
+                    key !== 'password' &&
+                    key !== 'userType' &&
+                    key !== '__v'
+                )
+                .map((key) => (
+                  <li key={key}>
+                    {key}: {request[key]}
+                  </li>
+                ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default ViewPatient;
