@@ -44,9 +44,11 @@ app.get('/typeformed', async (req, res) => {
 // Register route for patients
 
 app.post('/register-patient', async (req, res) => {
+  console.log("hi ", req.body)
   const patientData = req.body;
   try {
     // Check if a user with the same username already exists
+    console.log(patientData.username)
     const existingPatient = await PatientsModel.findOne({ username: patientData.username });
 
     if (existingPatient) {
@@ -269,9 +271,13 @@ app.post('/reject-pharmacist/:id', async (req, res) => {
     const pharmacistId = req.params.id;
 
     // Remove the pharmacist from the database
-    await PharmacistsModel.findByIdAndUpdate(pharmacistId, { enrolled: "rejected" });
+    const deletedPharmacist = await PharmacistsModel.findOneAndRemove({ _id: pharmacistId });
 
-    res.json({ message: 'Pharmacist rejected and removed successfully' });
+    if (deletedPharmacist) {
+      res.json({ message: 'Pharmacist rejected and removed successfully' });
+    } else {
+      res.status(404).json({ message: 'Pharmacist not found' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
