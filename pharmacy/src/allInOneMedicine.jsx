@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function AllInOneMedicine() {
     const [meds, setMeds] = useState([]);
@@ -8,6 +9,21 @@ function AllInOneMedicine() {
     const [medicinalUses, setMedicinalUses] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [medicines, setMedicines] = useState([]);
+    const [type, setType] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Fetch patient requests from the server
+        axios.get('http://localhost:3001/typeformed')
+            .then((response) => {
+                console.log(response.data)
+                setType(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+                setMessage('An error occurred while fetching patient requests.');
+            });
+    }, [navigate]);
 
     useEffect(() => {
         // Fetch distinct medicinal uses from the server
@@ -111,8 +127,15 @@ function AllInOneMedicine() {
                     <div key={med._id} style={{ marginBottom: '20px' }}>
                         <h3>{med.name}</h3>
                         <img src={med.imageUrl} alt={med.name} style={{ width: '100px' }} />
-                        <p>{med.description}</p>
+                        <p>Description: {med.description}</p>
                         <p>Medicinal Use: {med.medicinalUse}</p>
+                        {type.includes('pharmacist') && (
+                            <div>
+                                <p>Price: ${med.price}</p>
+                                <p>Available Quantity: {med.quantity}</p>
+                                <p>Sales: {med.sales}</p>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

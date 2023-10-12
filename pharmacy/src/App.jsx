@@ -12,8 +12,6 @@ import ViewPatient from './viewPatient'
 import AddMed from './addmed';
 import EditMed from './editmed';
 import PharmacistDashboard from './pharmacist';
-import PatientDashboard from './patient';
-import ViewAllMedicinesP from './ViewAllMedicinespharmacist';
 import PharmacistRegistrationForm from './makeReq'
 import AllInOneMedicine from './allInOneMedicine'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
@@ -32,7 +30,6 @@ function App() {
         <Route path="/view-pharmacist" element={<ViewPharmacist />} />
         <Route path="/view-patient" element={<ViewPatient />} />
         <Route path="/allInOneMedicine" element={<AllInOneMedicine />} />
-        <Route path="/ViewAllMedicinesP" element={<ViewAllMedicinesP />} />
         <Route path="/add-med" element={<AddMed />} />
         <Route path="/edit-med" element={<EditMed />} />
         <Route path="/pharmacist" element={<PharmacistDashboard />} />

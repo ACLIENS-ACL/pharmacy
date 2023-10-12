@@ -24,7 +24,7 @@ function PharmacistDashboard() {
             <MDBCardBody>
               <MDBCardTitle>Medicines</MDBCardTitle>
               <MDBCardText>Search medicines by name or filter by medicine use</MDBCardText>
-              <Link to="/ViewAllMedicinesP">
+              <Link to="/allInOneMedicine">
                 <MDBBtn color="success">Search Medicines</MDBBtn>
               </Link>
             </MDBCardBody>

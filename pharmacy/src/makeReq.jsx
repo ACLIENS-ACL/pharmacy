@@ -39,7 +39,6 @@ const submitButtonStyle = {
   color: 'white',
   border: 'none',
   padding: '10px 20px',
-  cursor: 'pointer',
 };
 
 const columnContainerStyle = {
@@ -56,13 +55,13 @@ const PharmacistRegistrationForm = () => {
   const [pharmacistInfo, setPharmacistInfo] = useState({});
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
-  const [formModified, setFormModified] = useState(false);
+  const [formModified, setFormModified] = useState(false); // Track form modifications
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch pharmacist information from the server
     axios.get('http://localhost:3001/get-pharmacist-info')
       .then((response) => {
-        console.log(response.data);
         setPharmacistInfo(response.data);
         if (response.data.enrolled === 'rejected') {
           setMessage('Your request was rejected');
@@ -80,28 +79,31 @@ const PharmacistRegistrationForm = () => {
       ...pharmacistInfo,
       [e.target.name]: e.target.value,
     });
-    setFormModified(true);
+    setFormModified(true); // Mark the form as modified
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Reset the status to "pending" if the form has been modified
+    const updatedStatus = formModified ? 'pending' : pharmacistInfo.enrolled;
+
     // Create a data object to send to the server
     const requestData = {
       ...pharmacistInfo,
       notes,
-      enrolled: 'pending',
+      enrolled: updatedStatus, // Use the updated status
     };
 
     try {
-      // Send a POST request to your server to update the pharmacist's information
+      // Send a PUT request to update the pharmacist's information
       await axios.put('http://localhost:3001/update-pharmacist-info', requestData);
 
-      setFormModified(false);
+      setFormModified(false); // Reset the form modification flag
 
-      // Optionally, you can display a success message to the user
+      // Display a success message to the user
       alert('Registration request submitted successfully.');
-      navigate('./login')
+      navigate('./login');
     } catch (error) {
       console.error('Error:', error);
 
@@ -145,11 +147,11 @@ const PharmacistRegistrationForm = () => {
               style={inputStyle}
             />
 
-            <label style={labelStyle}>Gender:</label>
+            <label style={labelStyle}>Educational Background:</label>
             <input
               type="text"
-              name="gender"
-              value={pharmacistInfo.gender || ''}
+              name="educationalBackground"
+              value={pharmacistInfo.educationalBackground || ''}
               onChange={handleInputChange}
               style={inputStyle}
             />
@@ -172,21 +174,11 @@ const PharmacistRegistrationForm = () => {
               onChange={handleInputChange}
               style={inputStyle}
             />
-
             <label style={labelStyle}>Affiliation:</label>
             <input
               type="text"
               name="affiliation"
               value={pharmacistInfo.affiliation || ''}
-              onChange={handleInputChange}
-              style={inputStyle}
-            />
-
-            <label style={labelStyle}>Educational Background:</label>
-            <input
-              type="text"
-              name="educationalBackground"
-              value={pharmacistInfo.educationalBackground || ''}
               onChange={handleInputChange}
               style={inputStyle}
             />
@@ -203,7 +195,14 @@ const PharmacistRegistrationForm = () => {
         />
         <br />
 
-        <button type="submit" disabled={!formModified} style={submitButtonStyle}>
+        <button
+          type="submit"
+          style={{
+            ...submitButtonStyle,
+            cursor: formModified ? 'pointer' : 'not-allowed',
+          }}
+          disabled={!formModified}
+        >
           Submit Registration
         </button>
       </form>

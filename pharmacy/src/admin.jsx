@@ -28,7 +28,7 @@ function AdminDashboard() {
                 Register a new admin user.
               </MDBCardText>
               <Link to="/register-admin">
-                <MDBBtn color="primary">Register</MDBBtn>
+                <MDBBtn color="success" >Register</MDBBtn>
               </Link>
             </MDBCardBody>
           </MDBCard>

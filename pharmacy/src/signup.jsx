@@ -25,6 +25,7 @@ function Signup() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [emergencyContactName, setEmergencyContactName] = useState('');
   const [emergencyContactNumber, setEmergencyContactNumber] = useState('');
+  const [relationToPatient, setReltaionToPatient] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
   const [affiliation, setAffiliation] = useState('');
   const [educationalBackground, setEducationalBackground] = useState('');
@@ -42,7 +43,7 @@ function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError(null); // Clear any previous error message
-    
+
     if (!validatePassword(password)) {
       setPasswordError('Password must contain at least one capital letter, one small letter, one special character, one number and 8 characters long.');
       return;
@@ -60,6 +61,7 @@ function Signup() {
       userData.gender = gender;
       userData.emergencyContactName = emergencyContactName;
       userData.emergencyContactNumber = emergencyContactNumber;
+      userData.relationToPatient = relationToPatient;
     } else if (userType === 'pharmacist') {
       userData.hourlyRate = hourlyRate;
       userData.affiliation = affiliation;
@@ -120,11 +122,19 @@ function Signup() {
                   <MDBCol md='6'>
                     <MDBInput wrapperClass='mb-4' label='Date of Birth' size='lg' id='form6' type='text' onChange={(e) => setDob(e.target.value)} />
                   </MDBCol>
-                  <MDBCol md='6' className='mb-4'>
-                    <h6 className="fw-bold">Gender: </h6>
-                    <MDBRadio name='inlineRadio' id='inlineRadio1' value='female' label='Female' inline onChange={(e) => setGender(e.target.value)} />
-                    <MDBRadio name='inlineRadio' id='inlineRadio2' value='male' label='Male' inline onChange={(e) => setGender(e.target.value)} />
-                  </MDBCol>
+                  {userType === 'patient' && (
+                    <MDBCol md='6'>
+                      {/* Gender input, only for patients */}
+                      <h6 className="fw-bold">Gender: </h6>
+                      <MDBRadio name='inlineRadio' id='inlineRadio1' value='female' label='Female' inline onChange={(e) => setGender(e.target.value)} />
+                      <MDBRadio name='inlineRadio' id='inlineRadio2' value='male' label='Male' inline onChange={(e) => setGender(e.target.value)} />
+                    </MDBCol>
+                  )}
+                  {userType === 'pharmacist' && (
+                    <MDBCol md='6'>
+                      <MDBInput wrapperClass='mb-4' label='Hourly Rate' size='lg' id='form10' type='number' onChange={(e) => setHourlyRate(e.target.value)} />
+                    </MDBCol>
+                  )}
                 </MDBRow>
                 <MDBRow>
                   <MDBCol md='6'>
@@ -134,16 +144,17 @@ function Signup() {
                     <MDBCol md='6'>
                       <MDBInput wrapperClass='mb-4' label='Emergency Contact Name' size='lg' id='form8' type='text' onChange={(e) => setEmergencyContactName(e.target.value)} />
                       <MDBInput wrapperClass='mb-4' label='Emergency Contact Number' size='lg' id='form9' type='tel' onChange={(e) => setEmergencyContactNumber(e.target.value)} />
+                      <MDBInput wrapperClass='mb-4' label='Relation to patient' size='lg' id='form9' type='tel' onChange={(e) => setReltaionToPatient(e.target.value)} />
                     </MDBCol>
                   )}
                   {userType === 'pharmacist' && (
                     <MDBCol md='6'>
-                      <MDBInput wrapperClass='mb-4' label='Hourly Rate' size='lg' id='form10' type='number' onChange={(e) => setHourlyRate(e.target.value)} />
                       <MDBInput wrapperClass='mb-4' label='Affiliation (Hospital)' size='lg' id='form11' type='text' onChange={(e) => setAffiliation(e.target.value)} />
                       <MDBInput wrapperClass='mb-4' label='Educational Background' size='lg' id='form12' type='text' onChange={(e) => setEducationalBackground(e.target.value)} />
                     </MDBCol>
                   )}
                 </MDBRow>
+
                 <MDBBtn className='mb-4' size='lg' type="submit">Submit</MDBBtn>
                 {error && <div className="alert alert-danger">{error}</div>}
               </form>

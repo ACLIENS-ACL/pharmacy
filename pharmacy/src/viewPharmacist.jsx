@@ -83,7 +83,6 @@ function ViewPharmacist() {
                     key !== 'username' &&
                     key !== 'name' &&
                     key !== 'password' &&
-                    key !== 'enrolled' &&
                     key !== 'userType' &&
                     key !== '__v'
                 )
