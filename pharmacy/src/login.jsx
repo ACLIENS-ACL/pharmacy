@@ -31,9 +31,10 @@ function App() {
   const handleSubmit = (e) => {
     console.log("hellooo")
     e.preventDefault();
+    const lowercaseUsername = username.toLowerCase();
     axios
     axios
-      .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {username,
+      .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {username:lowercaseUsername,
       password}) // Use a dynamic endpoint based on userType
       .then(result => {
         console.log(result.data.message)

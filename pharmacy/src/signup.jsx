@@ -48,8 +48,11 @@ function Signup() {
       setPasswordError('Password must contain at least one capital letter, one small letter, one special character, one number and 8 characters long.');
       return;
     }
+    console.log(username)
+    console.log(username.toLowerCase())
+    const lowercaseUsername=username.toLowerCase();
     const userData = {
-      username,
+      username:lowercaseUsername,
       name,
       email,
       password,
