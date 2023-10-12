@@ -37,6 +37,10 @@ app.get('/patient', async (req, res) => {
   res.json(logged);
 })
 
+app.get('/typeformed', async (req, res) => {
+  res.json(logged.type);
+})
+
 // Register route for patients
 
 app.post('/register-patient', async (req, res) => {
