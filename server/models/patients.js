@@ -10,6 +10,7 @@ const PatientsSchema = new mongoose.Schema({
   mobileNumber: String,
   emergencyContactName: String,
   emergencyContactNumber: String,
+  relationToPatient:String,
   userType: {
     type: String,
     default: 'patient', // Set the default user type to 'patient'
