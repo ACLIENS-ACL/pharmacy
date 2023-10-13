@@ -10,6 +10,7 @@ function AdminDashboard() {
     axios.get(`http://localhost:3001/admin`)
       .then((response) => {
         const responseData = response.data;
+        console.log(responseData.type,responseData.in)
         if (responseData.type !== "admin" || responseData.in !== true) {
           navigate('/login')
         }

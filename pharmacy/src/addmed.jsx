@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,7 +61,16 @@ const AddMed = () => {
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
+  useEffect(() => {
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/add-medicine`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type !== "pharmacist" || responseData.in !== true) {
+          navigate('/login')
+        }
+      })
+  }, []);
   const handleChange = (event) => {
     setSuccessMessage('');
     const { name, value } = event.target;

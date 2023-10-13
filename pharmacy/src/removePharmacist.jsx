@@ -15,8 +15,9 @@ function RemovePharmacist() {
       .then((response) => {
         const responseData = response.data;
         if (responseData.userType === 'admin' && responseData.sessi === true) {
-          setPharmacists(responseData.pharmacistRequests);
-          setFilteredPharmacists(responseData.pharmacistRequests); // Initially set the filtered list to all pharmacists
+          const initiallyAcceptedPharmacists = responseData.pharmacistRequests.filter((pharmacist) => pharmacist.enrolled === 'accepted');
+          setPharmacists(initiallyAcceptedPharmacists);
+          setFilteredPharmacists(initiallyAcceptedPharmacists); // Initially set the filtered list to all pharmacists
         } else {
           navigate('/login');
         }
@@ -45,8 +46,8 @@ function RemovePharmacist() {
     // Filter pharmacists based on the search input
     const searchTerm = searchInput.toLowerCase(); // Convert searchTerm to lowercase for case-insensitive search
     const filtered = pharmacists.filter((pharmacist) => {
-      const username = pharmacist.username.toLowerCase();
-      return username.includes(searchTerm);
+      const name = pharmacist.name.toLowerCase();
+      return name.startsWith(searchTerm);
     });
 
     setFilteredPharmacists(filtered);
@@ -96,6 +97,7 @@ function RemovePharmacist() {
                     key !== '_id' &&
                     key !== 'password' &&
                     key !== 'username' &&
+                    key !== 'enrolled' &&
                     key !== 'userType' &&
                     key !== 'name' &&
                     key !== '__v'

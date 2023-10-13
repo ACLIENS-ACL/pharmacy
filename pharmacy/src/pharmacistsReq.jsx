@@ -23,6 +23,8 @@ function PharmacistsRequests() {
         setMessage('An error occurred while fetching pharmacist requests.');
       });
   }, [navigate]);
+  
+  const pendingRequests = requests.filter((request) => request.status === 'pending');
 
   const handleApprove = (pharmacistId) => {
     // Send a request to approve the pharmacist
@@ -55,7 +57,7 @@ function PharmacistsRequests() {
       <h2 style={{ fontSize: '2rem', color: 'blue', marginBottom: '20px' }}>Pharmacist Requests</h2>
       {message && <div className="alert alert-danger">{message}</div>}
       <ul>
-        {requests.map((request) => (
+        {pendingRequests.map((request) => (
           <li key={request._id} style={{ marginBottom: '20px' }}>
             <strong>Name:</strong> {request.name}<br />
             <strong>Other Properties:</strong>

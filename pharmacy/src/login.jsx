@@ -29,7 +29,8 @@ function App() {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    console.log("hellooo")
+    console.log(username)
+    console.log(userType)
     e.preventDefault();
     const lowercaseUsername = username.toLowerCase();
     axios
@@ -37,7 +38,7 @@ function App() {
       .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {username:lowercaseUsername,
       password}) // Use a dynamic endpoint based on userType
       .then(result => {
-        console.log(result.data.message)
+        console.log(result.data.message+"asao")
         if(result.data.message==='Success But Not Enrolled'){
           navigate('/makeReq');
         }

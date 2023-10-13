@@ -11,6 +11,17 @@ function AllInOneMedicine() {
     const [medicines, setMedicines] = useState([]);
     const [type, setType] = useState([]);
     const navigate = useNavigate();
+    useEffect(() => {
+      // Fetch admin data from the server
+      axios.get(`http://localhost:3001/admin`)
+        .then((response) => {
+          const responseData = response.data;
+          console.log(responseData.type,responseData.in)
+          if (responseData.type !== "admin" || responseData.in !== true) {
+            navigate('/login')
+          }
+        })
+    }, []);
 
     useEffect(() => {
         // Fetch patient requests from the server
@@ -29,7 +40,8 @@ function AllInOneMedicine() {
         // Fetch distinct medicinal uses from the server
         axios.get(`http://localhost:3001/medicinal-uses`)
             .then(response => {
-                setMedicinalUses(response.data);
+                const responseData=response.data
+                  setMedicinalUses(responseData.medicinalUses);
             })
             .catch(error => {
                 console.error(error);

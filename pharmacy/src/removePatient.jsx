@@ -46,7 +46,7 @@ function RemovePatient() {
     const searchTerm = searchInput.toLowerCase();
     const filtered = patients.filter((patient) => {
       const name = patient.name.toLowerCase();
-      return name.includes(searchTerm);
+      return name.startsWith(searchTerm);
     });
 
     setFilteredPatients(filtered);

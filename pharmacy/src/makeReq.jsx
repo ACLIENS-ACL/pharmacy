@@ -67,6 +67,8 @@ const PharmacistRegistrationForm = () => {
           setMessage('Your request was rejected');
         } else if (response.data.enrolled === 'pending') {
           setMessage('Your request is still pending');
+        } else if (response.data.enrolled === 'request not made') {
+          setMessage('please submit your request');
         }
       })
       .catch((error) => {
