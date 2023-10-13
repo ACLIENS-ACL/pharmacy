@@ -24,6 +24,7 @@ const medicineSchema = new mongoose.Schema({
   },
   sales: {
     type: Number,
+    default:0,
     required: false
   },
   imageUrl: {
