@@ -16,7 +16,7 @@ const UsersSchema = new mongoose.Schema({
   educationalBackground: String,
   enrolled: {
     type: String,
-    default: "pending",
+    default: "request not made",
   }
 });
 

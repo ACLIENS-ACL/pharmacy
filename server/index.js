@@ -17,7 +17,7 @@ app.use(
     saveUninitialized: true,
     secret: "anyrandomstring",
   })
-);
+); 
 mongoose.connect('mongodb://127.0.0.1:27017/pharmacy');
 var logged = {
   username: "",
@@ -25,6 +25,10 @@ var logged = {
   type: ""
 };
 
+app.get('/editmed', async (req, res) => {
+  console.log(logged)
+  res.json(logged);
+})
 app.get('/admin', async (req, res) => {
   res.json(logged);
 })
@@ -97,7 +101,7 @@ app.post('/login-pharmacist', (req, res) => {
       .then(user => {
         if (user) {
           if (user.password === password) {
-            if (user.enrolled === "rejected" || user.enrolled === "pending") {
+            if (user.enrolled !== "accepted") {
               res.status(200).json({ message: "Success But Not Enrolled", enrolledStatus: user.enrolled });
             } else {
               res.status(200).json({ message: "Success" });
@@ -140,31 +144,27 @@ app.post('/login-patient', (req, res) => {
   const { username, password } = req.body;
   logged.username = username;
   logged.in = true;
+  console.log(username)
+  console.log(password)
   logged.type = "patient"
-  if (logged.type = "patient") {
-    res.json("Success");
-    req.session.loggedIn = true;
-    req.session.user = "patient";
-    req.session.save();
-  }
-  else {
-    PatientsModel.findOne({ username: username })
-      .then(user => {
-        if (user) {
-          if (user.password === password) {
-            res.json("Success");
-            req.session.loggedIn = true;
-            req.session.user = "patient";
-            req.session.save();
-          } else {
-            res.json("Password incorrect");
-          }
+  PatientsModel.findOne({ username: username })
+    .then(user => {
+      if (user) {
+        console.log("hiiii")
+        if (user.password === password) {
+          res.json("Success");
+          req.session.loggedIn = true;
+          req.session.user = "patient";
+          req.session.save();
         } else {
-          res.json("user isn't registered");
+          res.json("Password incorrect");
         }
-      })
-      .catch(err => res.status(400).json(err));
-  }
+      } else {
+        res.json("user isn't registered");
+      }
+    })
+    .catch(err => res.status(400).json(err));
+
 
 });
 
@@ -173,14 +173,10 @@ app.post('/login-admin', (req, res) => {
   logged.username = username;
   logged.in = true;
   logged.type = "admin"
-  if (logged.type = "admin") {
+  if (username == "admin" && password == "admin")
     res.json("Success");
-    req.session.loggedIn = true;
-    req.session.user = "admin";
-    req.session.save();
-  }
   else {
-    admins.findOne({ username: username })
+    AdminsModel.findOne({ username: username })
       .then(user => {
         if (user) {
           if (user.password === password) {
@@ -471,15 +467,26 @@ app.get('/filter-medicines', async (req, res) => {
 });
 
 app.get('/medicinal-uses', async (req, res) => {
+  var sess = logged.in
+  var type = logged.type
+  var responseData = {
+    medicinalUses: [],
+    userType: type,
+    sessi: sess
+  }
   try {
-      const medicinalUses = await MedicineModel.distinct('medicinalUse');
-      res.json(medicinalUses);
+    const medicinalUses = await MedicineModel.distinct('medicinalUse');
+    responseData.medicinalUses = medicinalUses
+    res.json(responseData);
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
+app.get('/add-medicine', async (req, res) => {
+  res.json(logged);
+});
 
 // Server-side route to add a new medicine or update an existing one's quantity
 app.post('/add-medicine', async (req, res) => {
@@ -544,8 +551,6 @@ app.get('/medicines', async (req, res) => {
   try {
     // Find all medicines in the database
     const medicines = await MedicineModel.find({});
-    console.log(medicines)
-    // Return the medicines
     res.json(medicines);
   } catch (error) {
     // Handle any errors
