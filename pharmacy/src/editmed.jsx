@@ -33,6 +33,13 @@ function EditMed() {
   }
 
   function handleSaveChanges() {
+    const updatedQuantity = editedMedicine.quantity;
+    const difference = selectedMedicine.quantity - updatedQuantity;
+  
+    if (difference > 0) {
+      editedMedicine.sales = selectedMedicine.sales + difference;
+    }
+  
     axios.put(`http://localhost:3001/medicines/${selectedMedicine.name}`, editedMedicine)
       .then(response => {
         setSelectedMedicine(null);
@@ -44,6 +51,7 @@ function EditMed() {
         console.error(error);
       });
   }
+  
 
   return (
     <div className="container">
