@@ -8,7 +8,17 @@ function EditMed() {
   const [editedMedicine, setEditedMedicine] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
-
+  useEffect(() => {
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/typeformed`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type === "pharmacist" && responseData.in === true) {
+          
+        }
+        else{navigate('/login')}
+      })
+  }, []);
   useEffect(() => {
     axios.get('http://localhost:3001/medicines')
       .then(response => {
@@ -39,7 +49,7 @@ function EditMed() {
     if (difference > 0) {
       editedMedicine.sales = selectedMedicine.sales + difference;
     }
-  
+    console.log(editedMedicine)
     axios.put(`http://localhost:3001/medicines/${selectedMedicine.name}`, editedMedicine)
       .then(response => {
         setSelectedMedicine(null);
@@ -84,7 +94,6 @@ function EditMed() {
                 <label className="form-label">Quantity:</label>
                 <input type="number" className="form-control" name="quantity" value={editedMedicine.quantity} onChange={handleEditMedicine} />
               </div>
-              {/* Add other fields that match the backend */}
               <button className="btn btn-primary" onClick={handleSaveChanges}>Save Changes</button>
             </form>
           </div>

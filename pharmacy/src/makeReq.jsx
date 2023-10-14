@@ -57,7 +57,17 @@ const PharmacistRegistrationForm = () => {
   const [message, setMessage] = useState('');
   const [formModified, setFormModified] = useState(false); // Track form modifications
   const navigate = useNavigate();
-
+  useEffect(() => {
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/typeformed`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type === "pharmacist" && responseData.in === true) {
+          
+        }
+        else{navigate('/login')}
+      })
+  }, []);
   useEffect(() => {
     // Fetch pharmacist information from the server
     axios.get('http://localhost:3001/get-pharmacist-info')

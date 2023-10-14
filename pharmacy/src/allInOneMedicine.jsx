@@ -13,28 +13,29 @@ function AllInOneMedicine() {
     const navigate = useNavigate();
     useEffect(() => {
       // Fetch admin data from the server
-      axios.get(`http://localhost:3001/admin`)
+      axios.get(`http://localhost:3001/typeformed`)
         .then((response) => {
           const responseData = response.data;
+          setType(responseData.type)
           console.log(responseData.type,responseData.in)
-          if (responseData.type !== "admin" || responseData.in !== true) {
-            navigate('/login')
+          if ((responseData.type === "admin" ||responseData.type === "pharmacist"||responseData.type === "patient") && responseData.in === true) {
+            
           }
+          else{navigate('/login')}
         })
     }, []);
 
-    useEffect(() => {
-        // Fetch patient requests from the server
-        axios.get('http://localhost:3001/typeformed')
-            .then((response) => {
-                console.log(response.data)
-                setType(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-                setMessage('An error occurred while fetching patient requests.');
-            });
-    }, [navigate]);
+    // useEffect(() => {
+    //     // Fetch patient requests from the server
+    //     axios.get('http://localhost:3001/typeformed')
+    //         .then((response) => {
+    //             setType(response.data);
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //             setMessage('An error occurred while fetching patient requests.');
+    //         });
+    // }, [navigate]);
 
     useEffect(() => {
         // Fetch distinct medicinal uses from the server
@@ -141,7 +142,7 @@ function AllInOneMedicine() {
                         <img src={med.imageUrl} alt={med.name} style={{ width: '100px' }} />
                         <p>Description: {med.description}</p>
                         <p>Medicinal Use: {med.medicinalUse}</p>
-                        {type.includes('pharmacist') && (
+                        {type.includes('pharm') && (
                             <div>
                                 <p>Price: ${med.price}</p>
                                 <p>Available Quantity: {med.quantity}</p>

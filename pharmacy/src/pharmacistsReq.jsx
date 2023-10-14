@@ -12,6 +12,7 @@ function PharmacistsRequests() {
     axios.get('http://localhost:3001/pharmacist-requests')
       .then((response) => {
         const responseData = response.data;
+        console.log(responseData.pharmacistRequests+" dasmlm")
         if (responseData.userType === 'admin' && responseData.sessi === true) {
           setRequests(responseData.pharmacistRequests);
         } else {
@@ -24,7 +25,8 @@ function PharmacistsRequests() {
       });
   }, [navigate]);
   
-  const pendingRequests = requests.filter((request) => request.status === 'pending');
+  const pendingRequests = requests.filter((request) => request.enrolled === 'pending');
+  console.log(pendingRequests)
 
   const handleApprove = (pharmacistId) => {
     // Send a request to approve the pharmacist

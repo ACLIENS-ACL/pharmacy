@@ -66,6 +66,7 @@ const AddMed = () => {
     axios.get(`http://localhost:3001/add-medicine`)
       .then((response) => {
         const responseData = response.data;
+        console.log(responseData.type,responseData.in)
         if (responseData.type !== "pharmacist" || responseData.in !== true) {
           navigate('/login')
         }
