@@ -33,7 +33,7 @@ function ViewPharmacist() {
     const searchTerm = searchInput.toLowerCase();
     const filtered = pharmacists.filter((pharmacist) => {
       const name = pharmacist.name.toLowerCase();
-      return name.startsWith(searchTerm)&&enrolled==="accepted";
+      return name.startsWith(searchTerm);
     });
 
     setFilteredPharmacists(filtered);

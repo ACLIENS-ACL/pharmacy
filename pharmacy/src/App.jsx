@@ -35,7 +35,7 @@ function App() {
         <Route path="/pharmacist" element={<PharmacistDashboard />} />
         <Route path="/makeReq" element={<PharmacistRegistrationForm />} />
         <Route path="/patient" element={<AllInOneMedicine />} />
-        <Route path="*" element={<Admin />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
