@@ -10,10 +10,10 @@ function EditMed() {
   const navigate = useNavigate();
   useEffect(() => {
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/typeformed`)
+    axios.get(`http://localhost:3001/admin`)
       .then((response) => {
-        const responseData = response.data;
-        if (responseData.type === "pharmacist" && responseData.in === true) {
+        const logged = response.data;
+        if (logged.type === "pharmacist" && logged.in === true) {
           
         }
         else{navigate('/login')}
@@ -82,10 +82,6 @@ function EditMed() {
           <div className="col-6">
             <h2>{selectedMedicine.name}</h2>
             <form>
-              <div className="mb-3">
-                <label className="form-label">Name:</label>
-                <input type="text" className="form-control" name="name" value={editedMedicine.name} onChange={handleEditMedicine} />
-              </div>
               <div className="mb-3">
                 <label className="form-label">Price:</label>
                 <input type="number" className="form-control" name="price" value={editedMedicine.price} onChange={handleEditMedicine} />

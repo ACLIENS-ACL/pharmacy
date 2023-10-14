@@ -13,7 +13,7 @@ function AllInOneMedicine() {
     const navigate = useNavigate();
     useEffect(() => {
       // Fetch admin data from the server
-      axios.get(`http://localhost:3001/typeformed`)
+      axios.get(`http://localhost:3001/admin`)
         .then((response) => {
           const responseData = response.data;
           setType(responseData.type)

@@ -77,10 +77,9 @@ function Signup() {
       .then(result => {
         console.log(result);
         if (userType === "pharmacist") {
-          navigate('/makeReq');
-        } else {
+          alert("please login to submit request")
+        } 
           navigate('/login');
-        }
       })
       .catch(err => {
         console.log(err);

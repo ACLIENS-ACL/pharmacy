@@ -16,8 +16,9 @@ function ViewPharmacist() {
       .then((response) => {
         const responseData = response.data;
         if (responseData.userType === 'admin' && responseData.sessi === true) {
-          setPharmacists(responseData.pharmacistRequests);
-          setFilteredPharmacists(responseData.pharmacistRequests); // Initially set the filtered list to all pharmacists
+          const initiallyAcceptedPharmacists = responseData.pharmacistRequests.filter((pharmacist) => pharmacist.enrolled === 'accepted');
+          setPharmacists(initiallyAcceptedPharmacists);
+          setFilteredPharmacists(initiallyAcceptedPharmacists); // Initially set the filtered list to all pharmacists
         } else {
           navigate('/login');
         }
@@ -32,7 +33,7 @@ function ViewPharmacist() {
     const searchTerm = searchInput.toLowerCase();
     const filtered = pharmacists.filter((pharmacist) => {
       const name = pharmacist.name.toLowerCase();
-      return name.startsWith(searchTerm);
+      return name.startsWith(searchTerm)&&enrolled==="accepted";
     });
 
     setFilteredPharmacists(filtered);
