@@ -26,7 +26,6 @@ var logged = {
 };
 
 app.get('/editmed', async (req, res) => {
-  console.log(logged)
   res.json(logged);
 })
 app.get('/admin', async (req, res) => {
@@ -42,17 +41,16 @@ app.get('/patient', async (req, res) => {
 })
 
 app.get('/typeformed', async (req, res) => {
-  res.json(logged.type);
+  console.log(logged)
+  res.json(logged);
 })
 
 // Register route for patients
 
 app.post('/register-patient', async (req, res) => {
-  console.log("hi ", req.body)
   const patientData = req.body;
   try {
     // Check if a user with the same username already exists
-    console.log(patientData.username)
     const existingPatient = await PatientsModel.findOne({ username: patientData.username });
 
     if (existingPatient) {
@@ -69,6 +67,7 @@ app.post('/register-patient', async (req, res) => {
 // Register route for pharmacists
 app.post('/register-pharmacist', async (req, res) => {
   const pharmacistData = req.body;
+  logged.username = pharmacistData.username;
   try {
     // Check if a user with the same username already exists
     const existingPharmacist = await PharmacistsModel.findOne({ username: pharmacistData.username });
@@ -144,14 +143,13 @@ app.post('/login-patient', (req, res) => {
   const { username, password } = req.body;
   logged.username = username;
   logged.in = true;
-  console.log(username)
-  console.log(password)
   logged.type = "patient"
+  console.log(logged)
   PatientsModel.findOne({ username: username })
     .then(user => {
       if (user) {
-        console.log("hiiii")
         if (user.password === password) {
+          console.log("success")
           res.json("Success");
           req.session.loggedIn = true;
           req.session.user = "patient";
@@ -234,9 +232,7 @@ app.get('/pharmacist-requests', async (req, res) => {
   }
   try {
     // Find all pharmacists with "enrolled" set to false
-    console.log("hi")
     const PharmacistRequests = await PharmacistsModel.find({ enrolled: "pending" });
-    console.log("bye")
     type = logged.type
     responseData.pharmacistRequests = PharmacistRequests
     res.json(responseData);
@@ -418,13 +414,15 @@ app.put('/medicines/:name', async (req, res) => {
     const { name } = req.params;
 
     // Get the updated medicine data from the request body
-    const { activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
-
+    const { Nname,activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
+    console.log(name)
+    console.log(Nname,activeIngredients, medicinalUse, price, quantity, sales, imageUrl)
     // Find the medicine in the database by name
     const medicine = await MedicineModel.findOne({ name });
 
     if (medicine) {
       // If the medicine is found, update its attributes
+      medicine.name = Nname || medicine.name;
       medicine.activeIngredients = activeIngredients || medicine.activeIngredients;
       medicine.medicinalUse = medicinalUse || medicine.medicinalUse;
       medicine.price = price || medicine.price;
