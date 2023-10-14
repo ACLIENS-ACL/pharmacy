@@ -131,6 +131,7 @@ app.get('/get-pharmacist-info', async (req, res) => {
 
 app.put('/update-pharmacist-info', async (req, res) => {
   try {
+    console.log(req.body)
     await PharmacistsModel.updateOne({ username: req.body.username }, req.body);
     res.json({ message: 'pharmacist info updated successfully.' });
   } catch (error) {

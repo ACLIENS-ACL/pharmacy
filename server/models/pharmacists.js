@@ -17,7 +17,11 @@ const UsersSchema = new mongoose.Schema({
   enrolled: {
     type: String,
     default: "request not made",
-  }
+  },
+  extraNotes:{
+    type:String,
+    default:""
+  }, 
 });
 
 const UserModel = mongoose.model('pharmacists', UsersSchema);
