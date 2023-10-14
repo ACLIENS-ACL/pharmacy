@@ -145,9 +145,13 @@ app.post('/login-patient', (req, res) => {
   logged.in = true;
   logged.type = "patient"
   console.log(logged)
+  console.log(username, password)
   PatientsModel.findOne({ username: username })
     .then(user => {
+      console.log("success")
+      console.log(user)
       if (user) {
+        console.log("success")
         if (user.password === password) {
           console.log("success")
           res.json("Success");
