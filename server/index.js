@@ -605,7 +605,7 @@ app.get('/medicinespharmacist', async (req, res) => {
   }
 });
 
-app.post("/uploadPhoto", upload.single(req.name), (req, res) => {
+app.post("/uploadPhoto", upload.single(req.medName), (req, res) => {
   const obj = {
     img: {
       data: fs.readFileSync(
@@ -634,7 +634,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post('/uploadPdf', upload.single('file'), async (req, res) => {
+app.post('/uploadPdf', upload.single(req.pharmacistName+'file'), async (req, res) => {
   try {
     // Check if a file was uploaded
     if (!req.file) {
@@ -648,6 +648,7 @@ app.post('/uploadPdf', upload.single('file'), async (req, res) => {
     const fileName = `${uploadedFile.originalname}`;
     const filePath = `${uploadDirectory}/${fileName}`;
     const fileData = fs.readFileSync(filePath, 'utf8');
+    const pharmacistUsername= req.pharmacistName;
     await processFileData(fileData);
 
     // Determine the file type
