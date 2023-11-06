@@ -6,7 +6,36 @@ const PatientsModel = require('./models/patients');
 const PharmacistsModel = require('./models/pharmacists');
 const AdminsModel = require('./models/admins');
 const MedicineModel = require('./models/medicines');
+const multer= require('multer');
 var session = require("express-session");
+const bodyParser = require("body-parser");
+const path = require("path");
+const fs = require("fs");
+const mongoose = require("mongoose");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+
+const PDFParser = require('pdf-parse');
+const uploadDirectory = './uploads';
+const multer = require('multer');
+const path = require('path');
+const mammoth = require('mammoth');
+const pdf = require('html-pdf');
+app.use(express.urlencoded({ extended: true }));
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "/uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: storage });
 
 const app = express();
 app.use(express.json());
@@ -18,7 +47,8 @@ app.use(
     secret: "anyrandomstring",
   })
 ); 
-mongoose.connect('mongodb://127.0.0.1:27017/pharmacy');
+mongoose.connect('mongodb://127.0.0.1:27017/pharmacy',{useNewUrlParser: true,
+useUnifiedTopology: true});
 var logged = {
   username: "",
   in: "",
@@ -573,5 +603,66 @@ app.get('/medicinespharmacist', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
+});
+
+app.post("/uploadPhoto", upload.single("myImage"), (req, res) => {
+  const obj = {
+    img: {
+      data: fs.readFileSync(
+        path.join(__dirname + "/uploads/" + req.file.filename)
+      ),
+      contentType: "image/png",
+    },
+  };
+  const newImage = new ImageModel({
+    image: obj.img,
+  });
+  newImage.save((err) => {
+    err ? console.log(err) : res.redirect("/");
+  });
+});
+
+app.get("/", (req, res) => {
+  ImageModel.find({}, (err, images) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("An error occurred", err);
+    } else {
+      res.render("index", { images: images });
+    }
+  });
+});
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    // Check if a file was uploaded
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Retrieve the uploaded file from the request body
+    const uploadedFile = req.file;
+
+    // Write the file to the upload directory
+    const fileName = `${uploadedFile.originalname}`;
+    const filePath = `${uploadDirectory}/${fileName}`;
+    const fileData = fs.readFileSync(filePath, 'utf8');
+    await processFileData(fileData);
+
+    // Determine the file type
+    const fileExtension = uploadedFile.mimetype ?uploadedFile.mimetype : null;
+
+    // Check if the file is already in PDF format
+    if (fileExtension === 'application/pdf') {
+        await processPDF(filePath, res);
+    } else {
+        const convertedFilePath = await convertToPDF(filePath);
+        await processPDF(convertedFilePath, res);
+    }
+} catch (error) {
+     console.error('An error occurred while processing the file:', error);
+     res.status(500).json({ error: 'Failed to process the file' });
+}
+
 });
 
