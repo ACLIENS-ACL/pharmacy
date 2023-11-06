@@ -605,7 +605,7 @@ app.get('/medicinespharmacist', async (req, res) => {
   }
 });
 
-app.post("/uploadPhoto", upload.single("myImage"), (req, res) => {
+app.post("/uploadPhoto", upload.single(req.name), (req, res) => {
   const obj = {
     img: {
       data: fs.readFileSync(
@@ -614,6 +614,7 @@ app.post("/uploadPhoto", upload.single("myImage"), (req, res) => {
       contentType: "image/png",
     },
   };
+  const medName= req.name;
   const newImage = new ImageModel({
     image: obj.img,
   });
@@ -633,7 +634,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/uploadPdf', upload.single('file'), async (req, res) => {
   try {
     // Check if a file was uploaded
     if (!req.file) {
