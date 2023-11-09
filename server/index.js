@@ -575,3 +575,32 @@ app.get('/medicinespharmacist', async (req, res) => {
   }
 });
 
+//Logging out (patients/admins/pharamisists)
+app.post('/logout', async (req, res) => {
+  // Get the type of the current logged-in user
+  const type = logged.type;
+
+  // Clear the corresponding session data
+  switch (type) {
+    case 'pharmacist':
+      req.session.destroy('pharmacist');
+      break;
+    case 'patient':
+      req.session.destroy('patient');
+      break;
+    case 'admin':
+      req.session.destroy('admin');
+      break;
+    default:
+      // Do nothing if the user type is not supported
+      break;
+  }
+
+  // Set the logged-in user to null
+  logged.username = "";
+
+  // Redirect the user to the homepage
+  res.redirect('/');
+});
+
+
