@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ImageModel = require('./image');
 
 const UsersSchema = new mongoose.Schema({
   username: String,
@@ -7,6 +8,9 @@ const UsersSchema = new mongoose.Schema({
   password: String,
   dob: String,
   mobileNumber: String,
+  id: ImageModel,
+  license:ImageModel,
+  degree:ImageModel,
   userType: {
     type: String,
     default: 'pharmacist', // Set the default user type to 'doctor'
