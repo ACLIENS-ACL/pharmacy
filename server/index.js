@@ -575,7 +575,7 @@ app.get('/medicinespharmacist', async (req, res) => {
   }
 });
 
-//Logging out (patients/admins/pharamisists)
+//Logging out (patients/admins/pharmacists)
 app.post('/logout', async (req, res) => {
   // Get the type of the current logged-in user
   const type = logged.type;
@@ -583,13 +583,13 @@ app.post('/logout', async (req, res) => {
   // Clear the corresponding session data
   switch (type) {
     case 'pharmacist':
-      req.session.destroy('pharmacist');
+      req.session.destroy();
       break;
     case 'patient':
-      req.session.destroy('patient');
+      req.session.destroy();
       break;
     case 'admin':
-      req.session.destroy('admin');
+      req.session.destroy();
       break;
     default:
       // Do nothing if the user type is not supported
@@ -602,5 +602,114 @@ app.post('/logout', async (req, res) => {
   // Redirect the user to the homepage
   res.redirect('/');
 });
+
+
+// Server-side route to change password for a pharmacist
+app.put('/change-password/pharmacist', async (req, res) => {
+  try {
+    const { username, oldPassword, newPassword } = req.body;
+
+    // Find the pharmacist in the database
+    const pharmacist = await PharmacistsModel.findOne({ username });
+
+    if (pharmacist) {
+      // Check if the old password matches the stored password
+      if (pharmacist.password === oldPassword) {
+        // Add password constraints: at least 1 capital letter and at least 1 number
+        const hasCapitalLetter = /[A-Z]/.test(newPassword);
+        const hasNumber = /\d/.test(newPassword);
+
+        if (hasCapitalLetter && hasNumber) {
+          // Update the password
+          pharmacist.password = newPassword;
+          await pharmacist.save();
+
+          res.json({ message: 'Password changed successfully' });
+        } else {
+          res.status(400).json({ message: 'Password must contain at least 1 capital letter and 1 number' });
+        }
+      } else {
+        res.status(400).json({ message: 'Old password is incorrect' });
+      }
+    } else {
+      res.status(404).json({ message: 'Pharmacist not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Server-side route to change password for a patient
+app.put('/change-password/patient', async (req, res) => {
+  try {
+    const { username, oldPassword, newPassword } = req.body;
+
+    // Find the patient in the database
+    const patient = await PatientsModel.findOne({ username });
+
+    if (patient) {
+      // Check if the old password matches the stored password
+      if (patient.password === oldPassword) {
+        // Add password constraints: at least 1 capital letter and at least 1 number
+        const hasCapitalLetter = /[A-Z]/.test(newPassword);
+        const hasNumber = /\d/.test(newPassword);
+
+        if (hasCapitalLetter && hasNumber) {
+          // Update the password
+          patient.password = newPassword;
+          await patient.save();
+
+          res.json({ message: 'Password changed successfully' });
+        } else {
+          res.status(400).json({ message: 'Password must contain at least 1 capital letter and 1 number' });
+        }
+      } else {
+        res.status(400).json({ message: 'Old password is incorrect' });
+      }
+    } else {
+      res.status(404).json({ message: 'Patient not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Server-side route to change password for an admin
+app.put('/change-password/admin', async (req, res) => {
+  try {
+    const { username, oldPassword, newPassword } = req.body;
+
+    // Check if the username is "admin" (assuming there's a default admin account)
+    if (username === 'admin') {
+      const admin = await AdminsModel.findOne({ username });
+
+      if (admin) {
+        // Add password constraints: at least 1 capital letter and at least 1 number
+        const hasCapitalLetter = /[A-Z]/.test(newPassword);
+        const hasNumber = /\d/.test(newPassword);
+
+        if (hasCapitalLetter && hasNumber) {
+          // Update the password
+          admin.password = newPassword;
+          await admin.save();
+
+          res.json({ message: 'Password changed successfully' });
+        } else {
+          res.status(400).json({ message: 'Password must contain at least 1 capital letter and 1 number' });
+        }
+      } else {
+        res.status(404).json({ message: 'Admin not found' });
+      }
+    } else {
+      res.status(403).json({ message: 'Permission denied. Cannot change password for this user' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 
