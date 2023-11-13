@@ -812,7 +812,8 @@ app.post('/add-address', async (req, res) => {
     }
 
     // Merge the new address with the existing addresses
-    patient.deliveryAddresses = [...patient.deliveryAddresses, ...addresses];
+    patient.deliveryAddresses = [ ...addresses];
+    console.log()
 
     await patient.save();
     res.json({ message: 'Addresses updated successfully' });
