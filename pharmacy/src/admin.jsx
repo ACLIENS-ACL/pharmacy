@@ -17,8 +17,18 @@ function AdminDashboard() {
       })
   }, []);
 
+  
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // After logging out, navigate to the login page.
+    navigate('/login');
+  };
+
   return (
     <MDBContainer className="mt-5">
+    <div className="d-flex justify-content-end mb-2">
+      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+    </div>
       <MDBRow className="justify-content-center">
         {/* Existing Cards */}
         <MDBCol md="4" className="mb-4">
@@ -107,6 +117,20 @@ function AdminDashboard() {
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
+        <MDBCol md="4" className="mb-4">
+          <MDBCard>
+            <MDBCardBody>
+              <MDBCardTitle>Change Password</MDBCardTitle>
+              <MDBCardText>
+                Change Your Password
+              </MDBCardText>
+              <Link to="/password-change">
+                <MDBBtn color="success" >Change Password</MDBBtn>
+              </Link>
+            </MDBCardBody>
+          </MDBCard>
+        </MDBCol>
+
       </MDBRow>
     </MDBContainer>
   );

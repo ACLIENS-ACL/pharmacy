@@ -12,6 +12,7 @@ const addMedContainerStyle = {
   display: 'grid', // Set the container to use grid layout
   gridTemplateColumns: '1fr 1fr', // Two equal-width columns
   gap: '20px', // Spacing between columns
+  position: 'relative',
 };
 
 const labelStyle = {
@@ -45,6 +46,11 @@ const formColumnStyle = {
   display: 'flex',
   flexDirection: 'column',
 };
+const logoutButtonStyle = {
+  position: 'absolute',
+  top: '20px', // Adjust as needed
+  right: '20px', // Adjust as needed
+};
 
 const AddMed = () => {
   const navigate = useNavigate();
@@ -55,7 +61,7 @@ const AddMed = () => {
     price: 0,
     quantity: 0,
     sales: 0,
-    imageUrl: '',
+    imageUrl: null,
     isPrescriptionRequired: false,
     description: '',
   });
@@ -83,7 +89,13 @@ const AddMed = () => {
         ...prevState,
         [name]: ingredientsArray,
       }));
-    } else if (name === 'price' || name === 'quantity') {
+    } else if (name === 'image') {
+      const file = event.target.files[0];
+      setMedicine((prevState) => ({
+        ...prevState,
+        image: file,
+      }));
+    }else if (name === 'price' || name === 'quantity') {
       // Ensure that the value is a non-negative number
       const numericValue = parseFloat(value);
       if (!isNaN(numericValue) && numericValue >= 0) {
@@ -102,11 +114,26 @@ const AddMed = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+  
+    const formData = new FormData();
+    formData.append('name', medicine.name);
+    formData.append('activeIngredients', medicine.activeIngredients.join(', '));
+    formData.append('medicinalUse', medicine.medicinalUse);
+    formData.append('price', medicine.price);
+    formData.append('quantity', medicine.quantity);
+    formData.append('isPrescriptionRequired', medicine.isPrescriptionRequired);
+    formData.append('description', medicine.description);
+    formData.append('image', medicine.image); // Append the image file
+  
     try {
       if (medicine.price <= 0 || medicine.quantity <= 0) {
         setErrorMessage('Price and quantity must be greater than 0.');
       } else {
-        const response = await axios.post('http://localhost:3001/add-medicine', medicine);
+        const response = await axios.post('http://localhost:3001/add-medicine', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+          },
+        });
         console.log(response.data);
         setSuccessMessage('Medicine added successfully');
         setErrorMessage('');
@@ -127,9 +154,25 @@ const AddMed = () => {
       console.error(error);
     }
   };
-
+  
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // After logging out, navigate to the login page.
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/logout`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type == "") {
+          navigate('/login');
+        }
+      })
+  };
+  
   return (
     <div style={addMedContainerStyle}>
+    <div style={logoutButtonStyle}>
+      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+    </div>
       <h1 style={{ margin: '20px', gridColumn: 'span 2' }}>Add Medicine</h1>
       <form onSubmit={handleSubmit} style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         <div style={formColumnStyle}>
@@ -173,12 +216,19 @@ const AddMed = () => {
             </label>
             <input type="number" id="quantity" name="quantity" value={medicine.quantity} onChange={handleChange} required />
           </div>
-          <div style={{ ...formColumnStyle, marginBottom: '20px' }}>
-            <label style={labelStyle} htmlFor="imageUrl">
-              Image URL:
-            </label>
-            <input type="text" id="imageUrl" name="imageUrl" value={medicine.imageUrl} onChange={handleChange} required />
-          </div>
+        <div style={{ ...formColumnStyle, marginBottom: '20px' }}>
+          <label style={labelStyle} htmlFor="image">
+            Medicine Image:
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*" // Specify that only image files are allowed
+            onChange={handleChange}
+            required
+          />
+        </div>
           <div style={{ ...formColumnStyle, marginBottom: '20px' }}>
             <label style={labelStyle} htmlFor="isPrescriptionRequired">
               Prescription Required:

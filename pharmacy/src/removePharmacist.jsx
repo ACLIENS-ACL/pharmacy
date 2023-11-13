@@ -52,9 +52,25 @@ function RemovePharmacist() {
 
     setFilteredPharmacists(filtered);
   };
+  
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // After logging out, navigate to the login page.
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/logout`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type == "") {
+          navigate('/login');
+        }
+      })
+  };
 
   return (
     <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
+    <div className="d-flex justify-content-end mb-2">
+      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+    </div>
       <h2>Pharmacists</h2>
       {message && <div className="alert alert-danger">{message}</div>}
       <div style={{ marginBottom: '20px' }}>
@@ -104,7 +120,26 @@ function RemovePharmacist() {
                 )
                 .map((key) => (
                   <li key={key}>
-                    {key}: {request[key]}
+                    {key}: {key === 'idDocument' || key === 'medicalDegree' ? (
+                      // If the key is 'idDocument' or 'medicalDegree', create a link to view the file
+                      <a href={`http://localhost:3001/uploads/${request[key].fileName}`} target="_blank" rel="noopener noreferrer">
+                        View {key}
+                      </a>
+                    ) : key === 'medicalLicenses' ? (
+                      // If the key is 'medicalLicenses', create links to view each license file
+                      <ul>
+                        {request[key].map((license, index) => (
+                          <li key={index}>
+                            <a href={`http://localhost:3001/uploads/${license.fileName}`} target="_blank" rel="noopener noreferrer">
+                              View License {index + 1}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      // Otherwise, display the property normally
+                      `${request[key]}`
+                    )}
                   </li>
                 ))}
             </ul>
