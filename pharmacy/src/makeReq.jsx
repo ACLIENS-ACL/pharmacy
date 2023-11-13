@@ -120,9 +120,25 @@ const PharmacistRegistrationForm = () => {
       alert('An error occurred while submitting the registration request.');
     }
   };
+  
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // After logging out, navigate to the login page.
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/logout`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type == "") {
+          navigate('/login');
+        }
+      })
+  };
 
   return (
     <div style={containerStyle}>
+    <div className="d-flex justify-content-end mb-2">
+      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+    </div>
       <p style={messageStyle}>{message}</p>
 
       <h1 style={headingStyle}>Pharmacist Registration</h1>

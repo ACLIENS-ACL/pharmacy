@@ -17,6 +17,7 @@ import {
 function Signup() {
   const [userType, setUserType] = useState('patient'); // Default to 'patient'
   const [username, setUsername] = useState('');
+  const [nationalID, setnationalID] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +30,10 @@ function Signup() {
   const [hourlyRate, setHourlyRate] = useState('');
   const [affiliation, setAffiliation] = useState('');
   const [educationalBackground, setEducationalBackground] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null);// New state for selected specialty
+  const [idDocument, setIdDocument] = useState(null);
+  const [medicalLicenses, setMedicalLicenses] = useState([]);
+  const [medicalDegree, setMedicalDegree] = useState(null);
   const navigate = useNavigate();
 
   const [passwordError, setPasswordError] = useState('');
@@ -78,8 +82,34 @@ function Signup() {
         console.log(result);
         if (userType === "pharmacist") {
           alert("please login to submit request")
-        } 
-          navigate('/login');
+          alert("Please Login to Make a Request!");
+
+          const formData = new FormData();
+          formData.append('idDocument', idDocument);
+
+          axios.post(`http://localhost:3001/upload-id-document/${username}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          const formData2 = new FormData();
+          formData2.append('medicalDegree', medicalDegree);
+          axios.post(`http://localhost:3001/upload-medical-degree/${username}`, formData2, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          const formData3 = new FormData();
+          for (let i = 0; i < medicalLicenses.length; i++) {
+            formData3.append('medicalLicenses', medicalLicenses[i]);
+          }
+          axios.post(`http://localhost:3001/upload-medical-licenses/${username}`, formData3, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+        }
+        navigate('/login');
       })
       .catch(err => {
         console.log(err);
@@ -89,6 +119,7 @@ function Signup() {
         }
       });
   };
+  
 
   const formStyle = {
     background: 'linear-gradient(to bottom right, rgba(240, 147, 251, 1), rgba(245, 87, 108, 1))',
@@ -136,23 +167,6 @@ function Signup() {
                 <MDBRow>
                   <MDBCol md='6'>
                     <MDBInput wrapperClass='mb-4' label='Date of Birth' size='lg' id='form6' type='date' onChange={(e) => setDob(e.target.value)} required />
-                  </MDBCol>
-                  {userType === 'patient' && (
-                    <MDBCol md='6'>
-                      {/* Gender input, only for patients */}
-                      <h6 className="fw-bold">Gender: </h6>
-                      <MDBRadio name='inlineRadio' id='inlineRadio1' value='female' label='Female' inline onChange={(e) => setGender(e.target.value)} required />
-                      <MDBRadio name='inlineRadio' id='inlineRadio2' value='male' label='Male' inline onChange={(e) => setGender(e.target.value)} required />
-                    </MDBCol>
-                  )}
-                  {userType === 'pharmacist' && (
-                    <MDBCol md='6'>
-                      <MDBInput wrapperClass='mb-4' label='Hourly Rate' size='lg' id='form10' type='number' onChange={(e) => setHourlyRate(e.target.value)} required />
-                    </MDBCol>
-                  )}
-                </MDBRow>
-                <MDBRow>
-                  <MDBCol md='6'>
                     <MDBInput
                       wrapperClass='mb-4'
                       label='Mobile Number'
@@ -174,38 +188,89 @@ function Signup() {
                       required
                     />
                     <p className="text-danger">{mobileNumberError}</p>
+                    {userType === 'pharmacist' && (
+                      <MDBCol md='4'>
+                        {/* ID Document */}
+                        <div className="mb-4">
+                          <label htmlFor="idDocument" className="form-label">ID Document</label>
+                          <input
+                            id="idDocument"
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => setIdDocument(e.target.files[0])}
+                            required
+                          />
+                        </div>
+
+                        {/* Medical License */}
+                        <div className="mb-4">
+                          <label htmlFor="medicalLicense" className="form-label">Medical License</label>
+                          <input
+                            id="medicalLicense"
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => setMedicalLicenses(e.target.files)}
+                            required
+                            multiple
+                          />
+                        </div>
+
+                      </MDBCol>
+                    )}
                   </MDBCol>
                   {userType === 'patient' && (
                     <MDBCol md='6'>
-                      <MDBInput wrapperClass='mb-4' label='Emergency Contact Name' size='lg' id='form8' type='text' onChange={(e) => setEmergencyContactName(e.target.value)} required />
-                    <MDBInput
-                      wrapperClass='mb-4'
-                      label='Emergency Contact Number'
-                      size='lg'
-                      id='form9'
-                      type='tel'
-                      pattern="[0-9]{11}" // Use a regular expression pattern to accept 10-digit numbers
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setEmergencyContactNumber(value);
-
-                        if (!/^[0-9]{11}$/.test(value)) {
-                          setEmergencyContactNumberError('Please enter a valid 11-digit phone number.');
-                        } else {
-                          setEmergencyContactNumberError('');
-                        }
-                      }}
-                      inputMode="numeric"
-                      required
-                    />
-                    <p className="text-danger">{emergencyContactNumberError}</p>
-                      <MDBInput wrapperClass='mb-4' label='Relation to patient' size='lg' id='form10' type='text' onChange={(e) => setRelationToPatient(e.target.value)} required />
+                      {/* Gender input, only for patients */}
+                      <h6 className="fw-bold">Gender: </h6>
+                      <MDBRadio name='inlineRadio' id='inlineRadio1' value='female' label='Female' inline onChange={(e) => setGender(e.target.value)} required />
+                      <MDBRadio name='inlineRadio' id='inlineRadio2' value='male' label='Male' inline onChange={(e) => setGender(e.target.value)} required />
                     </MDBCol>
                   )}
                   {userType === 'pharmacist' && (
                     <MDBCol md='6'>
+                      <MDBInput wrapperClass='mb-4' label='Hourly Rate' size='lg' id='form10' type='number' onChange={(e) => setHourlyRate(e.target.value)} required />
                       <MDBInput wrapperClass='mb-4' label='Affiliation (Hospital)' size='lg' id='form11' type='text' onChange={(e) => setAffiliation(e.target.value)} required />
                       <MDBInput wrapperClass='mb-4' label='Educational Background' size='lg' id='form12' type='text' onChange={(e) => setEducationalBackground(e.target.value)} required />
+                      {/* Medical Degree */}
+                      <div className="mb-4">
+                        <label htmlFor="medicalDegree" className="form-label">Medical Degree</label>
+                        <input
+                          id="medicalDegree"
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => setMedicalDegree(e.target.files[0])}
+                          required
+                        />
+                      </div>
+                    </MDBCol>
+                  )}
+                </MDBRow>
+                <MDBRow>
+                  {userType === 'patient' && (
+                    <MDBCol md='6'>
+                      <MDBInput wrapperClass='mb-4' label='Emergency Contact Name' size='lg' id='form8' type='text' onChange={(e) => setEmergencyContactName(e.target.value)} required />
+                      <MDBInput
+                        wrapperClass='mb-4'
+                        label='Emergency Contact Number'
+                        size='lg'
+                        id='form9'
+                        type='tel'
+                        pattern="[0-9]{11}" // Use a regular expression pattern to accept 10-digit numbers
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setEmergencyContactNumber(value);
+
+                          if (!/^[0-9]{11}$/.test(value)) {
+                            setEmergencyContactNumberError('Please enter a valid 11-digit phone number.');
+                          } else {
+                            setEmergencyContactNumberError('');
+                          }
+                        }}
+                        inputMode="numeric"
+                        required
+                      />
+                      <p className="text-danger">{emergencyContactNumberError}</p>
+                      <MDBInput wrapperClass='mb-4' label='Relation to patient' size='lg' id='form10' type='text' onChange={(e) => setRelationToPatient(e.target.value)} required />
                     </MDBCol>
                   )}
                 </MDBRow>

@@ -7,6 +7,18 @@ const UsersSchema = new mongoose.Schema({
   password: String,
   dob: String,
   mobileNumber: String,
+  idDocument:{
+    fileName: String,
+    filePath:Object
+  },
+  medicalDegree:{
+    fileName: String,
+    filePath:Object
+  },
+  medicalLicenses: [{
+    fileName: String,
+    filePath:Object
+  }],
   userType: {
     type: String,
     default: 'pharmacist', // Set the default user type to 'doctor'

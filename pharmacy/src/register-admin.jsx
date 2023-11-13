@@ -55,9 +55,25 @@ function RegistrationForm() {
       setMessage('An error occurred. Please try again later.');
     }
   };
+  
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // After logging out, navigate to the login page.
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/logout`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type == "") {
+          navigate('/login');
+        }
+      })
+  };
 
   return (
     <MDBContainer className="vh-100 d-flex justify-content-center align-items-center">
+    <div className="d-flex justify-content-end mb-2">
+      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+    </div>
       <MDBRow>
         <MDBCol md="20" lg="20">
           <h2 style={h2Style}>Add Admin</h2>

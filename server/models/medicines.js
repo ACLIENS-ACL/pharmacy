@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const medicineSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -24,25 +23,28 @@ const medicineSchema = new mongoose.Schema({
   },
   sales: {
     type: Number,
-    default:0,
-    required: false
+    default: 0,
+    required: false,
   },
   imageUrl: {
-    type: String,
-    required: true,
+    fileName: {
+      type: String,
+      required: true,
+    },
+    filePath: {
+      type: String, // Change this to String if storing the file path as a string
+      required: true,
+    },
   },
   isPrescriptionRequired: {
     type: Boolean,
     required: true,
   },
-  description : {
+  description: {
     type: String,
     required: true,
-  }
+  },
 });
-
-
-
 
 const MedicineModel = mongoose.model('Medicine', medicineSchema);
 

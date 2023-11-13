@@ -25,29 +25,35 @@ function App() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('patient'); 
+  const [userType, setUserType] = useState('patient');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     console.log(username)
     console.log(userType)
-    e.preventDefault();
+    e.preventDefault();    
+    const type = await axios.get('http://localhost:3001/getType', {
+      params: { username: username },
+    });
+    setUserType(type.data.userType);
     const lowercaseUsername = username.toLowerCase();
     axios
     axios
-      .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {username:lowercaseUsername,
-      password}) // Use a dynamic endpoint based on userType
+      .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {
+        username: lowercaseUsername,
+        password
+      }) // Use a dynamic endpoint based on userType
       .then(result => {
-        console.log(result.data.message+"asao")
-        if(result.data.message==='Success But Not Enrolled'){
+        console.log(result.data.message + "asao")
+        if (result.data.message === 'Success But Not Enrolled') {
           navigate('/makeReq');
         }
-        else if (result.data.message === 'Success'||result.data === 'Success') {
+        else if (result.data.message === 'Success' || result.data === 'Success') {
           if (userType.toLowerCase() === "admin") { // Fix the comparison
             navigate('/admin');
-          }else if(userType.toLowerCase() === "pharmacist")  {
+          } else if (userType.toLowerCase() === "pharmacist") {
             navigate('/pharmacist');
-          }else if(userType.toLowerCase() === "patient")  {
+          } else if (userType.toLowerCase() === "patient") {
             navigate('/patient');
           } else {
             navigate('/register');
@@ -55,11 +61,14 @@ function App() {
         }
       })
       .catch(err => {
-        console.log(err+"i dkkkk");
+        console.log(err + "i dkkkk");
         // Handle error
       });
-      
+
   };
+  const resetpage = () => {
+    navigate('/password-reset')
+  }
 
   return (
     <MDBContainer className="my-5" style={gradientFormStyle}>
@@ -76,18 +85,10 @@ function App() {
               <MDBInput wrapperClass='mb-4' label='Username' id='form1' type='username' value={username} onChange={(e) => setUsername(e.target.value)} />
               <MDBInput wrapperClass='mb-4' label='Password' id='form2' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
               <div className="text-center pt-1 mb-5 pb-1">
-                <div className="mb-3">
-                  <label className="form-label">User Type:</label>
-                  <select className="form-select" value={userType} onChange={(e) => setUserType(e.target.value)}>
-                    <option value="patient" onChange={(e) => setUserType("patient")}>Patient</option >
-                    <option value="pharmacist" onChange={(e) => setUserType("pharmacist")}>Pharmacist</option>
-                    <option value="admin" onChange={(e) => setUserType("admin")}>Admin</option>
-                  </select>
-                </div>
                 <MDBBtn className="mb-4 w-100" style={gradientCustom2Style} type="submit">
                   Sign in
                 </MDBBtn>
-                <a className="text-muted" href="#!">Forgot password?</a>
+                <a className="text-muted" href="#!" onClick={resetpage}>Forgot password?</a>
               </div>
             </form>
             <div className="d-flex flex-row align-items-center justify-content-center pb-4 mb-4">

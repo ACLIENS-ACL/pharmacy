@@ -62,9 +62,25 @@ function EditMed() {
       });
   }
   
+  
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // After logging out, navigate to the login page.
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/logout`)
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.type == "") {
+          navigate('/login');
+        }
+      })
+  };
 
   return (
     <div className="container">
+    <div className="d-flex justify-content-end mb-2">
+      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+    </div>
       {successMessage && <p className="alert alert-success">{successMessage}</p>}
       <h1 className="my-4">Edit Medicine</h1>
       <div className="row">
