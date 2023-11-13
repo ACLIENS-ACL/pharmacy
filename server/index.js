@@ -282,9 +282,11 @@ app.post('/register-admin', async (req, res) => {
     const existingPae = await AdminsModel.findOne({ email: adminData.email });
 
     if (existingAdmin || existingPatient || existingPharmacist) {
+      console.log("asdnj")
       return res.json({ message: 'Username already exists' });
     }
     else if (existingPatiente || existingPe || existingPae) {
+      console.log("asdnjsad")
       return res.json({ message: 'Email already registered to another user' });
     }
 
