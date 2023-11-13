@@ -48,12 +48,21 @@ var logged = {
 };
 loggedinusername = "";
 
+
 app.get('/editmed', async (req, res) => {
   res.json(logged);
 })
 app.get('/admin', async (req, res) => {
   res.json(logged);
 })
+var loggedd = {
+  username: "",
+  password: ""
+};
+app.get('/adminadmin', async (req, res) => {
+  res.json(loggedd);
+})
+
 
 app.get('/pharmacist', async (req, res) => {
   res.json(logged);
@@ -110,6 +119,11 @@ app.get('/getType', async (req, res) => {
 app.post('/register-patient', async (req, res) => {
   const patientData = req.body;
   try {
+    console.log(patientData.username)
+    if(patientData.username==="admin"){
+      console.log("ads")
+      res.status(400).json({ error: 'Username already exists' });
+    }
     // Check if a user with the same username already exists
     const existingPatient = await PatientsModel.findOne({ username: patientData.username });
     const existingP = await PharmacistsModel.findOne({ username: patientData.username });
@@ -137,6 +151,9 @@ app.post('/register-pharmacist', async (req, res) => {
   const pharmacistData = req.body;
   logged.username = pharmacistData.username;
   try {
+    if(pharmacistData.username==="admin"){
+      res.status(400).json({ error: 'Username already exists, Please Chose a unique username' });
+    }
     // Check if a user with the same username already exists
     const existingPharmacist = await PharmacistsModel.findOne({ username: pharmacistData.username });
     const existingPatient = await PatientsModel.findOne({ username: pharmacistData.username });
@@ -246,6 +263,8 @@ app.post('/login-admin', (req, res) => {
   logged.username = username;
   logged.in = true;
   logged.type = "admin"
+  loggedd.username=username
+  loggedd.password=password
   if (username == "admin" && password == "admin")
     res.json("Success");
   else {
@@ -274,6 +293,9 @@ app.get('/register-admin', async (req, res) => {
 app.post('/register-admin', async (req, res) => {
   try {
     const adminData = req.body;
+    if(adminData.username==="admin"){
+      return res.json({ message: 'Username already exists' });
+    }
     const existingAdmin = await AdminsModel.findOne({ username: adminData.username });
     const existingPharmacist = await PharmacistsModel.findOne({ username: adminData.username });
     const existingPatient = await PatientsModel.findOne({ username: adminData.username });
