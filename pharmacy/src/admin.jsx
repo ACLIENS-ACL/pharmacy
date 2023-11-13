@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBContainer, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import axios from 'axios';
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     // Fetch admin data from the server
     axios.get(`http://localhost:3001/admin`)
@@ -13,6 +14,20 @@ function AdminDashboard() {
         console.log(responseData.type,responseData.in)
         if (responseData.type !== "admin" || responseData.in !== true) {
           navigate('/login')
+        }
+      })
+  }, []);
+  useEffect(() => {
+    // Fetch admin data from the server
+    axios.get(`http://localhost:3001/adminadmin`)
+      .then((response) => {
+        const responseData = response.data;
+
+        console.log(responseData)
+        if (responseData.username === "admin" || responseData.password ==="admin") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
         }
       })
   }, []);
@@ -117,19 +132,21 @@ function AdminDashboard() {
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardTitle>Change Password</MDBCardTitle>
-              <MDBCardText>
-                Change Your Password
-              </MDBCardText>
-              <Link to="/password-change">
-                <MDBBtn color="success" >Change Password</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
+        {!isAdmin  && (
+          <MDBCol md="4" className="mb-4">
+            <MDBCard>
+              <MDBCardBody>
+                <MDBCardTitle>Change Password</MDBCardTitle>
+                <MDBCardText>
+                  Change Your Password
+                </MDBCardText>
+                <Link to="/password-change">
+                  <MDBBtn color="success" >Change Password</MDBBtn>
+                </Link>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        )}
 
       </MDBRow>
     </MDBContainer>

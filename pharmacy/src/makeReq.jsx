@@ -112,7 +112,6 @@ const PharmacistRegistrationForm = () => {
 
       setFormModified(false);
 
-      alert('Registration request submitted successfully.');
       navigate('./login');
     } catch (error) {
       console.error('Error:', error);

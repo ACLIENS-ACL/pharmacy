@@ -143,13 +143,13 @@ function CheckOut() {
       alert('Please select a delivery address and payment method.');
       return;
     }
-  
+
     const orderData = {
       cart: cartData,
       deliveryAddress: selectedAddress,
       paymentMethod: selectedPaymentMethod,
     };
-  
+
     if (selectedPaymentMethod === 'wallet') {
       console.log(walletBalance)
       console.log(total)
@@ -158,14 +158,14 @@ function CheckOut() {
         return;
       }
     }
-  
+
     // Send a request to the server to place the order
     axios
       .post('http://localhost:3001/place-order', orderData)
       .then((response) => {
         if (selectedPaymentMethod === 'wallet') {
           const newWalletBalance = walletBalance - total;
-      
+
           // Update the wallet balance on the server
           axios.post('http://localhost:3001/update-wallet-balance', { balance: newWalletBalance })
             .then(() => {
@@ -278,6 +278,10 @@ function CheckOut() {
           <CheckoutForm onPaymentSuccess={() => navigate('/patient')} />
         </Elements>
       )}
+      {selectedPaymentMethod === 'wallet' && (
+        <p>wallet:${walletBalance}</p>
+      )
+      }
 
       <button onClick={placeOrder} style={buttonStyle}>
         Place Order

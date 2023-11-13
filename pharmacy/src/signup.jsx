@@ -82,7 +82,6 @@ function Signup() {
         console.log(result);
         if (userType === "pharmacist") {
           alert("please login to submit request")
-          alert("Please Login to Make a Request!");
 
           const formData = new FormData();
           formData.append('idDocument', idDocument);
