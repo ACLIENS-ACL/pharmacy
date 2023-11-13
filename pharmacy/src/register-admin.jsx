@@ -21,6 +21,7 @@ function RegistrationForm() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
@@ -41,6 +42,7 @@ function RegistrationForm() {
     try {
       const adminData = {
         username,
+        email,
         password,
       };
 
@@ -48,8 +50,10 @@ function RegistrationForm() {
 
       if (result.data.message === 'Admin added successfully') {
         setMessage('Admin registered successfully.');
-      } else {
+      } else if(result.data.message === 'Username Already Exists') {
         setMessage('Username Already Exists');
+      }else if(result.data.message === 'Email already registered to another user') {
+        setMessage('Email already registered to another user');
       }
     } catch (error) {
       setMessage('An error occurred. Please try again later.');
@@ -68,12 +72,18 @@ function RegistrationForm() {
         }
       })
   };
+  
+  const logoutButtonStyle = {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+  };
 
   return (
     <MDBContainer className="vh-100 d-flex justify-content-center align-items-center">
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+    <button onClick={handleLogout} className="btn btn-danger" style={logoutButtonStyle}>
+        Logout
+      </button>
       <MDBRow>
         <MDBCol md="20" lg="20">
           <h2 style={h2Style}>Add Admin</h2>
@@ -87,6 +97,16 @@ function RegistrationForm() {
               style={inputStyle}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+            />
+            <MDBInput
+              label="Email"
+              type="email"
+              id="email"
+              name="email"
+              className="mb-4"
+              style={inputStyle}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <MDBInput
               label="Password"

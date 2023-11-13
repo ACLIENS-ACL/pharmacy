@@ -116,7 +116,11 @@ function RemovePatient() {
                     key !== 'username' &&
                     key !== 'password' &&
                     key !== 'enrolled' &&
-                    key !== '__v'
+                    key !== '__v'&&
+                    key !== 'cart'&&
+                    key !== 'orders'&&
+                    key !== 'deliveryAddresses'&&
+                    key !== 'wallets'
                 )
                 .map((key) => (
                   <li key={key}>
