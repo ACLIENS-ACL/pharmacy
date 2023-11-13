@@ -57,6 +57,7 @@ function AddAddressForm() {
   useEffect(() => {
     axios.get('http://localhost:3001/delivery-addresses')
       .then((response) => {
+        console.log(response.data.patientRequests[0].deliveryAddresses)
         setExistingAddresses(response.data.patientRequests[0].deliveryAddresses || []);
       })
       .catch((error) => {
@@ -86,6 +87,7 @@ function AddAddressForm() {
     else if (!existingAddresses.includes(newAddress)) {
       // Create a new array with the existing addresses and the new address
       const updatedAddresses = [...existingAddresses, newAddress];
+      console.log(updatedAddresses)
 
       // Send the updated addresses to the backend
       axios
