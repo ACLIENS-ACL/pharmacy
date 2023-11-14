@@ -327,6 +327,19 @@ app.post('/register-admin', async (req, res) => {
   }
 });
 
+app.put('/register-adminemail', async (req, res) => {
+  const email = req.body.email;
+  const existingPatiente = await PatientsModel.findOne({ email: email });
+  const existingPe = await PharmacistsModel.findOne({ email: email });
+  const existingPae = await AdminsModel.findOne({ email: email });
+  if (existingPatiente || existingPe || existingPae) {
+    return res.json('Email already registered to another user');
+  } else {
+    return res.json('Clear');
+  }
+});
+
+
 // Server-side route to fetch pharmacist requests
 app.get('/pharmacist-requests', async (req, res) => {
   var sess = logged.in
