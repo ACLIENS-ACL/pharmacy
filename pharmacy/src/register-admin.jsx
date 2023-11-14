@@ -25,6 +25,11 @@ function RegistrationForm() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    // Password must contain at least one capital letter, one small letter, one special character, and one number.
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordPattern.test(password);
+  };
   useEffect(() => {
     // Fetch pharmacist requests from the server
     axios.get('http://localhost:3001/register-admin')
@@ -39,6 +44,13 @@ function RegistrationForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate the password
+    if (!validatePassword(password)) {
+      setMessage(
+        'Password must contain at least one lowercase letter, one uppercase letter, one special character, and one number. It should be at least 8 characters long.'
+      );
+      return;
+    }
     try {
       const adminData = {
         username,
@@ -47,10 +59,11 @@ function RegistrationForm() {
       };
 
       const result = await axios.post('http://localhost:3001/register-admin', adminData);
-
+console.log(result.data.message)
       if (result.data.message === 'Admin added successfully') {
         setMessage('Admin registered successfully.');
-      } else if(result.data.message === 'Username Already Exists') {
+      } else if(result.data.message === 'Username already exists') {
+        console.log("dsad")
         setMessage('Username Already Exists');
       }else if(result.data.message === 'Email already registered to another user') {
         setMessage('Email already registered to another user');

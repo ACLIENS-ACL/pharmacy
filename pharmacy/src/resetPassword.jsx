@@ -60,7 +60,7 @@ function ResetPassword() {
 
   const resetPassword = () => {
     if (!validatePassword(newPassword)) {
-      setMessage('Password does not meet the criteria.');
+      setMessage('Password must contain at least one lowercase letter, one uppercase letter, one special character, and one number. It should be at least 8 characters long.');
         return;
     }
     axios

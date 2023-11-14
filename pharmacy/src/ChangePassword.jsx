@@ -32,7 +32,7 @@ function ChangePassword() {
         }
 
         if (!validatePassword(newPassword)) {
-            setError('Password does not meet the criteria.');
+            setError('Password must contain at least one lowercase letter, one uppercase letter, one special character, and one number. It should be at least 8 characters long.');
             return;
         }
 
