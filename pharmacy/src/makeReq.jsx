@@ -57,6 +57,7 @@ const PharmacistRegistrationForm = () => {
   const [notes, setNotes] = useState();
   const [message, setMessage] = useState('');
   const [formModified, setFormModified] = useState(false);
+  const [pEmail, setEmail] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,6 +76,7 @@ const PharmacistRegistrationForm = () => {
     axios.get('http://localhost:3001/get-pharmacist-info')
       .then((response) => {
         setPharmacistInfo(response.data);
+        setEmail(response.data.email)
         if (response.data.enrolled === 'rejected') {
           setMessage('Your request was rejected');
         } else if (response.data.enrolled === 'pending') {
@@ -103,23 +105,44 @@ const PharmacistRegistrationForm = () => {
     console.log(notes)
     const requestData = {
       ...pharmacistInfo,
-       notes, 
+      notes,
       enrolled: updatedStatus,
     };
 
-    try {console.log(requestData);
-      await axios.put('http://localhost:3001/update-pharmacist-info', requestData);
+    try {
+      console.log(requestData.email + "ads")
+      if (requestData.email == pEmail) {
+        await axios.put('http://localhost:3001/update-pharmacist-info', requestData);
 
-      setFormModified(false);
+        setFormModified(false);
 
-      navigate('./login');
+        navigate('./login');
+      }
+      else{
+        axios.put('http://localhost:3001/register-adminemail', { email: requestData.email })
+          .then(async (response) => {
+            if (response.data === 'Email already registered to another user') {
+              setMessage('Email already registered to another user');
+            } else if (response.data === 'Clear') {
+              await axios.put('http://localhost:3001/update-pharmacist-info', requestData);
+
+              setFormModified(false);
+
+              navigate('./login');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+        }
+
     } catch (error) {
       console.error('Error:', error);
 
       alert('An error occurred while submitting the registration request.');
     }
   };
-  
+
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
@@ -135,9 +158,9 @@ const PharmacistRegistrationForm = () => {
 
   return (
     <div style={containerStyle}>
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <p style={messageStyle}>{message}</p>
 
       <h1 style={headingStyle}>Pharmacist Registration</h1>
