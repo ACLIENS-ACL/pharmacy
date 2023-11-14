@@ -906,8 +906,10 @@ app.put('/cancel-order/:orderId', async (req, res) => {
 
       if (medicine) {
         // Update the medicine's quantity
+      const sales=medicine.sales-quantity;
         const updatedQuantity = medicine.quantity + quantity;
         medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
+        medicine.sales=sales
 
         // Save the updated medicine
         await medicine.save();
@@ -974,8 +976,10 @@ app.put('/add-to-cart/:orderId', async (req, res) => {
 
       if (medicine) {
         // Update the medicine's quantity
+      const sales=medicine.sales-quantity;
         const updatedQuantity = medicine.quantity + quantity;
         medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
+        medicine.sales=sales
 
         // Save the updated medicine
         await medicine.save();
@@ -1039,8 +1043,10 @@ app.get('/update-medicine-quantities', async (req, res) => {
 
       if (medicine) {
         // Update the medicine's quantity
+      const sales=medicine.sales+quantity;
         const updatedQuantity = medicine.quantity - quantity;
         medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
+        medicine.sales=sales
 
         // Save the updated medicine
         await medicine.save();
