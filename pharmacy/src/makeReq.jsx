@@ -58,21 +58,13 @@ const PharmacistRegistrationForm = () => {
   const [message, setMessage] = useState('');
   const [formModified, setFormModified] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem('pharmacistToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/typeformed`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type === "pharmacist" && responseData.in === true) {
-
-        } else {
-          navigate('/login');
-        }
-      })
-  }, []);
-
-  useEffect(() => {
-    axios.get('http://localhost:3001/get-pharmacist-info')
+    axios.get('http://localhost:3002/get-pharmacist-info')
       .then((response) => {
         setPharmacistInfo(response.data);
         if (response.data.enrolled === 'rejected') {
@@ -108,11 +100,10 @@ const PharmacistRegistrationForm = () => {
     };
 
     try {console.log(requestData);
-      await axios.put('http://localhost:3001/update-pharmacist-info', requestData);
+      await axios.put('http://localhost:3002/update-pharmacist-info', requestData);
 
       setFormModified(false);
 
-      alert('Registration request submitted successfully.');
       navigate('./login');
     } catch (error) {
       console.error('Error:', error);
@@ -125,7 +116,7 @@ const PharmacistRegistrationForm = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
+    axios.get(`http://localhost:3002/logout`, {headers})
       .then((response) => {
         const responseData = response.data;
         if (responseData.type == "") {

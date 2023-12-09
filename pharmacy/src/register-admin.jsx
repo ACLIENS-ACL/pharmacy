@@ -21,19 +21,19 @@ function RegistrationForm() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
-    // Fetch pharmacist requests from the server
-    axios.get('http://localhost:3001/register-admin')
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type !== "admin" || !responseData.in) {
-          navigate('/login')
-        }
-      })
-  });
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,15 +41,18 @@ function RegistrationForm() {
     try {
       const adminData = {
         username,
+        email,
         password,
       };
 
-      const result = await axios.post('http://localhost:3001/register-admin', adminData);
+      const result = await axios.post('http://localhost:3002/register-admin', adminData, {headers});
 
       if (result.data.message === 'Admin added successfully') {
         setMessage('Admin registered successfully.');
-      } else {
+      } else if(result.data.message === 'Username Already Exists') {
         setMessage('Username Already Exists');
+      }else if(result.data.message === 'Email already registered to another user') {
+        setMessage('Email already registered to another user');
       }
     } catch (error) {
       setMessage('An error occurred. Please try again later.');
@@ -60,20 +63,27 @@ function RegistrationForm() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
+    // axios.get(`http://localhost:3002/logout`, {headers})
+    //   .then((response) => {
+    //     const responseData = response.data;
+    //     if (responseData.type == "") {
+    localStorage.removeItem('adminToken');
           navigate('/login');
-        }
-      })
+      //   }
+      // })
+  };
+  
+  const logoutButtonStyle = {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
   };
 
   return (
     <MDBContainer className="vh-100 d-flex justify-content-center align-items-center">
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+    <button onClick={handleLogout} className="btn btn-danger" style={logoutButtonStyle}>
+        Logout
+      </button>
       <MDBRow>
         <MDBCol md="20" lg="20">
           <h2 style={h2Style}>Add Admin</h2>
@@ -87,6 +97,16 @@ function RegistrationForm() {
               style={inputStyle}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+            />
+            <MDBInput
+              label="Email"
+              type="email"
+              id="email"
+              name="email"
+              className="mb-4"
+              style={inputStyle}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <MDBInput
               label="Password"

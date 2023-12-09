@@ -8,6 +8,7 @@ import {
   MDBCol,
   MDBInput
 } from 'mdb-react-ui-kit';
+import { jwtDecode } from 'jwt-decode';
 
 function App() {
   const gradientCustom2Style = {
@@ -25,35 +26,46 @@ function App() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('patient');
+  const [userType, setUserType] = useState('admin');
   const navigate = useNavigate();
 
   const handleSubmit =async (e) => {
     console.log(username)
     console.log(userType)
     e.preventDefault();    
-    const type = await axios.get('http://localhost:3001/getType', {
+    const type = await axios.get('http://localhost:3002/getType', {
       params: { username: username },
-    });
+    })
     setUserType(type.data.userType);
     const lowercaseUsername = username.toLowerCase();
     axios
-    axios
-      .post(`http://localhost:3001/login-${userType.toLowerCase()}`, {
+      .post(`http://localhost:3002/login-${userType.toLowerCase()}`, {
         username: lowercaseUsername,
         password
       }) // Use a dynamic endpoint based on userType
       .then(result => {
+        const token=result.data.token;   
+        console.log(token)   
+        console.log(jwtDecode(token).type+"ad")
+        const user = jwtDecode(token).type;
+  
         console.log(result.data.message + "asao")
+
         if (result.data.message === 'Success But Not Enrolled') {
           navigate('/makeReq');
         }
         else if (result.data.message === 'Success' || result.data === 'Success') {
-          if (userType.toLowerCase() === "admin") { // Fix the comparison
+          const decodedToken=jwtDecode(token)
+          if (decodedToken.type.toLowerCase() === "admin") { 
+            localStorage.setItem('adminToken', token);
             navigate('/admin');
-          } else if (userType.toLowerCase() === "pharmacist") {
+          } else if (decodedToken.type.toLowerCase() === "pharmacist") {
+            console.log("arrived")
+            localStorage.setItem('pharmacistToken', token);
+            console.log("left")
             navigate('/pharmacist');
-          } else if (userType.toLowerCase() === "patient") {
+          } else if (decodedToken.type.toLowerCase() === "patient") {
+            localStorage.setItem('patientToken', token);
             navigate('/patient');
           } else {
             navigate('/register');

@@ -70,19 +70,19 @@ const CheckoutForm = ({ onPaymentSuccess }) => {
 
     const card = elements.getElement(CardElement);
 
-    const { token, error } = await stripe.createToken(card);
+    const { tokenn, error } = await stripe.createToken(card);
 
     if (error) {
       console.error(error);
     } else {
-      // Send the token to your server to charge the user.
+      // Send the tokenn to your server to charge the user.
       // You can handle the server-side logic for payment here.
 
       // Example: Call your API to handle the payment
-      // const response = await axios.post('your-payment-endpoint', { token });
-      // if (response.data.success) {
-      //   onPaymentSuccess();
-      // }
+      const response = await axios.post('your-payment-endpoint', { tokenn });
+      if (response.data.success) {
+        onPaymentSuccess();
+      }
     }
   };
 
@@ -106,9 +106,18 @@ function CheckOut() {
   const cartData = location.state?.cart || [];
   const total = cartData.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+  const token = localStorage.getItem('patientToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   useEffect(() => {
     // Fetch the wallet balance from the server
-    axios.get('http://localhost:3001/wallet-balance') // Adjust the endpoint as needed
+    axios.get('http://localhost:3002/wallet-balance', {headers}) // Adjust the endpoint as needed
       .then((response) => {
         setWalletBalance(response.data.balance);
       })
@@ -120,14 +129,14 @@ function CheckOut() {
   useEffect(() => {
     // Fetch delivery addresses from the server
     axios
-      .get('http://localhost:3001/delivery-addresses')
+      .get('http://localhost:3002/delivery-addresses', {headers})
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType === 'patient' && responseData.sessi === true) {
+        // if (responseData.userType === 'patient' && responseData.sessi === true) {
           setDeliveryAddresses(responseData.patientRequests[0].deliveryAddresses);
-        } else {
-          navigate('/login');
-        }
+        // } else {
+        //   navigate('/login');
+        // }
       })
       .catch((error) => {
         console.error('Error fetching delivery addresses:', error);
@@ -143,13 +152,13 @@ function CheckOut() {
       alert('Please select a delivery address and payment method.');
       return;
     }
-  
+
     const orderData = {
       cart: cartData,
       deliveryAddress: selectedAddress,
       paymentMethod: selectedPaymentMethod,
     };
-  
+
     if (selectedPaymentMethod === 'wallet') {
       console.log(walletBalance)
       console.log(total)
@@ -158,16 +167,16 @@ function CheckOut() {
         return;
       }
     }
-  
+
     // Send a request to the server to place the order
     axios
-      .post('http://localhost:3001/place-order', orderData)
+      .post('http://localhost:3002/place-order', orderData, {headers})
       .then((response) => {
         if (selectedPaymentMethod === 'wallet') {
           const newWalletBalance = walletBalance - total;
-      
+
           // Update the wallet balance on the server
-          axios.post('http://localhost:3001/update-wallet-balance', { balance: newWalletBalance })
+          axios.post('http://localhost:3002/update-wallet-balance', { balance: newWalletBalance }, {headers})
             .then(() => {
               setWalletBalance(newWalletBalance);
             })
@@ -176,7 +185,7 @@ function CheckOut() {
             });
         }
         axios
-          .get('http://localhost:3001/update-medicine-quantities', {})
+          .get('http://localhost:3002/update-medicine-quantities', {headers})
         navigate('/patient'); // Redirect to a success page
       })
       .catch((error) => {
@@ -194,10 +203,10 @@ function CheckOut() {
   };
 
   const handleLogout = () => {
-    // Perform any necessary logout actions (e.g., clearing session or tokens).
+    // Perform any necessary logout actions (e.g., clearing session or tokenns).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
+    axios.get(`http://localhost:3002/logout`)
       .then((response) => {
         const responseData = response.data;
         if (responseData.type === "") {
@@ -206,16 +215,6 @@ function CheckOut() {
       });
   };
 
-  useEffect(() => {
-    // Fetch admin data from the server
-    axios.get(`http://localhost:3001/patient`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type !== "patient" || responseData.in !== true) {
-          navigate('/login');
-        }
-      });
-  }, []);
 
   return (
     <div style={containerStyle}>
@@ -278,6 +277,10 @@ function CheckOut() {
           <CheckoutForm onPaymentSuccess={() => navigate('/patient')} />
         </Elements>
       )}
+      {selectedPaymentMethod === 'wallet' && (
+        <p>wallet:${walletBalance}</p>
+      )
+      }
 
       <button onClick={placeOrder} style={buttonStyle}>
         Place Order

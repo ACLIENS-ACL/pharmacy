@@ -8,18 +8,27 @@ function RemovePatient() {
   const [message, setMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
+  useEffect(() => {
     // Fetch patient requests from the server
-    axios.get('http://localhost:3001/remove-patient')
+    axios.get('http://localhost:3002/remove-patient', {headers})
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType === 'admin' && responseData.sessi === true) {
+        // if (responseData.userType === 'admin' && responseData.sessi === true) {
           setPatients(responseData.patientRequests);
           setFilteredPatients(responseData.patientRequests); // Initially set the filtered list to all patients
-        } else {
-          navigate('/login');
-        }
+        // } else {
+        //   navigate('/login');
+        // }
       })
       .catch((error) => {
         console.error(error);
@@ -29,7 +38,7 @@ function RemovePatient() {
 
   const handleReject = (patientId) => {
     // Send a request to reject and remove the patient
-    axios.post(`http://localhost:3001/remove-patient/${patientId}`)
+    axios.post(`http://localhost:3002/remove-patient/${patientId}`, {headers})
       .then(() => {
         // Update the local state to remove the deleted patient
         setPatients((prevRequests) => prevRequests.filter((request) => request._id !== patientId));
@@ -57,13 +66,14 @@ function RemovePatient() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
+    // axios.get(`http://localhost:3002/logout`, {headers})
+    //   .then((response) => {
+    //     const responseData = response.data;
+    //     if (responseData.type == "") {
+    localStorage.removeItem('token');
           navigate('/login');
-        }
-      })
+      //   }
+      // })
   };
 
   return (
@@ -116,7 +126,11 @@ function RemovePatient() {
                     key !== 'username' &&
                     key !== 'password' &&
                     key !== 'enrolled' &&
-                    key !== '__v'
+                    key !== '__v'&&
+                    key !== 'cart'&&
+                    key !== 'orders'&&
+                    key !== 'deliveryAddresses'&&
+                    key !== 'wallets'
                 )
                 .map((key) => (
                   <li key={key}>

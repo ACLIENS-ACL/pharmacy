@@ -6,18 +6,26 @@ function PharmacistsRequests() {
   const [requests, setRequests] = useState([]);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     // Fetch pharmacist requests from the server
-    axios.get('http://localhost:3001/pharmacist-requests')
+    axios.get('http://localhost:3002/pharmacist-requests', {headers})
       .then((response) => {
         const responseData = response.data;
-        console.log(responseData.pharmacistRequests+" dasmlm")
-        if (responseData.userType === 'admin' && responseData.sessi === true) {
+        // if (responseData.userType === 'admin' && responseData.sessi === true) {
           setRequests(responseData.pharmacistRequests);
-        } else {
-          navigate('/login');
-        }
+        // } else {
+        //   navigate('/login');
+        // }
       })
       .catch((error) => {
         console.error(error);
@@ -30,7 +38,8 @@ function PharmacistsRequests() {
 
   const handleApprove = (pharmacistId) => {
     // Send a request to approve the pharmacist
-    axios.post(`http://localhost:3001/approve-pharmacist/${pharmacistId}`)
+    console.log(token)
+    axios.post(`http://localhost:3002/approve-pharmacist/${pharmacistId}`)
       .then(() => {
         // Update the local state to reflect the change
         setRequests((prevRequests) => prevRequests.filter((request) => request._id !== pharmacistId));
@@ -43,7 +52,7 @@ function PharmacistsRequests() {
 
   const handleReject = (pharmacistId) => {
     // Send a request to reject and remove the pharmacist
-    axios.post(`http://localhost:3001/reject-pharmacist/${pharmacistId}`)
+    axios.post(`http://localhost:3002/reject-pharmacist/${pharmacistId}`)
       .then(() => {
         // Update the local state to remove the rejected pharmacist
         setRequests((prevRequests) => prevRequests.filter((request) => request._id !== pharmacistId));
@@ -59,13 +68,14 @@ function PharmacistsRequests() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
+    // axios.get(`http://localhost:3002/logout`, {headers})
+    //   .then((response) => {
+    //     const responseData = response.data;
+    //     if (responseData.type == "") {
+    localStorage.removeItem('adminToken');
           navigate('/login');
-        }
-      })
+        // }
+      // })
   };
 
   return (
@@ -95,7 +105,7 @@ function PharmacistsRequests() {
                   <li key={key}>
                     {key}: {key === 'idDocument' || key === 'medicalDegree' ? (
                       // If the key is 'idDocument' or 'medicalDegree', create a link to view the file
-                      <a href={`http://localhost:3001/uploads/${request[key].fileName}`} target="_blank" rel="noopener noreferrer">
+                      <a href={`http://localhost:3002/uploads/${request[key].fileName}`} target="_blank" rel="noopener noreferrer">
                         View {key}
                       </a>
                     ) : key === 'medicalLicenses' ? (
@@ -103,7 +113,7 @@ function PharmacistsRequests() {
                       <ul>
                         {request[key].map((license, index) => (
                           <li key={index}>
-                            <a href={`http://localhost:3001/uploads/${license.fileName}`} target="_blank" rel="noopener noreferrer">
+                            <a href={`http://localhost:3002/uploads/${license.fileName}`} target="_blank" rel="noopener noreferrer">
                               View License {index + 1}
                             </a>
                           </li>

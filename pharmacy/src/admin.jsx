@@ -1,24 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBContainer, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import axios from 'axios';
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   useEffect(() => {
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/admin`)
+    axios.get(`http://localhost:3002/adminadmin`, {headers})
       .then((response) => {
         const responseData = response.data;
-        console.log(responseData.type,responseData.in)
-        if (responseData.type !== "admin" || responseData.in !== true) {
-          navigate('/login')
+
+        console.log(responseData)
+        if (responseData.username === "admin" || responseData.password ==="admin") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
         }
       })
   }, []);
 
   
   const handleLogout = () => {
+    localStorage.removeItem('token');
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     navigate('/login');
@@ -111,25 +125,27 @@ function AdminDashboard() {
             <MDBCardBody>
               <MDBCardTitle>Medicines</MDBCardTitle>
               <MDBCardText>Search medicines by name or filter by medicine use</MDBCardText>
-              <Link to="/allInOneMedicine">
+              <Link to="/medicinesadmin">
                 <MDBBtn color="success">Search Medicines</MDBBtn>
               </Link>
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
-        <MDBCol md="4" className="mb-4">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardTitle>Change Password</MDBCardTitle>
-              <MDBCardText>
-                Change Your Password
-              </MDBCardText>
-              <Link to="/password-change">
-                <MDBBtn color="success" >Change Password</MDBBtn>
-              </Link>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
+        {!isAdmin  && (
+          <MDBCol md="4" className="mb-4">
+            <MDBCard>
+              <MDBCardBody>
+                <MDBCardTitle>Change Password</MDBCardTitle>
+                <MDBCardText>
+                  Change Your Password
+                </MDBCardText>
+                <Link to="/password-change">
+                  <MDBBtn color="success" >Change Password</MDBBtn>
+                </Link>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        )}
 
       </MDBRow>
     </MDBContainer>

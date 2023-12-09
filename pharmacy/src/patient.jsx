@@ -1,32 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBContainer, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import axios from 'axios';
 
 function PatientDashboard() {
+  const [patient, setPatient] = useState([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem('patientToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  
   useEffect(() => {
-    // Fetch admin data from the server
-    axios.get(`http://localhost:3001/patient`)
+    if (token === null) {
+      navigate('/login');
+    }
+    axios.get(`http://localhost:3002/patientData`, {headers})
       .then((response) => {
-        const responseData = response.data;
-        if (responseData.type !== "patient" || responseData.in !== true) {
-          navigate('/login')
-        }
+        setPatient( response.data.patient)
       })
-  }, []);
+  }, [token, navigate]);
 
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
+    // axios.get(`http://localhost:3002/logout`, {headers})
+    //   .then((response) => {
+    //     const responseData = response.data;
+    //     if (responseData.type == "") {
+    localStorage.removeItem('token');
           navigate('/login');
-        }
-      })
+      //   }
+      // })
   };
   return (
     <MDBContainer className="mt-5">
@@ -40,7 +46,7 @@ function PatientDashboard() {
             <MDBCardBody>
               <MDBCardTitle>Medicines</MDBCardTitle>
               <MDBCardText>Search medicines by name or filter by medicine use</MDBCardText>
-              <Link to="/allInOneMedicine">
+              <Link to="/patientMedicine">
                 <MDBBtn color="success">Search Medicines</MDBBtn>
               </Link>
             </MDBCardBody>

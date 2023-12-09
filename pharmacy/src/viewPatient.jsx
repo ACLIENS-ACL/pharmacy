@@ -8,18 +8,27 @@ function ViewPatient() {
   const [message, setMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     // Fetch patient requests from the server
-    axios.get('http://localhost:3001/view-patient')
+    axios.get('http://localhost:3002/view-patient', {headers})
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType === 'admin' && responseData.sessi === true) {
+        // if (responseData.userType === 'admin' && responseData.sessi === true) {
           setPatients(responseData.patientRequests);
           setFilteredPatients(responseData.patientRequests); // Initially set the filtered list to all patients
-        } else {
-          navigate('/login');
-        }
+        // } else {
+        //   navigate('/login');
+        // }
       })
       .catch((error) => {
         console.error(error);
@@ -41,13 +50,14 @@ function ViewPatient() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
+    // axios.get(`http://localhost:3002/logout`, {headers})
+    //   .then((response) => {
+    //     const responseData = response.data;
+    //     if (responseData.type == "") {
+    localStorage.removeItem('token');
           navigate('/login');
-        }
-      })
+      //   }
+      // })
   };
 
   return (
@@ -99,7 +109,11 @@ function ViewPatient() {
                     key !== 'name' &&
                     key !== 'password' &&
                     key !== 'userType' &&
-                    key !== '__v'
+                    key !== '__v'&&
+                    key !== 'cart'&&
+                    key !== 'orders'&&
+                    key !== 'deliveryAddresses'&&
+                    key !== 'wallets'
                 )
                 .map((key) => (
                   <li key={key}>

@@ -77,24 +77,23 @@ function Signup() {
     }
 
     axios
-      .post(`http://localhost:3001/register-${userType}`, userData)
+      .post(`http://localhost:3002/register-${userType}`, userData)
       .then(result => {
         console.log(result);
         if (userType === "pharmacist") {
           alert("please login to submit request")
-          alert("Please Login to Make a Request!");
 
           const formData = new FormData();
           formData.append('idDocument', idDocument);
 
-          axios.post(`http://localhost:3001/upload-id-document/${username}`, formData, {
+          axios.post(`http://localhost:3002/upload-id-document/${username}`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
           const formData2 = new FormData();
           formData2.append('medicalDegree', medicalDegree);
-          axios.post(`http://localhost:3001/upload-medical-degree/${username}`, formData2, {
+          axios.post(`http://localhost:3002/upload-medical-degree/${username}`, formData2, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
@@ -103,7 +102,7 @@ function Signup() {
           for (let i = 0; i < medicalLicenses.length; i++) {
             formData3.append('medicalLicenses', medicalLicenses[i]);
           }
-          axios.post(`http://localhost:3001/upload-medical-licenses/${username}`, formData3, {
+          axios.post(`http://localhost:3002/upload-medical-licenses/${username}`, formData3, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },

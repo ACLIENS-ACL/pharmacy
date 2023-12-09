@@ -67,15 +67,24 @@ const AddMed = () => {
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const token = localStorage.getItem('pharmacistToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   useEffect(() => {
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/add-medicine`)
+    axios.get(`http://localhost:3002/add-medicine`, {headers})
       .then((response) => {
-        const responseData = response.data;
-        console.log(responseData.type,responseData.in)
-        if (responseData.type !== "pharmacist" || responseData.in !== true) {
-          navigate('/login')
-        }
+        // const responseData = response.data;
+        // console.log(responseData.type,responseData.in)
+        // if (responseData.type !== "pharmacist" || responseData.in !== true) {
+        //   navigate('/login')
+        // }
       })
   }, []);
   const handleChange = (event) => {
@@ -85,9 +94,15 @@ const AddMed = () => {
     // Check if the field being updated is 'activeIngredients'
     if (name === 'activeIngredients') {
       const ingredientsArray = value.split(',').map((ingredient) => ingredient.trim());
+      console.log(ingredientsArray.length)
+      const arr=[]
+      for(var i=0;i<ingredientsArray.length;i++){
+        arr.push(ingredientsArray[i])
+        console.log(ingredientsArray[i])
+      }
       setMedicine((prevState) => ({
         ...prevState,
-        [name]: ingredientsArray,
+        [name]: arr,
       }));
     } else if (name === 'image') {
       const file = event.target.files[0];
@@ -129,11 +144,7 @@ const AddMed = () => {
       if (medicine.price <= 0 || medicine.quantity <= 0) {
         setErrorMessage('Price and quantity must be greater than 0.');
       } else {
-        const response = await axios.post('http://localhost:3001/add-medicine', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
-          },
-        });
+        const response = await axios.post('http://localhost:3002/add-medicine', formData, {headers})
         console.log(response.data);
         setSuccessMessage('Medicine added successfully');
         setErrorMessage('');
@@ -159,7 +170,7 @@ const AddMed = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
+    axios.get(`http://localhost:3002/logout`, {headers})
       .then((response) => {
         const responseData = response.data;
         if (responseData.type == "") {

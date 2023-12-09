@@ -49,7 +49,7 @@ function ResetPassword() {
 
   const requestOTP = () => {
     axios
-      .post('http://localhost:3001/send-otp', { username: email })
+      .post('http://localhost:3002/send-otp', { username: email })
       .then((response) => {
         setMessage(response.data.message);
       })
@@ -64,11 +64,11 @@ function ResetPassword() {
         return;
     }
     axios
-      .post('http://localhost:3001/verify-otp', { username: email, otp })
+      .post('http://localhost:3002/verify-otp', { username: email, otp })
       .then((response) => {
         if (response.status === 200) {
           axios
-            .post('http://localhost:3001/reset-password', { email, password: newPassword })
+            .post('http://localhost:3002/reset-password', { email, password: newPassword })
             .then((resetResponse) => {
               setMessage(resetResponse.data.message);
               setResetSuccess(true);

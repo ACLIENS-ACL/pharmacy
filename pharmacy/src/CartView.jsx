@@ -6,12 +6,21 @@ function CartView() {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
   const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const token = localStorage.getItem('patientToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   const removeItem = (itemId) => {
     const updatedCart = cartItems.filter((item) => item.name !== itemId);
     setCartItems(updatedCart);
     axios
-      .post('http://localhost:3001/remove-item', { cart: updatedCart })
+      .post('http://localhost:3002/remove-item', { cart: updatedCart }, {headers})
       .then((response) => {})
       .catch((error) => {
         console.error('Error removing item:', error);
@@ -20,12 +29,12 @@ function CartView() {
   
   useEffect(() => {
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/patient`)
+    axios.get(`http://localhost:3002/patient`, {headers})
       .then((response) => {
         const responseData = response.data;
-        if (responseData.type !== "patient" || responseData.in !== true) {
-          navigate('/login')
-        }
+        // if (responseData.type !== "patient" || responseData.in !== true) {
+        //   navigate('/login')
+        // }
       })
   }, []);
 
@@ -42,7 +51,7 @@ function CartView() {
       setCartItems(updatedCart);
 
       axios
-        .post('http://localhost:3001/update-quantity', { cart: updatedCart })
+        .post('http://localhost:3002/update-quantity', { cart: updatedCart }, {headers})
         .then((response) => {})
         .catch((error) => {
           console.error('Error updating quantity:', error);
@@ -56,7 +65,7 @@ function CartView() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/view-cart')
+      .get('http://localhost:3002/view-cart', {headers})
       .then((response) => {
         const responseData = response.data;
         if (responseData.userType === 'patient' && responseData.sessi === true) {
@@ -71,7 +80,7 @@ function CartView() {
   }, [navigate]);
 
   const handleLogout = () => {
-    axios.get(`http://localhost:3001/logout`).then((response) => {
+    axios.get(`http://localhost:3002/logout`, {headers}).then((response) => {
       const responseData = response.data;
       if (responseData.type === '') {
         navigate('/login');

@@ -10,7 +10,25 @@ function ChangePassword() {
     const [error, setError] = useState('');
     const [currentpass, setcurrentpass] = useState('');
     const navigate = useNavigate();
-
+    const token = localStorage.getItem('patientToken');
+    const token1 = localStorage.getItem('adminToken');
+    const token2 = localStorage.getItem('pharmacistToken');
+    
+  const headers = {
+    Authorization: '',
+  };
+  if (token !== null) {
+    headers.Authorization = `Bearer ${token}`;
+  } else if (token1 !== null) {
+    headers.Authorization = `Bearer ${token1}`;
+  } else if (token2 !== null) {
+    headers.Authorization = `Bearer ${token2}`;
+  } 
+    useEffect(() => {
+      if (token !== null&&token1 !== null&&token2 !== null) {
+        navigate('/login');
+      }
+    }, [token, navigate]);
     const validatePassword = (password) => {
         // Password must contain at least one capital letter, one small letter, one special character, and one number.
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -47,9 +65,9 @@ function ChangePassword() {
         }
 
         axios
-            .post('http://localhost:3001/update-password', {
+            .post('http://localhost:3002/update-password', {
                 password: newPassword
-            })
+            }, {headers})
             .then((response) => {
                 console.log("hi")
                 console.log(response.data.message)
@@ -64,7 +82,7 @@ function ChangePassword() {
 
     useEffect(() => {
         // Fetch cart items and user data from the server
-        axios.get('http://localhost:3001/change-password')
+        axios.get('http://localhost:3002/change-password', {headers})
             .then((response) => {
                 const responseData = response.data;
                 setcurrentpass(responseData.patientRequests.password);
@@ -79,7 +97,7 @@ function ChangePassword() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
+    axios.get(`http://localhost:3002/logout`, {headers})
       .then((response) => {
         const responseData = response.data;
         if (responseData.type == "") {
@@ -89,7 +107,7 @@ function ChangePassword() {
   };
   useEffect(() => {
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/patient`)
+    axios.get(`http://localhost:3002/patient`, {headers})
       .then((response) => {
         const responseData = response.data;
         console.log(responseData.type)

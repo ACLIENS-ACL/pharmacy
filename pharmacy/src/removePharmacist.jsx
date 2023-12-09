@@ -8,19 +8,28 @@ function RemovePharmacist() {
   const [message, setMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
   useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
+  useEffect(() => {
     // Fetch pharmacist requests from the server
-    axios.get('http://localhost:3001/remove-pharmacist')
+    axios.get('http://localhost:3002/remove-pharmacist', {headers})
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType === 'admin' && responseData.sessi === true) {
+        // if (responseData.userType === 'admin' && responseData.sessi === true) {
           const initiallyAcceptedPharmacists = responseData.pharmacistRequests.filter((pharmacist) => pharmacist.enrolled === 'accepted');
           setPharmacists(initiallyAcceptedPharmacists);
           setFilteredPharmacists(initiallyAcceptedPharmacists); // Initially set the filtered list to all pharmacists
-        } else {
-          navigate('/login');
-        }
+        // } else {
+        //   navigate('/login');
+        // }
       })
       .catch((error) => {
         console.error(error);
@@ -30,7 +39,7 @@ function RemovePharmacist() {
 
   const handleRemove = (pharmacistId) => {
     // Send a request to reject and remove the pharmacist
-    axios.post(`http://localhost:3001/remove-pharmacist/${pharmacistId}`)
+    axios.post(`http://localhost:3002/remove-pharmacist/${pharmacistId}`, {headers})
       .then(() => {
         // Update the local state to remove the deleted pharmacist
         setPharmacists((prevRequests) => prevRequests.filter((request) => request._id !== pharmacistId));
@@ -57,13 +66,13 @@ function RemovePharmacist() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
+    // axios.get(`http://localhost:3002/logout`, {headers})
+    //   .then((response) => {
+    //     const responseData = response.data;
+    //     if (responseData.type == "") {
           navigate('/login');
-        }
-      })
+      //   }
+      // })
   };
 
   return (

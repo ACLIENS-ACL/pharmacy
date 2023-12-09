@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+import { useNavigate, useLocation } from 'react-router-dom';
 const containerStyle = {
   maxWidth: '600px',
   margin: '0 auto',
@@ -28,23 +29,33 @@ const cancelButtonStyle = {
 function UserOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('patientToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch admin data from the server
-        const adminResponse = await axios.get(`http://localhost:3001/patient`);
-        const adminData = adminResponse.data;
+        // const adminResponse = await axios.get(`http://localhost:3002/patient`, {headers});
+        // const adminData = adminResponse.data;
 
-        if (adminData.type !== "patient" || adminData.in !== true) {
-          // Redirect to login page if not a patient
-          navigate('/login');
-        } else {
+        // if (adminData.type !== "patient" || adminData.in !== true) {
+        //   // Redirect to login page if not a patient
+        //   navigate('/login');
+        // } else {
           // Fetch the user's orders when the component loads
-          const ordersResponse = await axios.get(`http://localhost:3001/user-orders`);
+          const ordersResponse = await axios.get(`http://localhost:3002/user-orders`, {headers})
           setOrders(ordersResponse.data);
           setLoading(false);
-        }
+        // }
       } catch (error) {
         console.error('Error fetching user orders:', error);
         setLoading(false);
@@ -56,9 +67,10 @@ function UserOrders() {
 
   useEffect(() => {
     // Fetch the user's orders when the component loads
-    axios.get(`http://localhost:3001/user-orders`)
+    axios.get(`http://localhost:3002/user-orders`, {headers})
       .then((response) => {
         setOrders(response.data);
+        console.log(response.data)
         setLoading(false);
       })
       .catch((error) => {
@@ -75,7 +87,7 @@ function UserOrders() {
       const confirmation = window.confirm("Do you want to add this order back to your cart?");
       if (confirmation) {
         // Send a request to the server to add the order back to the cart
-        axios.put(`http://localhost:3001/add-to-cart/${orderId}`)
+        axios.put(`http://localhost:3002/add-to-cart/${orderId}`, {headers})
           .then(() => {
             // Remove the canceled order from the local state
             setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
@@ -85,7 +97,7 @@ function UserOrders() {
           });
       } else {
         // Send a request to the server to cancel the order
-        axios.put(`http://localhost:3001/cancel-order/${orderId}`)
+        axios.put(`http://localhost:3002/cancel-order/${orderId}`, {headers})
           .then(() => {
             // Remove the canceled order from the local state
             setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
@@ -107,7 +119,7 @@ function UserOrders() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
+    axios.get(`http://localhost:3002/logout`, {headers})
       .then((response) => {
         const responseData = response.data;
         if (responseData.type == "") {

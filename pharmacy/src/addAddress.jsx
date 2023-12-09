@@ -52,28 +52,26 @@ function AddAddressForm() {
   const [existingAddresses, setExistingAddresses] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   // Fetch and set existing addresses from the database when the component mounts
   useEffect(() => {
-    axios.get('http://localhost:3001/delivery-addresses')
+    axios.get('http://localhost:3002/delivery-addresses',{headers})
       .then((response) => {
+        console.log(response.data.patientRequests[0].deliveryAddresses)
         setExistingAddresses(response.data.patientRequests[0].deliveryAddresses || []);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
-
-  
-  useEffect(() => {
-    // Fetch admin data from the server
-    axios.get(`http://localhost:3001/patient`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type !== "patient" || responseData.in !== true) {
-          navigate('/login')
-        }
-      })
   }, []);
 
   const handleSubmit = async (event) => {
@@ -86,10 +84,11 @@ function AddAddressForm() {
     else if (!existingAddresses.includes(newAddress)) {
       // Create a new array with the existing addresses and the new address
       const updatedAddresses = [...existingAddresses, newAddress];
+      console.log(updatedAddresses)
 
       // Send the updated addresses to the backend
       axios
-        .post('http://localhost:3001/add-address', { addresses: updatedAddresses })
+        .post('http://localhost:3002/add-address', { addresses: updatedAddresses }, {headers})
         .then((response) => {
           // Handle the response if needed
         })

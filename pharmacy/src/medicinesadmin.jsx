@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
-function AllInOneMedicine() {
+function Medicinesadmin() {
   const [meds, setMeds] = useState([]);
   const [message, setMessage] = useState('');
   const [medicinalUse, setMedicinalUse] = useState('');
@@ -13,7 +13,7 @@ function AllInOneMedicine() {
   const [type, setType] = useState([]);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-    const token = localStorage.getItem('patientToken');
+    const token = localStorage.getItem('adminToken');
   const headers = {
     Authorization: `Bearer ${token}`,
   };
@@ -245,25 +245,6 @@ return (
             <div>
               <p>Description: {med.description}</p>
               <p>Medicinal Use: {med.medicinalUse}</p>
-              {type.includes('pharm') && (
-                <div>
-                  <p>Price: ${med.price}</p>
-                  <p>Available Quantity: {med.quantity}</p>
-                  <p>Sales: {med.sales}</p>
-                </div>
-              )}
-              {type.includes('pat') && (
-                <div>
-                  <p>Stock: {med.quantity}</p>
-                  {med.isPrescriptionRequired ? (
-                    <p style={{ color: 'red' }}>This medicine requires a prescription.</p>
-                  ) : (
-                    <button onClick={() => addToCart(med)} className="btn btn-primary">
-                      Add to Cart
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -274,4 +255,4 @@ return (
 );
 
 }
-export default AllInOneMedicine;
+export default Medicinesadmin;

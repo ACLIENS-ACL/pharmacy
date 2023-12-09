@@ -8,20 +8,29 @@ function ViewPharmacist() {
   const [message, setMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
+  useEffect(() => {
+    if (token === null) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
   useEffect(() => {
     // Fetch pharmacist requests from the server
     axios
-      .get('http://localhost:3001/view-pharmacist')
+      .get('http://localhost:3002/view-pharmacist', { headers })
       .then((response) => {
         const responseData = response.data;
-        if (responseData.userType === 'admin' && responseData.sessi === true) {
-          const initiallyAcceptedPharmacists = responseData.pharmacistRequests.filter((pharmacist) => pharmacist.enrolled === 'accepted');
-          setPharmacists(initiallyAcceptedPharmacists);
-          setFilteredPharmacists(initiallyAcceptedPharmacists); // Initially set the filtered list to all pharmacists
-        } else {
-          navigate('/login');
-        }
+        // if (responseData.userType === 'admin' && responseData.sessi === true) {
+        const initiallyAcceptedPharmacists = responseData.pharmacistRequests.filter((pharmacist) => pharmacist.enrolled === 'accepted');
+        setPharmacists(initiallyAcceptedPharmacists);
+        setFilteredPharmacists(initiallyAcceptedPharmacists); // Initially set the filtered list to all pharmacists
+        // } else {
+        //   navigate('/login');
+        // }
       })
       .catch((error) => {
         console.error(error);
@@ -43,20 +52,15 @@ function ViewPharmacist() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3001/logout`)
-      .then((response) => {
-        const responseData = response.data;
-        if (responseData.type == "") {
-          navigate('/login');
-        }
-      })
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
     <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <h2>Pharmacists</h2>
       {message && <div className="alert alert-danger">{message}</div>}
       <div style={{ marginBottom: '20px' }}>
