@@ -8,6 +8,9 @@ const AdminsModel = require('./models/admins');
 const MedicineModel = require('./models/medicines');
 const OrderModel = require('./models/order');
 var session = require("express-session");
+const jwt = require('jsonwebtoken');
+
+const secretKey = 'random';
 
 
 const multer = require('multer');
@@ -40,7 +43,29 @@ app.use(
     secret: "anyrandomstring",
   })
 );
-mongoose.connect('mongodb://127.0.0.1:27017/pharmacy');
+
+const pharmacyDBURI = 'mongodb://localhost:27017/pharmacy';
+mongoose.connect(pharmacyDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Create a connection to the 'clinic' database
+const clinicDBURI = 'mongodb://localhost:27017/clinic';
+const clinicDB = mongoose.createConnection(clinicDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const Clinic = clinicDB.model('patients', {});
+const Clinicp = clinicDB.model('prescriptions', {});
+
+// Check for connection errors for both databases
+mongoose.connection.on('error', console.error.bind(console, 'Connection error for pharmacy database:'));
+clinicDB.on('error', console.error.bind(console, 'Connection error for clinic database:'));
+
+// Once connected, log a success message
+mongoose.connection.once('open', () => {
+  console.log('Connected to the pharmacy database');
+});
+
+clinicDB.once('open', () => {
+  console.log('Connected to the clinic database');
+});
 var logged = {
   username: "",
   in: "",
@@ -48,26 +73,65 @@ var logged = {
 };
 loggedinusername = "";
 
-app.get('/editmed', async (req, res) => {
+
+app.get('/editmed', verifyToken, async (req, res) => {
   res.json(logged);
 })
-app.get('/admin', async (req, res) => {
+app.get('/admin', verifyToken, async (req, res) => {
+  res.json(logged);
+})
+app.get('/pharma', verifyToken, async (req, res) => {
+  const Pharmacist = await PharmacistsModel.findOne({ username: logged.username });
+  const logged2 = { logged: logged, medicines: Pharmacist.medicines }
+  res.json(logged2);
+})
+var loggedd = {
+  username: "",
+  password: ""
+};
+app.get('/adminadmin', verifyToken, async (req, res) => {
+  res.json(loggedd);
+})
+
+
+app.get('/pharmacist', verifyToken, async (req, res) => {
+  try {
+    const Pharmacist = await PharmacistsModel.findOne({ username: logged.username });
+    // Now 'logged' contains the username from the token, and you can respond with it
+    res.json({ logged: logged, pharmacist: Pharmacist });
+  } catch (error) {
+    res.status(401).json({ message: 'Token validation failed' });
+  }
+})
+
+app.get('/patientData', verifyToken, async (req, res) => {
+  const Patient = await PatientsModel.findOne({ username: logged.username });
+  // Now 'logged' contains the username from the token, and you can respond with it
+  res.json({ logged: logged, patient: Patient });
+})
+app.get('/pharmacistData', verifyToken, async (req, res) => {
+  const Pharmacist = await PharmacistsModel.findOne({ username: logged.username });
+  // Now 'logged' contains the username from the token, and you can respond with it
+  res.json({ logged: logged, pharmacist: Pharmacist });
+})
+
+
+app.get('/adminData', verifyToken, async (req, res) => {
+  if (loggedd.username == "admin") {
+    res.json({ username: loggedd.username });
+  }
+  else {
+    const Admin = await AdminsModel.findOne({ username: loggedd.username });
+    // Now 'logged' contains the username from the token, and you can respond with it
+    res.json({ username: Admin.username });
+  }
+})
+
+app.get('/typeformed', verifyToken, async (req, res) => {
   res.json(logged);
 })
 
-app.get('/pharmacist', async (req, res) => {
-  res.json(logged);
-})
-
-app.get('/patient', async (req, res) => {
-  res.json(logged);
-})
-
-app.get('/typeformed', async (req, res) => {
-  res.json(logged);
-})
-
-app.get('/logout', async (req, res) => {
+app.get('/logout', verifyToken, async (req, res) => {
   logged.username = ""
   logged.type = ""
   res.json(logged);
@@ -110,6 +174,9 @@ app.get('/getType', async (req, res) => {
 app.post('/register-patient', async (req, res) => {
   const patientData = req.body;
   try {
+    if (patientData.username === "admin") {
+      res.status(400).json({ error: 'Username already exists' });
+    }
     // Check if a user with the same username already exists
     const existingPatient = await PatientsModel.findOne({ username: patientData.username });
     const existingP = await PharmacistsModel.findOne({ username: patientData.username });
@@ -137,6 +204,9 @@ app.post('/register-pharmacist', async (req, res) => {
   const pharmacistData = req.body;
   logged.username = pharmacistData.username;
   try {
+    if (pharmacistData.username === "admin") {
+      res.status(400).json({ error: 'Username already exists, Please Chose a unique username' });
+    }
     // Check if a user with the same username already exists
     const existingPharmacist = await PharmacistsModel.findOne({ username: pharmacistData.username });
     const existingPatient = await PatientsModel.findOne({ username: pharmacistData.username });
@@ -176,24 +246,44 @@ app.post('/login-pharmacist', (req, res) => {
       .then(user => {
         if (user) {
           if (user.password === password) {
+            const token = jwt.sign({ username: user.username, type: 'pharmacist' }, secretKey, { expiresIn: '1h' });
             if (user.enrolled !== "accepted") {
-              res.status(200).json({ message: "Success But Not Enrolled", enrolledStatus: user.enrolled });
+              res.json({ message: "Success But Not Enrolled", enrolledStatus: user.enrolled, token });
             } else {
-              res.status(200).json({ message: "Success" });
+              res.json({ message: "Success", token });
             }
+            // Store the token securely on the client side (using localStorage)
             req.session.loggedIn = true;
             req.session.user = "pharmacist";
             req.session.save();
           } else {
-            res.json("Password incorrect");
+            res.json({ message: "Password incorrect" });
           }
         } else {
-          res.json("user isn't registered");
+          res.json({ message: "Username isn't registered" });
         }
       })
       .catch(err => res.status(400).json(err));
   }
 });
+function verifyToken(req, res, next) {
+  const token = req.header('Authorization');
+  console.log("himeishere", token)
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. Token not provided.' });
+  }
+  console.log("idkkkkis it")
+
+  try {
+    console.log(secretKey)
+    const decoded = jwt.verify(token.replace('Bearer ', ''), secretKey);
+    console.log(decoded)
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid token.' });
+  }
+}
 
 app.get('/get-pharmacist-info', async (req, res) => {
   try {
@@ -224,16 +314,18 @@ app.post('/login-patient', (req, res) => {
     .then(user => {
       if (user) {
         if (user.password === password) {
-          res.json("Success");
+          const token = jwt.sign({ username: user.username, type: 'patient' }, secretKey, { expiresIn: '1h' });
+
+          res.json({ message: 'Success', token });
           loggedinusername = username;
           req.session.loggedIn = true;
           req.session.user = "patient";
           req.session.save();
         } else {
-          res.json("Password incorrect");
+          res.json({ message: "Password incorrect" });
         }
       } else {
-        res.json("user isn't registered");
+        res.json({ message: "Username isn't registered" });
       }
     })
     .catch(err => res.status(400).json(err));
@@ -243,37 +335,40 @@ app.post('/login-patient', (req, res) => {
 
 app.post('/login-admin', (req, res) => {
   const { username, password } = req.body;
-  logged.username = username;
-  logged.in = true;
-  logged.type = "admin"
-  if (username == "admin" && password == "admin")
-    res.json("Success");
+  loggedd.username = username
+  loggedd.password = password
+  if (username.toLowerCase() === "admin" && password == "admin") {
+    const token = jwt.sign({ username: "admin", type: 'admin' }, 'random');
+    
+    res.json({ message: 'Success', token });
+
+  }
   else {
-    AdminsModel.findOne({ username: username })
+    AdminsModel.findOne({ username: username.toLowerCase() })
       .then(user => {
         if (user) {
           if (user.password === password) {
-            res.json("Success");
-            req.session.loggedIn = true;
-            req.session.user = "admin";
-            req.session.save();
+            const token = jwt.sign({ username: user.username, type: 'admin' }, 'random');
+            res.json({ message: 'Success', token });
           } else {
-            res.json("Password incorrect");
+            res.json({ message: "Password incorrect" });
           }
         } else {
-          res.json("Username isn't registered");
+          res.json({ message: "Username isn't registered" });
         }
       })
-      .catch(err => res.status(400).json(err));
   }
 });
 
-app.get('/register-admin', async (req, res) => {
+app.get('/register-admin', verifyToken, async (req, res) => {
   res.json(logged);
 })
-app.post('/register-admin', async (req, res) => {
+app.post('/register-admin', verifyToken, async (req, res) => {
   try {
     const adminData = req.body;
+    if (adminData.username === "admin") {
+      return res.json({ message: 'Username already exists' });
+    }
     const existingAdmin = await AdminsModel.findOne({ username: adminData.username });
     const existingPharmacist = await PharmacistsModel.findOne({ username: adminData.username });
     const existingPatient = await PatientsModel.findOne({ username: adminData.username });
@@ -304,7 +399,7 @@ app.post('/register-admin', async (req, res) => {
 });
 
 // Server-side route to fetch pharmacist requests
-app.get('/pharmacist-requests', async (req, res) => {
+app.get('/pharmacist-requests', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -329,8 +424,7 @@ app.post('/approve-pharmacist/:id', async (req, res) => {
   try {
     const pharmacistId = req.params.id;
 
-    // Update the pharmacist's "enrolled" status to true
-    await PharmacistsModel.findByIdAndUpdate(pharmacistId, { enrolled: "accepted" });
+    await PharmacistsModel.findByIdAndUpdate(pharmacistId, { enrolled: "accepted", lastAcceptedDate: new Date() });
 
     res.json({ message: 'pharmacist approved successfully' });
   } catch (error) {
@@ -359,7 +453,7 @@ app.post('/reject-pharmacist/:id', async (req, res) => {
 });
 
 // Server-side route to reject and remove a pharmacist
-app.get('/remove-pharmacist', async (req, res) => {
+app.get('/remove-pharmacist', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -378,7 +472,7 @@ app.get('/remove-pharmacist', async (req, res) => {
   }
 });
 
-app.post('/remove-pharmacist/:id', async (req, res) => {
+app.post('/remove-pharmacist/:id', verifyToken, async (req, res) => {
   try {
     const pharmacistId = req.params.id;
 
@@ -392,7 +486,8 @@ app.post('/remove-pharmacist/:id', async (req, res) => {
   }
 });
 // Server-side route to reject and remove a patient
-app.get('/remove-patient', async (req, res) => {
+app.get('/remove-patient', verifyToken, async (req, res) => {
+  
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -411,8 +506,9 @@ app.get('/remove-patient', async (req, res) => {
   }
 });
 
-app.post('/remove-patient/:id', async (req, res) => {
+app.post('/remove-patient/:id', verifyToken, async (req, res) => {
   try {
+    console.log("of course nott")
     const patientId = req.params.id;
 
     // Remove the patient from the database
@@ -425,7 +521,7 @@ app.post('/remove-patient/:id', async (req, res) => {
   }
 });
 
-app.get('/view-pharmacist', async (req, res) => {
+app.get('/view-pharmacist', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -443,7 +539,7 @@ app.get('/view-pharmacist', async (req, res) => {
   }
 });
 
-app.post('/view-pharmacist/:id', async (req, res) => {
+app.post('/view-pharmacist/:id', verifyToken, async (req, res) => {
   try {
     const pharmacistId = req.params.id;
 
@@ -456,7 +552,7 @@ app.post('/view-pharmacist/:id', async (req, res) => {
   }
 });
 
-app.get('/view-patient', async (req, res) => {
+app.get('/view-patient', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -474,7 +570,7 @@ app.get('/view-patient', async (req, res) => {
   }
 });
 
-app.post('/view-patient/:id', async (req, res) => {
+app.post('/view-patient/:id', verifyToken, async (req, res) => {
   try {
     const patientId = req.params.id;
 
@@ -487,16 +583,16 @@ app.post('/view-patient/:id', async (req, res) => {
   }
 });
 
-app.listen(3001, 'localhost');
+app.listen(3002, 'localhost');
 
 // Server-side route to update a medicine by ID// Server-side route to update a medicine by name
-app.put('/medicines/:name', async (req, res) => {
+app.put('/medicines/:name', verifyToken, async (req, res) => {
   try {
     // Get the medicine name from the request parameters
     const { name } = req.params;
 
     // Get the updated medicine data from the request body
-    const { Nname, activeIngredients, medicinalUse, price, quantity, sales, imageUrl } = req.body;
+    const { Nname, activeIngredients, medicinalUse, price, quantity, sales, imageUrl, archived } = req.body;
     // Find the medicine in the database by name
     const medicine = await MedicineModel.findOne({ name });
 
@@ -509,6 +605,7 @@ app.put('/medicines/:name', async (req, res) => {
       medicine.quantity = quantity || medicine.quantity;
       medicine.sales = sales || medicine.sales;
       medicine.imageUrl = imageUrl || medicine.imageUrl;
+      medicine.archived = archived;
 
       await medicine.save();
 
@@ -527,7 +624,7 @@ app.put('/medicines/:name', async (req, res) => {
 
 
 // filter medicines by medicinalUse
-app.get('/filter-medicines', async (req, res) => {
+app.get('/filter-medicines', verifyToken, async (req, res) => {
   try {
     // Get the medicinalUse from the request query parameters
     const { medicinalUse } = req.query;
@@ -544,7 +641,7 @@ app.get('/filter-medicines', async (req, res) => {
   }
 });
 
-app.get('/medicinal-uses', async (req, res) => {
+app.get('/medicinal-uses', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -562,13 +659,13 @@ app.get('/medicinal-uses', async (req, res) => {
   }
 });
 
-app.get('/add-medicine', async (req, res) => {
+app.get('/add-medicine', verifyToken, async (req, res) => {
   res.json(logged);
 });
 
 
 // Define the route for adding medicine with file upload
-app.post('/add-medicine', upload.single('image'), async (req, res) => {
+app.post('/add-medicine', verifyToken, upload.single('image'), async (req, res) => {
   try {
     // Get the medicine data from the request body
     const { name, activeIngredients, medicinalUse, price, quantity, isPrescriptionRequired, description } = req.body;
@@ -576,11 +673,23 @@ app.post('/add-medicine', upload.single('image'), async (req, res) => {
     // Get the file information from the request
     const { originalname, filename } = req.file;
     const filePath = path.join(__dirname, 'uploads', filename);
+   
+    const ingredientsArray = activeIngredients.split(',').map((ingredient) => ingredient.trim());
+    arr = []
+    for (var i = 0; i < ingredientsArray.length; i++) {
+      arr[i] = ingredientsArray[i]
+    }
 
+    const pharmacist = await PharmacistsModel.findOne({ username: logged.username });
+    if (!pharmacist) {
+      console.error('Pharmacist not found');
+      return; // or handle the case where the pharmacist is not found
+    }
     // Create a new medicine object
     const newMedicine = new MedicineModel({
       name,
-      activeIngredients,
+      activeIngredients: arr,
+      pharmacistId: pharmacist._id,
       medicinalUse,
       price,
       quantity,
@@ -592,6 +701,11 @@ app.post('/add-medicine', upload.single('image'), async (req, res) => {
     // Save the new medicine to the database
     await newMedicine.save();
 
+    if (pharmacist) {
+      pharmacist.medicines.push(newMedicine._id);
+      await pharmacist.save();
+    }
+
     // Return a success response
     res.json({ message: 'Medicine added successfully' });
   } catch (error) {
@@ -601,7 +715,7 @@ app.post('/add-medicine', upload.single('image'), async (req, res) => {
   }
 });
 // to search for a medicine
-app.get('/search-medicine', async (req, res) => {
+app.get('/search-medicine', verifyToken, async (req, res) => {
   try {
     // Get the search query from the request query parameters
     const { searchQuery } = req.query;
@@ -621,7 +735,7 @@ app.get('/search-medicine', async (req, res) => {
 });
 
 // Server-side route to view a list of all available medicines in the database
-app.get('/medicines', async (req, res) => {
+app.get('/medicines', verifyToken, async (req, res) => {
   try {
     // Find all medicines in the database
     const medicines = await MedicineModel.find({});
@@ -632,7 +746,69 @@ app.get('/medicines', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-app.get('/medicinespharmacist', async (req, res) => {
+
+app.get('/medicinespatient', verifyToken, async (req, res) => {
+  try {
+    // Get the patient email from the patient collection in the pharmacy database
+    const patientInPharmacy = await PatientsModel.findOne({ username: logged.username });
+
+    if (!patientInPharmacy) {
+      return res.status(404).json({ message: 'Patient not found in pharmacy database' });
+    }
+
+    const patientEmail = patientInPharmacy.email;
+    // Use the patient email to find the patient in the patients collection in the clinic database
+    const patientInClinic = await Clinic.findOne({ email: patientEmail });
+    let clinicMedicines = [];
+    if (patientInClinic) {
+      const patientId = patientInClinic._id;
+
+      // Use the patient ID to find prescriptions in the prescription collection in the clinic database
+      const prescriptions = await Clinicp.find({ patientID: patientId });
+
+
+      if (prescriptions && prescriptions.length > 0) {
+        const currentDateTime = new Date();
+        const twoWeeksAgo = new Date(currentDateTime.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+       const validPrescriptions = prescriptions.filter(prescription => {
+          const prescriptionDate = new Date(prescription._doc.date);
+          return prescriptionDate >= twoWeeksAgo && !prescription._doc.filled;
+        });
+
+
+       
+        // Extract medicines names from valid prescriptions in the clinic database
+        clinicMedicines = validPrescriptions.reduce((allClinicMedicines, prescription) => {
+          const medicineKeys = Object.keys(prescription._doc.medicines);
+
+          // Iterate over the keys and extract the name property for each medicine
+          const prescriptionMedicines = medicineKeys.map((key) => prescription._doc.medicines[key].name);
+
+          // Concatenate the medicine names to the overall list
+          return allClinicMedicines.concat(prescriptionMedicines);
+        }, []);
+      }
+
+      // Now 'clinicMedicines' contains the medicines from prescriptions with a date within the last 2 weeks
+    }
+    // Get all medicines from the medicines collection in the pharmacy database
+    const pharmacyMedicines = await MedicineModel.find({});
+
+    // Combine medicines from both databases
+    const allMedicines = [{ clinicMedicines: clinicMedicines, pharmacyMedicines: pharmacyMedicines }];
+
+    // Send the combined list of medicines to the front end
+    res.json(allMedicines);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/medicinespharmacist', verifyToken, async (req, res) => {
   try {
     // Find all medicines in the database
     const medicines = await MedicineModel.find({});
@@ -648,7 +824,7 @@ app.get('/medicinespharmacist', async (req, res) => {
 
 
 //SPRINT 2
-app.post('/patient/:id/cart', async (req, res) => {
+app.post('/patient/:id/cart', verifyToken, async (req, res) => {
   const patientId = req.params.id;
   const { cart } = req.body;
 
@@ -660,7 +836,7 @@ app.post('/patient/:id/cart', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while updating pharmacist info.' });
   }
 });
-app.get('/current-user', async (req, res) => {
+app.get('/current-user', verifyToken, async (req, res) => {
   // Assuming the user's username is passed in the request.
   const username = loggedinusername;
   try {
@@ -672,7 +848,7 @@ app.get('/current-user', async (req, res) => {
   }
 });
 
-app.get('/view-cart', async (req, res) => {
+app.get('/view-cart', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -690,7 +866,7 @@ app.get('/view-cart', async (req, res) => {
   }
 });
 
-app.post('/remove-item', async (req, res) => {
+app.post('/remove-item', verifyToken, async (req, res) => {
   const { cart } = req.body;
   const username = logged.username;
   try {
@@ -701,7 +877,7 @@ app.post('/remove-item', async (req, res) => {
   }
 })
 
-app.post('/update-quantity', async (req, res) => {
+app.post('/update-quantity', verifyToken, async (req, res) => {
   const { cart } = req.body;
   const username = logged.username;
   try {
@@ -712,7 +888,7 @@ app.post('/update-quantity', async (req, res) => {
   }
 })
 
-app.get('/change-password', async (req, res) => {
+app.get('/change-password', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -739,7 +915,7 @@ app.get('/change-password', async (req, res) => {
   }
 });
 
-app.post('/update-password', async (req, res) => {
+app.post('/update-password', verifyToken, async (req, res) => {
   const { password } = req.body;
   const username = logged.username;
   try {
@@ -759,7 +935,7 @@ app.post('/update-password', async (req, res) => {
   }
 })
 
-app.get('/delivery-addresses', async (req, res) => {
+app.get('/delivery-addresses', verifyToken, async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -778,7 +954,7 @@ app.get('/delivery-addresses', async (req, res) => {
   }
 });
 
-app.post('/add-address', async (req, res) => {
+app.post('/add-address', verifyToken, async (req, res) => {
   try {
     const { addresses } = req.body;
     const patient = await PatientsModel.findOne({ username: logged.username });
@@ -788,7 +964,7 @@ app.post('/add-address', async (req, res) => {
     }
 
     // Merge the new address with the existing addresses
-    patient.deliveryAddresses = [...patient.deliveryAddresses, ...addresses];
+    patient.deliveryAddresses = [...addresses];
 
     await patient.save();
     res.json({ message: 'Addresses updated successfully' });
@@ -798,7 +974,7 @@ app.post('/add-address', async (req, res) => {
   }
 });
 
-app.post('/place-order', async (req, res) => {
+app.post('/place-order', verifyToken, async (req, res) => {
   try {
     // Get order data from the request body
     const { cart, deliveryAddress, paymentMethod } = req.body;
@@ -851,7 +1027,7 @@ app.post('/place-order', async (req, res) => {
   }
 });
 // Backend code to get a user's orders
-app.get('/user-orders', async (req, res) => {
+app.get('/user-orders', verifyToken, async (req, res) => {
   try {
     const username = logged.username; // You can extract the username from the request query
 
@@ -864,18 +1040,15 @@ app.get('/user-orders', async (req, res) => {
   }
 });
 
-app.put('/cancel-order/:orderId', async (req, res) => {
+app.put('/cancel-order/:orderId', verifyToken, async (req, res) => {
   try {
     const { orderId } = req.params;
 
     // Find the order by its ID
     const order = await OrderModel.findByIdAndRemove(orderId);
-    console.log(order)
     const cart = order.items
-    console.log(cart)
     for (const item of cart) {
       const { name, quantity } = item;
-      console.log(name, quantity)
       // Find the medicine in the database by ID
       const medicine = await MedicineModel.findOne({ name: name });
 
@@ -900,7 +1073,7 @@ app.put('/cancel-order/:orderId', async (req, res) => {
   }
 });
 
-app.get('/wallet-balance', async (req, res) => {
+app.get('/wallet-balance', verifyToken, async (req, res) => {
   try {
     // Assuming the user is authenticated and you have the user's ID in the request
     const userId = logged.username; // Adjust this based on your authentication logic
@@ -909,7 +1082,6 @@ app.get('/wallet-balance', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    console.log(user[0].wallets)
     res.json({ balance: user[0].wallets });
   } catch (error) {
     console.error('Error fetching wallet balance:', error);
@@ -917,7 +1089,7 @@ app.get('/wallet-balance', async (req, res) => {
   }
 });
 
-app.post('/update-wallet-balance', async (req, res) => {
+app.post('/update-wallet-balance', verifyToken, async (req, res) => {
   try {
     const userId = logged.username; // Adjust this based on your authentication logic
     const { balance } = req.body;
@@ -935,27 +1107,27 @@ app.post('/update-wallet-balance', async (req, res) => {
   }
 });
 
-app.put('/add-to-cart/:orderId', async (req, res) => {
+app.put('/add-to-cart/:orderId', verifyToken, async (req, res) => {
   try {
     const { orderId } = req.params;
 
     // Find the order by its ID
     const order = await OrderModel.findById(orderId);
     const cart = order.items
-    for (const item of cart) {
-      const { name, quantity } = item;
-      // Find the medicine in the database by ID
-      const medicine = await MedicineModel.findOne({ name: name });
+    // for (const item of cart) {
+    //   const { name, quantity } = item;
+    //   // Find the medicine in the database by ID
+    //   const medicine = await MedicineModel.findOne({ name: name });
 
-      if (medicine) {
-        // Update the medicine's quantity
-        const updatedQuantity = medicine.quantity + quantity;
-        medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
+    //   if (medicine) {
+    //     // Update the medicine's quantity
+    //     const updatedQuantity = medicine.quantity + quantity;
+    //     medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
 
-        // Save the updated medicine
-        await medicine.save();
-      }
-    }
+    //     // Save the updated medicine
+    //     await medicine.save();
+    //   }
+    // }
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -991,7 +1163,7 @@ app.put('/add-to-cart/:orderId', async (req, res) => {
   }
 });
 
-app.get('/update-medicine-quantities', async (req, res) => {
+app.get('/update-medicine-quantities', verifyToken, async (req, res) => {
   try {
     // Assuming you pass the user's ID in the request body
     const userId = logged.username;
@@ -1016,6 +1188,18 @@ app.get('/update-medicine-quantities', async (req, res) => {
         // Update the medicine's quantity
         const updatedQuantity = medicine.quantity - quantity;
         medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
+        if (updatedQuantity <= 0) {
+          const pharmacist = await PharmacistsModel.findOne({ _id: medicine.pharmacistId });
+          sendNotificationEmail(medicine.name, pharmacist.email)
+          pharmacist.latestNotifications.push({
+            message: `${medicine.name} is out of stock`,
+          });
+
+          // Keep only the last 10 notifications
+          const notificationsToKeep = pharmacist.latestNotifications.slice(-10);
+          pharmacist.latestNotifications = notificationsToKeep;
+          await pharmacist.save();
+        }
 
         // Save the updated medicine
         await medicine.save();
@@ -1043,7 +1227,6 @@ const transporter = nodemailer.createTransport({
 
 // Function to send an email with OTP
 const sendOTPByEmail = (toEmail, otp) => {
-  console.log(otp);
   const mailOptions = {
     from: 'acliensproject@gmail.com',
     to: toEmail, // User's email address
@@ -1061,6 +1244,23 @@ const sendOTPByEmail = (toEmail, otp) => {
     }
   });
 };
+function sendNotificationEmail(medicineName, toEmail) {
+  const mailOptions = {
+    from: 'acliensproject@gmail.com',
+    to: toEmail, // User's email address
+    subject: `Out of Stock Alert: ${medicineName}`,
+    text: `The medicine ${medicineName} is out of stock.`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+}
+
 const otpStorage = {};
 
 // Generate a random 6-digit OTP
@@ -1074,7 +1274,6 @@ app.post('/send-otp', async (req, res) => {
   let userType;
   let userModel;
   if (username) {
-    console.log(username)
     const patient = await PatientsModel.findOne({ email: username });
     if (patient) {
       email = patient.email;
@@ -1090,7 +1289,6 @@ app.post('/send-otp', async (req, res) => {
         logged.type = "admin";
       } else {
         const pharmacist = await PharmacistsModel.findOne({ email: username });
-        console.log(pharmacist+"pharmacist")
         if (pharmacist) {
           email = pharmacist.email;
           userType = 'pharmacist';
@@ -1248,3 +1446,123 @@ app.get('/uploads/:filename', (req, res) => {
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+/*
+async function getSalesReport(startDate, endDate) {
+  try {
+    const sales = await OrderModel.find({
+      status: 'Delivered', // You may adjust this based on your needs
+      salesDate: { $gte: startDate, $lte: endDate },
+    }).populate('items.medicine');
+
+    return sales;
+  } catch (error) {
+    console.error('Error fetching sales report:', error);
+    throw error;
+  }
+}
+*/
+app.get('/sales-report', verifyToken, async (req, res) => {
+  try {
+
+    // Find the user's orders based on the username
+    const orders = await OrderModel.find({});
+    const pharmacist = await PharmacistsModel.findOne({ username: logged.username });
+    var medicineNames = [];
+
+    if (pharmacist) {
+      const medicineIds = pharmacist.medicines;
+
+      // Loop over each medicine ID and find its name
+      for (const medicineId of medicineIds) {
+        const medicine = await MedicineModel.findOne({ _id: medicineId });
+
+        if (medicine) {
+          medicineNames.push(medicine.name);
+        } else {
+          console.log(`Medicine with ID ${medicineId} not found`);
+        }
+      }
+    }
+
+    res.json({ orders: orders, username: medicineNames });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/adminsales-report', verifyToken, async (req, res) => {
+  try {
+
+    // Find the user's orders based on the username
+    const orders = await OrderModel.find({});
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/place-order-clinic', async (req, res) => {
+  const { medicines, address, total, method, name } = req.body;
+
+  try {
+    // Create order items from the provided medicines
+    const orderItems = medicines.map(async medicine => {
+      const { _id, quantity } = medicine;
+
+      // Update the quantity and sales for each medicine
+      await MedicineModel.findByIdAndUpdate(
+        _id,
+        {
+          $inc: { quantity: -quantity, sales: quantity },
+        }
+      );
+
+      return {
+        _id,
+        quantity,
+        name: medicine.name,
+        price: medicine.price,
+      };
+    });
+
+    // Wait for all the updates to complete
+    const updatedOrderItems = await Promise.all(orderItems);
+    const newOrder = new OrderModel({
+      patientName: name,
+      items: updatedOrderItems,
+      totalAmount: total,
+      deliveryAddress: address,
+      paymentMethod: method,
+    });
+
+    // Save the order to the database
+    await newOrder.save();
+
+    // Send a success response
+    res.status(201).json({ success: true, message: 'Order placed successfully' });
+  } catch (error) {
+    console.error('Error placing order:', error);
+    res.status(500).json({ success: false, error: 'Error placing order' });
+  }
+});
+
+app.get('/medicines/:name', async (req, res) => {
+  try {
+    // Get the medicine name from the request parameters
+    const { name } = req.params;
+    const medicine = await MedicineModel.findOne({ name });
+    if (medicine) {
+      res.json({ name: medicine.name, quantity: 1, price: medicine.price, available: medicine.quantity, fileName: medicine.imageUrl.fileName });
+    } else {
+      // Otherwise, return a 404 status code with an error message
+      res.status(404).json({ message: 'Medicine not found' });
+    }
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal sserver error' });
+  }
+});
