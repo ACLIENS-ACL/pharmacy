@@ -1,0 +1,56 @@
+/* Add this to your CSS file or style section */
+.hover-text {
+    display: none;
+    position: absolute;
+    top: -30px; /* Adjust the positioning as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4e73df;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s, top 0.3s;
+    margin-top: 50px;
+  }
+  
+  .nav-item:hover .hover-text {
+    display: block;
+    opacity: 1;
+    top: 0;
+  }
+  /* Add this to your styles */
+/* Add this to your styles */
+/* Add this to your styles */
+.collapsed {
+    transition: all 0.3s ease-in-out;
+    color: white; /* Set text color to white */
+  }
+  
+  .collapsed:hover {
+    color: black; /* Change text color to black on hover */
+  }
+  
+  .collapsed .collapse-inner {
+    max-height: 0;
+    overflow: hidden;
+    transform-origin: top; /* Set the transform origin to top */
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .expanded .collapse-inner {
+    max-height: 200px; /* Adjust this value based on your content */
+    overflow: hidden;
+    transform-origin: top; /* Set the transform origin to top */
+    transition: all 0.3s ease-in-out;
+  }
+/* styles.css */
+.collapse-item {
+    color: white;
+    transition: color 0.3s ease;
+  }
+  
+  .collapse-item.newstyle:hover {
+    color: black;
+  }
+  
