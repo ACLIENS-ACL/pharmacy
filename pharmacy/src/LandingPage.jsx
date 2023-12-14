@@ -17,6 +17,7 @@ import clientImage1 from './images/client.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLongArrowLeft, faLongArrowRight } from '@fortawesome/free-solid-svg-icons';
 
+import Status from './Status';
 import { FaFacebook, FaTwitter, FaYoutube, FaLinkedin } from 'react-icons/fa';
 
 // Import required font-awesome icons
@@ -35,6 +36,8 @@ const LandingPage = () => {
     const [errorUsername, setErrorUsername] = useState('');
     const [errorPassword, setErrorPassword] = useState('');
     const navigate = useNavigate();
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [Statusv, setStatusv] = useState('');
     const handleNavigation = async (e) => {
         if (username) {
             navigate('/password-reset')
@@ -69,7 +72,9 @@ const LandingPage = () => {
                 if (message === 'Success But Not Enrolled') {
                     const { token2 } = result.data;
                     localStorage.setItem('token', token2);
-                    navigate('/makeReq');
+                    console.log(result.data.enrolledStatus)
+                    setShowConfirmation(true)
+                    setStatusv(result.data.enrolledStatus)
                 } else if (message === 'Waiting for contract') {
                     navigate('/contract');
                 } else if (message === 'Success' || message === 'success') {
@@ -110,8 +115,14 @@ const LandingPage = () => {
     const handleNext = () => {
         setActiveIndex((prevIndex) => (prevIndex === 2 ? 0 : prevIndex + 1));
     };
+    
     return (
         <div className="hero_area">
+        <Status
+            isOpen={showConfirmation}
+            Status={Statusv}
+            onCancel={() => setShowConfirmation(false)}
+        />
             {/* Header Section */}
             <div className="hero_area">
                 <div className="hero_bg_box" style={{
@@ -128,8 +139,8 @@ const LandingPage = () => {
                                 </span>
                             </Link>
 
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class=""> </span>
+                            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span className=""> </span>
                             </button>
                             <div className="d-flex align-items-center">
                                 <input
@@ -180,20 +191,20 @@ const LandingPage = () => {
                 {/* Slider Section */}
                 <section className="slider_section">
                     <div id="customCarousel1" className="carousel slide" data-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <div class="container ">
-                                    <div class="row">
-                                        <div class="col-md-7">
-                                            <div class="detail-box">
+                        <div className="carousel-inner">
+                            <div className="carousel-item active">
+                                <div className="container ">
+                                    <div className="row">
+                                        <div className="col-md-7">
+                                            <div className="detail-box">
                                                 <h1 >
                                                     WELCOME TO PHARMA<br />
                                                 </h1>
                                                 <p>
                                                     EFFECTIVE MEDICINE, NEW MEDICINE EVERYDAY
                                                 </p>
-                                                <div class="btn-box">
-                                                    <a href="/register" class="btn1">
+                                                <div className="btn-box">
+                                                    <a href="/register" className="btn1">
                                                         Sign Up Now
                                                     </a>
                                                 </div>
@@ -202,19 +213,19 @@ const LandingPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="carousel-item ">
-                                <div class="container ">
-                                    <div class="row">
-                                        <div class="col-md-7">
-                                            <div class="detail-box">
+                            <div className="carousel-item ">
+                                <div className="container ">
+                                    <div className="row">
+                                        <div className="col-md-7">
+                                            <div className="detail-box">
                                                 <h1>
                                                     We Provide Best Healthcare
                                                 </h1>
                                                 <p>
                                                     Explicabo esse amet tempora quibusdam laudantium, laborum eaque magnam fugiat hic? Esse dicta aliquid error repudiandae earum suscipit fugiat molestias, veniam, vel architecto veritatis delectus repellat modi impedit sequi.
                                                 </p>
-                                                <div class="btn-box">
-                                                    <a href="" class="btn1">
+                                                <div className="btn-box">
+                                                    <a href="" className="btn1">
                                                         Read More
                                                     </a>
                                                 </div>
@@ -223,11 +234,11 @@ const LandingPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="carousel-item">
-                                <div class="container ">
-                                    <div class="row">
-                                        <div class="col-md-7">
-                                            <div class="detail-box">
+                            <div className="carousel-item">
+                                <div className="container ">
+                                    <div className="row">
+                                        <div className="col-md-7">
+                                            <div className="detail-box">
                                                 <h1>
                                                     WELCOME TO PHARMA<br />
                                                     We Provide Best Healthcare
@@ -235,8 +246,8 @@ const LandingPage = () => {
                                                 <p>
                                                     EFFECTIVE MEDICINE, NEW MEDICINE EVERYDAY
                                                 </p>
-                                                <div class="btn-box">
-                                                    <a href="" class="btn1">
+                                                <div className="btn-box">
+                                                    <a href="" className="btn1">
                                                         Read More
                                                     </a>
                                                 </div>
@@ -253,15 +264,15 @@ const LandingPage = () => {
             {/* About Section */}
             <section className="about_section layout_margin-bottom">
                 <div className="container">
-                    <div class="row">
-                        <div class="col-md-6 ">
-                            <div class="img-box">
+                    <div className="row">
+                        <div className="col-md-6 ">
+                            <div className="img-box">
                                 <img src={aboutImage} alt="" />
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="detail-box">
-                                <div class="heading_container">
+                        <div className="col-md-6">
+                            <div className="detail-box">
+                                <div className="heading_container">
                                     <h2>
                                         About <span>Us</span>
                                     </h2>
@@ -284,22 +295,22 @@ const LandingPage = () => {
             {/* Doctor Section */}
             {/* <section className="doctor_section layout_padding">
                 <div className="container">
-                    <div class="heading_container heading_center">
+                    <div className="heading_container heading_center">
                         <h2>
                             Our Doctors
                         </h2>
-                        <p class="col-md-10 mx-auto px-0">
+                        <p className="col-md-10 mx-auto px-0">
                             Incilint sapiente illo quo praesentium officiis laudantium nostrum, ad adipisci cupiditate sit, quisquam aliquid. Officiis laudantium fuga ad voluptas aspernatur error fugiat quos facilis saepe quas fugit, beatae id quisquam.
                         </p>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-6 col-lg-4 mx-auto">
-                            <div class="box">
-                                <div class="img-box">
+                    <div className="row">
+                        <div className="col-sm-6 col-lg-4 mx-auto">
+                            <div className="box">
+                                <div className="img-box">
                                     <img src={doctorImage1} alt="" />
                                 </div>
-                                <div class="detail-box">
-                                    <div class="social_box" >
+                                <div className="detail-box">
+                                    <div className="social_box" >
                                         <a href="">
                                             <FaFacebook />
                                         </a>
@@ -316,19 +327,19 @@ const LandingPage = () => {
                                     <h5>
                                         Elina Josh
                                     </h5>
-                                    <h6 class="">
+                                    <h6 className="">
                                         Doctor
                                     </h6>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-lg-4 mx-auto">
-                            <div class="box">
-                                <div class="img-box">
+                        <div className="col-sm-6 col-lg-4 mx-auto">
+                            <div className="box">
+                                <div className="img-box">
                                     <img src={doctorImage2} alt="" />
                                 </div>
-                                <div class="detail-box">
-                                    <div class="social_box" >
+                                <div className="detail-box">
+                                    <div className="social_box" >
                                         <a href="">
                                             <FaFacebook />
                                         </a>
@@ -345,19 +356,19 @@ const LandingPage = () => {
                                     <h5>
                                         Adam View
                                     </h5>
-                                    <h6 class="">
+                                    <h6 className="">
                                         Doctor
                                     </h6>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-lg-4 mx-auto">
-                            <div class="box">
-                                <div class="img-box">
+                        <div className="col-sm-6 col-lg-4 mx-auto">
+                            <div className="box">
+                                <div className="img-box">
                                     <img src={doctorImage3} alt="" />
                                 </div>
-                                <div class="detail-box">
-                                    <div class="social_box" >
+                                <div className="detail-box">
+                                    <div className="social_box" >
                                         <a href="">
                                             <FaFacebook />
                                         </a>
@@ -374,7 +385,7 @@ const LandingPage = () => {
                                     <h5>
                                         Mia Mike
                                     </h5>
-                                    <h6 class="">
+                                    <h6 className="">
                                         Doctor
                                     </h6>
                                 </div>
@@ -388,13 +399,13 @@ const LandingPage = () => {
             {/* Client Section */}
             <section className="client_section layout_padding-bottom" style={{ marginTop: "40px" }}>
                 <div className="container">
-                    <div class="heading_container heading_center ">
+                    <div className="heading_container heading_center ">
                         <h2>
                             Testimonial
                         </h2>
                     </div>
-                    <div id="carouselExample2Controls" class="carousel slide" data-ride="carousel">
-                        <div class="carousel-inner">
+                    <div id="carouselExample2Controls" className="carousel slide" data-ride="carousel">
+                        <div className="carousel-inner">
                             <div className={`carousel-item ${activeIndex === 0 ? 'active' : ''}`}>
                                 <div className="row">
                                     <div className="col-md-11 col-lg-10 mx-auto">
@@ -417,15 +428,15 @@ const LandingPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div class={`carousel-item ${activeIndex === 1 ? 'active' : ''}`} >
-                                <div class="row">
-                                    <div class="col-md-11 col-lg-10 mx-auto">
-                                        <div class="box">
-                                            <div class="img-box">
+                            <div className={`carousel-item ${activeIndex === 1 ? 'active' : ''}`} >
+                                <div className="row">
+                                    <div className="col-md-11 col-lg-10 mx-auto">
+                                        <div className="box">
+                                            <div className="img-box">
                                                 <img src={clientImage1} alt="" />
                                             </div>
-                                            <div class="detail-box">
-                                                <div class="name">
+                                            <div className="detail-box">
+                                                <div className="name">
                                                     <h6>
                                                         Alan2 Emerson
                                                     </h6>
@@ -433,21 +444,21 @@ const LandingPage = () => {
                                                 <p>
                                                     Enim consequatur odio assumenda voluptas voluptatibus esse nobis officia. Magnam, aspernatur nostrum explicabo, distinctio laudantium delectus deserunt quia quidem magni corporis earum inventore totam consectetur corrupti! Corrupti, nihil sunt? Natus.
                                                 </p>
-                                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                                                <i className="fa fa-quote-left" aria-hidden="true"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class={`carousel-item ${activeIndex === 2 ? 'active' : ''}`}>
-                                <div class="row">
-                                    <div class="col-md-11 col-lg-10 mx-auto">
-                                        <div class="box">
-                                            <div class="img-box">
+                            <div className={`carousel-item ${activeIndex === 2 ? 'active' : ''}`}>
+                                <div className="row">
+                                    <div className="col-md-11 col-lg-10 mx-auto">
+                                        <div className="box">
+                                            <div className="img-box">
                                                 <img src={clientImage1} alt="" />
                                             </div>
-                                            <div class="detail-box">
-                                                <div class="name">
+                                            <div className="detail-box">
+                                                <div className="name">
                                                     <h6>
                                                         another alan Emerson
                                                     </h6>
@@ -455,7 +466,7 @@ const LandingPage = () => {
                                                 <p>
                                                     Enim consequatur odio assumenda voluptas voluptatibus esse nobis officia. Magnam, aspernatur nostrum explicabo, distinctio laudantium delectus deserunt quia quidem magni corporis earum inventore totam consectetur corrupti! Corrupti, nihil sunt? Natus.
                                                 </p>
-                                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                                                <i className="fa fa-quote-left" aria-hidden="true"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -479,50 +490,50 @@ const LandingPage = () => {
             {/* Footer Section */}
             <footer className="footer_section">
                 <div className="container">
-                    <div class="row">
-                        <div class="col-md-6 col-lg-3 footer_col">
-                            <div class="footer_contact">
+                    <div className="row">
+                        <div className="col-md-6 col-lg-3 footer_col">
+                            <div className="footer_contact">
                                 <h4>
                                     Reach at..
                                 </h4>
-                                <div class="contact_link_box">
+                                <div className="contact_link_box">
                                     <a href="">
-                                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                        <i className="fa fa-map-marker" aria-hidden="true"></i>
                                         <span>
                                             Location
                                         </span>
                                     </a>
                                     <a href="">
-                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                        <i className="fa fa-phone" aria-hidden="true"></i>
                                         <span>
                                             Call +01 1234567890
                                         </span>
                                     </a>
                                     <a href="">
-                                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        <i className="fa fa-envelope" aria-hidden="true"></i>
                                         <span>
                                             demo@gmail.com
                                         </span>
                                     </a>
                                 </div>
                             </div>
-                            <div class="footer_social">
+                            <div className="footer_social">
                                 <a href="">
-                                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                                    <i className="fa fa-facebook" aria-hidden="true"></i>
                                 </a>
                                 <a href="">
-                                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                                    <i className="fa fa-twitter" aria-hidden="true"></i>
                                 </a>
                                 <a href="">
-                                    <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                    <i className="fa fa-linkedin" aria-hidden="true"></i>
                                 </a>
                                 <a href="">
-                                    <i class="fa fa-instagram" aria-hidden="true"></i>
+                                    <i className="fa fa-instagram" aria-hidden="true"></i>
                                 </a>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3 footer_col">
-                            <div class="footer_detail">
+                        <div className="col-md-6 col-lg-3 footer_col">
+                            <div className="footer_detail">
                                 <h4>
                                     About
                                 </h4>
@@ -531,31 +542,31 @@ const LandingPage = () => {
                                 </p>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-2 mx-auto footer_col">
-                            <div class="footer_link_box">
+                        <div className="col-md-6 col-lg-2 mx-auto footer_col">
+                            <div className="footer_link_box">
                                 <h4>
                                     Links
                                 </h4>
-                                <div class="footer_links">
-                                    <a class="active" href="index.html">
+                                <div className="footer_links">
+                                    <a className="active" href="index.html">
                                         Home
                                     </a>
-                                    <a class="" href="about.html">
+                                    <a className="" href="about.html">
                                         About
                                     </a>
-                                    <a class="" href="departments.html">
+                                    <a className="" href="departments.html">
                                         Departments
                                     </a>
-                                    <a class="" href="doctors.html">
+                                    <a className="" href="doctors.html">
                                         Doctors
                                     </a>
-                                    <a class="" href="contact.html">
+                                    <a className="" href="contact.html">
                                         Contact Us
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3 footer_col ">
+                        <div className="col-md-6 col-lg-3 footer_col ">
                             <h4>
                                 Newsletter
                             </h4>
@@ -567,7 +578,7 @@ const LandingPage = () => {
                             </form>
                         </div>
                     </div>
-                    <div class="footer-info">
+                    <div className="footer-info">
                         <p>
                             &copy; <span id="displayYear"></span> All Rights Reserved By
                             <a href="https://html.design/">Free Html Templates<br /><br /></a>

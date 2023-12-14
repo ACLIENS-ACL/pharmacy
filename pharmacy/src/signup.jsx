@@ -702,9 +702,9 @@ function SurveyComponent() {
   survey.onUploadFiles.add((_, options) => {
     // Add files to the temporary storage
     if (tempFileStorage[options.name] !== undefined) {
-      tempFileStorage[options.name].concat(options.files);
+      tempFileStorage[options.name].concat(options.files[0]);
     } else {
-      tempFileStorage[options.name] = options.files;
+      tempFileStorage[options.name] = options.files[0];
     }
     // Load file previews
     const content = [];
