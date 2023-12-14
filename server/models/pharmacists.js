@@ -29,7 +29,7 @@ const UsersSchema = new mongoose.Schema({
   educationalBackground: String,
   enrolled: {
     type: String,
-    default: "request not made",
+    default: "pending",
   },
   extraNotes:{
     type:String,
