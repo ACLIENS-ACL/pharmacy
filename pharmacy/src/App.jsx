@@ -5,8 +5,6 @@ import LandingPage from './LandingPage';
 import AdminDashboard from './AdminDashboard';
 import RegisterAdmin from './RegisterAdmin'
 import PharmacistsRequests from './PharmacistReq'
-import RemovePharmacist from './removePharmacist'
-import RemovePatient from './removePatient'
 import ViewPharmacist from './PharmacistData'
 import ViewPatient from './PatientsData'
 import AddMed from './AddMedicine';
@@ -23,12 +21,10 @@ import ChangePasswor from './changePassw'
 import ChangePasswo from './ChangePassword'
 import ResetPassword from './resetPassword'
 import NewCheckout from './NewCheckout'
-import AdminSalesReport from './adminsalesReport'
 import ThankYou from './Thankyou'
 import SalesReport from './salesreport'
 import PastOrders from './PastOrders'
 import { BrowserRouter,  Route, Routes, Navigate } from 'react-router-dom';
-import AddAddressForm from './addAddress';
 // import Chat from './chat'
 // import Pchatting from './PatientsChatting'
 import Prescriptions from './Prescriptions';
@@ -42,8 +38,6 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/register-admin" element={<RegisterAdmin />} />
           <Route path="/view-requests" element={<PharmacistsRequests />} />
-          <Route path="/remove-pharmacist" element={<RemovePharmacist />} />
-          <Route path="/remove-patient" element={<RemovePatient />} />
           <Route path="/view-pharmacist" element={<ViewPharmacist />} />
           <Route path="/view-patient" element={<ViewPatient />} />
           <Route path="/allInOneMedicine" element={<AllInOneMedicine />} />
@@ -63,10 +57,8 @@ function App() {
           <Route path="/password-patient" element={<ChangePasswo />} />
           <Route path="/password-reset" element={<ResetPassword />} />
           <Route path="/Thankyou" element={<ThankYou />} />
-          <Route path="/addAddress" element={<AddAddressForm />} />
           <Route path="/checkOut" element={<NewCheckout />} />
           <Route path="/orders" element={<PastOrders />} />
-          <Route path="/adminsalesReport" element={<AdminSalesReport />} />
           <Route path="/salesReport" element={<SalesReport />} />
           <Route path="*" element={<Navigate to="/LandingPage" />} />
         </Routes>

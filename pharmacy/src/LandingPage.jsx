@@ -131,14 +131,6 @@ const LandingPage = () => {
                             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class=""> </span>
                             </button>
-
-                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                <ul class="navbar-nav">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="about.html"> About US</a>
-                                    </li>
-                                </ul>
-                            </div>
                             <div className="d-flex align-items-center">
                                 <input
                                     type="text"
@@ -290,7 +282,7 @@ const LandingPage = () => {
             </section>
 
             {/* Doctor Section */}
-            <section className="doctor_section layout_padding">
+            {/* <section className="doctor_section layout_padding">
                 <div className="container">
                     <div class="heading_container heading_center">
                         <h2>
@@ -390,7 +382,7 @@ const LandingPage = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
 
             {/* Client Section */}

@@ -584,13 +584,11 @@ function SurveyComponent() {
         mobileNumber: data["phone"],
         emergencyContactName: data["emergency-contact-full-name"],
         emergencyContactNumber: data["emergency-contact-phone"],
-        relationToPatient: data["relation-to-patient"],
-        nationalID: data["nationalid"]
+        relationToPatient: data["relation-to-patient"]
       };
       // Make an Axios call to check if the username and email already exist
       try {
         const response = await axios.post('http://localhost:3002/register-patient', userData);
-        alert(response.data.message);
         // Check the response for any error and set the appropriate error message
         if (response.data.message == "Username already exists") {
           errors["username"] = response.data.message;
@@ -633,7 +631,7 @@ function SurveyComponent() {
       // Make an Axios call to check if the username and email already exist
       try {
         const response = await axios.post('http://localhost:3002/register-pharmacist', userData);
-        alert(response.data.message);
+       
         // Check the response for any error and set the appropriate error message
         if (response.data.message == "Username already exists") {
           errors["username"] = response.data.message;

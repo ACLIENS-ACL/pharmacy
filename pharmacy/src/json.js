@@ -13,7 +13,7 @@ export const json = {
             "name": "userType",
             "title": "Select your role",
             "isRequired": true,
-            "choices": ["Patient", "Doctor"],
+            "choices": ["Patient", "Pharmacist"],
           }
         ]
       },
@@ -152,6 +152,7 @@ export const json = {
               },
               {
                 "type": "text",
+                "inputType": "password",
                 "name": "password",
                 "width": "50%",
                 "isRequired": true,
@@ -168,7 +169,7 @@ export const json = {
           {
             "type": "panel",
             "name": "professional-experience",
-             "visibleIf": "{userType} == 'Doctor'",
+             "visibleIf": "{userType} == 'Pharmacist'",
 
             "elements": [
               {
@@ -246,11 +247,11 @@ export const json = {
     },
     {
       "name": "userTypeCompletionMessage",
-      "expression": "iif({userType} == 'Doctor', 'Thank you for completing your Doctor Registration Form.', 'Thank you for completing your Patient Registration Form.')"
+      "expression": "iif({userType} == 'Pharmacist', 'Thank you for completing your Pharmacist Registration Form.', 'Thank you for completing your Patient Registration Form.')"
     },
     {
       "name": "additionalMessage",
-      "expression": "userType === 'Doctor' ? 'The admin will review your request, and you will guarantee access to the system upon approval.' : ''"
+      "expression": "userType === 'Pharmacist' ? 'The admin will review your request, and you will guarantee access to the system upon approval.' : ''"
     }],
     "showQuestionNumbers": "off",
     "questionErrorLocation": "bottom",
