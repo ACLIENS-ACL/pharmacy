@@ -212,9 +212,9 @@ const PatientDashboard = ({ click }) => {
                 <div className="container">
                     <div className="row align-items-stretch">
                         <div className="col-lg-6 mb-5 mb-lg-0">
-                            <Link to="/pharma-products" className="banner-1 h-100 d-flex" style={{ backgroundImage: `url(${bg_1})`,textDecoration:"none" }}>
+                            <Link to="/orders" className="banner-1 h-100 d-flex" style={{ backgroundImage: `url(${bg_1})`,textDecoration:"none" }}>
                                 <div className="banner-1-inner align-self-center">
-                                    <h2>Pharma Products</h2>
+                                    <h2>Past Orders</h2>
                                     <p>
                                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.
                                     </p>
@@ -222,7 +222,7 @@ const PatientDashboard = ({ click }) => {
                             </Link>
                         </div>
                         <div className="col-lg-6 mb-5 mb-lg-0">
-                            <Link to="/rated-by-experts" className="banner-1 h-100 d-flex justify-content-end" style={{ backgroundImage: `url(${bg_2})`,textDecoration:"none" }}>
+                            <Link to="/patientchat" className="banner-1 h-100 d-flex justify-content-end" style={{ backgroundImage: `url(${bg_2})`,textDecoration:"none" }}>
                                 <div className="banner-1-inner ml-auto align-self-center">
                                     <h2>Chat with Pharmacist</h2>
                                     <p>

@@ -145,7 +145,16 @@ const NewCart = ({ click }) => {
                                 Your Cart:
                             </div>
                             <div className="col-md-6 d-flex justify-content-end">
-                                <button className="btn btn-outline-primary btn-md btn-block">Continue Shopping</button>
+                                <button className="btn btn-outline-primary btn-md btn-block continueshopping">
+                                    <Link
+                                        to="/patientMedicine"
+                                        style={{ textDecoration: 'none', color: 'black' }}
+                                        onMouseOver={(e) => e.currentTarget.style.color = 'white'}
+                                        onMouseOut={(e) => e.currentTarget.style.color = 'black'}
+                                    >
+                                        Continue Shopping
+                                    </Link>
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -133,7 +133,7 @@ function Medicinesadmin() {
 
                     <div className="container-fluid">
                         <div>
-                            <div className="site-section" style={{  marginBottom: "80px" }}>
+                            <div className="site-section" style={{  marginBottom: "40px" }}>
                                 <div class="container">
                                     <div className="row">
                                         <div className="col-lg-10 align-self-center" style={{ marginLeft: "80px", height: "20px" }}>

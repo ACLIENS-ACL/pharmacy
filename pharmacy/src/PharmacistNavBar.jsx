@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'; // Import Bootstrap CSS
 import './css/font-awesome.min.css'; // Import Font Awesome CSS
 import './css/style.css'; // Import your custom styles
 import './css/responsive.css'; // Import your responsive styles
+import { FaWallet,FaSignOutAlt } from 'react-icons/fa';
 
 const PharmacistNavbar = () => {
     const [notifications, setNotifications] = useState([]); // New state for notifications
@@ -15,6 +16,7 @@ const PharmacistNavbar = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [pharmacist, setPharmacist] = useState([]);
     const navigate = useNavigate();
+
     const token = localStorage.getItem('pharmacistToken');
     const headers = {
         Authorization: `Bearer ${token}`,
@@ -29,10 +31,30 @@ const PharmacistNavbar = () => {
     useEffect(() => {
         axios.get(`http://localhost:3002/pharmacistData`, { headers })
             .then((response) => {
-                setPharmacist(response.data.pharmacist)
-                console.log(response.data.pharmacist.latestNotifications)
-                setNotifications(response.data.pharmacist.latestNotifications)
+                if (response.status === 401) {
+                    // Redirect to the login page if the token is invalid
+                    navigate('/login');
+                } else {
+                    setPharmacist(response.data.pharmacist)
+                    console.log(response.data.pharmacist.latestNotifications)
+                    setNotifications(response.data.pharmacist.latestNotifications)
+                }
             })
+            .catch(error => {
+                // Handle API call errors
+                console.error('Error fetching data:', error);
+
+                // Check the status code in the error response
+                if (error.response && error.response.status === 401) {
+                    // Redirect to the login page if the token is invalid
+                    navigate('/login');
+                } else {
+                    // Handle other error cases as needed
+                }
+                if (pharmacist.name == null) {
+                    navigate('/login');
+                }
+            });
     }, []);
 
     const handleLogout = () => {
@@ -48,10 +70,18 @@ const PharmacistNavbar = () => {
         //   }
         // })
     };
-    
+
     const handleNotificationsToggle = () => {
         setShowNotifications((prevShowNotifications) => !prevShowNotifications);
     };
+    const handleGoBack = () => {
+        navigate(-1); // This will go back to the previous page
+    };
+    const [showWallet, setShowWallet] = useState(false);
+    const handleWalletToggle = () => {
+        setShowWallet((prevShowWallet) => !prevShowWallet);
+    };
+
     return (
         <div className="hero_area">
 
@@ -60,7 +90,8 @@ const PharmacistNavbar = () => {
             </div>
             <header className="header_section" style={{ width: '100%' }}>
                 <div className="container-fluid">
-                    <nav className="navbar navbar-expand-lg custom_nav-container ">
+                    <nav className="navbar navbar-expand-lg custom_nav-container " >
+
                         <Link className="navbar-brand" to="/pharmacist">
                             <span>
                                 Pharmacy
@@ -73,6 +104,44 @@ const PharmacistNavbar = () => {
 
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav">
+                                <li className="nav-item active dropdown no-arrow mx-1">
+                                    {/* Add a class to the container for styling */}
+                                    <div className="nav-link nav-icon-container"
+                                        role="button"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                        data-placement="bottom" onClick={handleGoBack}>
+                                        {/* Back Arrow Icon */}
+                                        <i className="fas fa-arrow-left" aria-hidden="true"></i>
+                                        <span style={{ width: "100px" }} className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Go Back</span>
+                                    </div>
+                                </li>
+                                <li className="nav-item dropdown no-arrow mx-1">
+                                    <div
+                                        className="nav-link dropdown-toggle"
+                                        role="button"
+                                        aria-haspopup="true"
+                                        data-placement="bottom"
+                                        onClick={handleWalletToggle}
+                                    >
+                                        {/* Use the wallet icon */}
+                                        <FaWallet />
+
+                                        {/* Display Wallet text on hover */}
+                                        {/* <span className={`hover-text ${showWallet ? 'visible' : 'hidden'}`}>Wallet</span> */}
+                                    </div>
+                                    {/* Dropdown - Wallet */}
+                                    <div className={`wallet-content-container ${showNotifications ? 'd-block' : ''}`} >
+
+                                        {showWallet && (
+                                            <div className={`dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in notifications-box d-block`} style={{ paddingRight: "15px", paddingLeft: "15px" }}>
+
+                                                Wallet: {pharmacist.wallet}
+                                            </div>
+                                        )}
+                                    </div>
+                                </li>
                                 <li className="nav-item dropdown no-arrow mx-1">
                                     <div
                                         className="nav-link dropdown-toggle"
@@ -81,25 +150,32 @@ const PharmacistNavbar = () => {
                                         data-placement="bottom"
                                         onClick={handleNotificationsToggle}
                                     >
+                                        {/* Bell Icon for Notifications */}
                                         <i className="fa fa-bell" aria-hidden="true"></i>
 
-                                        {/* Show notifications if showNotifications is true */}
-                                        {showNotifications && (
-                                            <div className={`notifications-box p-2 border rounded hover-text visible`}>
-                                                {notifications.length === 0 ? (
-                                                    <p className="m-0">No notifications</p>
-                                                ) : (
-                                                    <ul className="list-unstyled m-0">
-                                                        {notifications.map((notification, index) => (
-                                                            <React.Fragment key={index}>
-                                                                <li className="mb-2">{notification.message}</li>
-                                                                {index < notifications.length - 1 && <hr className="my-2" />}
-                                                            </React.Fragment>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                            </div>
-                                        )}
+                                        {/* Notifications Box */}
+                                        <div className={`notifications-box-container ${showNotifications ? 'd-block' : ''}`} >
+
+                                            {showNotifications && (
+                                                <div className={`dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in notifications-box d-block`} style={{ paddingRight: "15px", paddingLeft: "15px" }}>
+                                                    <h6 className="dropdown-header">
+                                                        Notifications
+                                                    </h6>
+                                                    {notifications.length === 0 ? (
+                                                        <p className="m-0">No notifications</p>
+                                                    ) : (
+                                                        <ul className="list-unstyled m-0">
+                                                            {notifications.map((notification, index) => (
+                                                                <React.Fragment key={index}>
+                                                                    <li className="mb-2">{notification.message}</li>
+                                                                    {index < notifications.length - 1 && <hr className="my-2" />}
+                                                                </React.Fragment>
+                                                            ))}
+                                                        </ul>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </li>
                                 <li
@@ -107,9 +183,9 @@ const PharmacistNavbar = () => {
                                     onMouseEnter={() => setIsHovered(true)}
                                     onMouseLeave={() => setIsHovered(false)}
                                 >
-                                    <a
+                                    <Link
                                         className="nav-link dropdown-toggle"
-                                        href="#"
+                                        to="/password-change"
                                         id="settingsDropdown"
                                         role="button"
                                         data-toggle="dropdown"
@@ -121,7 +197,7 @@ const PharmacistNavbar = () => {
                                         <i className="fas fa-cogs fa-fw"></i>
                                         {/* Display Settings text on hover */}
                                         <span className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Settings</span>
-                                    </a>
+                                    </Link>
                                     {/* Dropdown - Settings */}
                                     <div
                                         className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -132,6 +208,7 @@ const PharmacistNavbar = () => {
                                         </h6>
                                     </div>
                                 </li>
+                                
                                 <li className="nav-item active dropdown no-arrow mx-1">
                                     <div onClick={handleLogout}
                                         className="nav-link dropdown-toggle"
@@ -140,7 +217,7 @@ const PharmacistNavbar = () => {
                                         aria-haspopup="true"
                                         aria-expanded="false"
                                         data-placement="bottom">
-                                        <i className="fa fa-sign-out" aria-hidden="true"></i>
+                                        <FaSignOutAlt/>
                                         <span className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Logout</span>
                                     </div>
                                 </li>

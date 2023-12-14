@@ -121,7 +121,14 @@ const ChartsSection = () => {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    // Perform any additional actions based on the selected date
+    
+    // If the selected month is not in the current displayed range, shift the display
+    if (!isSameMonth(date, displayedStartDate) && !isSameMonth(date, addMonths(displayedStartDate, 24))) {
+      setDisplayedStartDate(subMonths(date, 11));
+    }
+
+    const filteredData = salesReport.filter((entry) => isSameMonth(entry.orderDate, date));
+    setFilteredSalesReport(filteredData);
   };
 
   const chartOptions = {
@@ -147,11 +154,20 @@ const ChartsSection = () => {
   };
 
   const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
+    const selectedMonth = event.target.value;
+    setSelectedMonth(selectedMonth);
+  
+    const filteredData = salesReport.filter((entry) => {
+      const monthMatch = !selectedMonth || isSameMonth(entry.orderDate, new Date(selectedMonth));
+      return monthMatch;
+    });
 
-  const handleViewReport = () => {
-    console.log('View Report clicked');
+    // If the selected month is not in the current displayed range, shift the display
+    if (!isSameMonth(new Date(selectedMonth), displayedStartDate) && !isSameMonth(new Date(selectedMonth), addMonths(displayedStartDate, 24))) {
+      setDisplayedStartDate(subMonths(new Date(selectedMonth), 11));
+    }
+  
+    setFilteredSalesReport(filteredData);
   };
 
   const handlePreviousMonths = () => {

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingBag } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingBag,faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { animateScroll as scroll } from 'react-scroll';
 import Footer from './Footer';
 import Nav from './Nav';
@@ -27,6 +27,11 @@ import 'slick-carousel/slick/slick-theme.css';
 // import './styles/jquery-ui.css';
 // import './styles/aos.css';
 import './styles/style.css';
+
+import 'bootstrap/dist/css/bootstrap.css'; // Import Bootstrap CSS
+import './css/font-awesome.min.css'; // Import Font Awesome CSS
+import './css/style.css'; // Import your custom styles
+import './css/responsive.css'; // Import your responsive styles
 
 import bg_1 from "./images/bg_1.jpg";
 import bg_2 from "./images/bg_2.jpg";
@@ -117,6 +122,7 @@ const PatientMedicines = ({ click }) => {
     const indexOfLastMed = currentPage * itemsPerPage;
     const indexOfFirstMed = indexOfLastMed - itemsPerPage;
     const currentMeds = meds.slice(indexOfFirstMed, indexOfLastMed);
+    const [isHovered, setIsHovered] = useState(false);
 
     const totalPages = Math.ceil(meds.length / itemsPerPage);
 
@@ -230,20 +236,14 @@ const PatientMedicines = ({ click }) => {
         filterMedicines(searchQuery, medicinalUse);
     }, [searchQuery, medicinalUse, medicines]);
   
+    const handleGoBack = () => {
+        navigate(-1); // This will go back to the previous page
+    };
 
     return (
         <div>
         <div class="site-navbar py-2">
 
-            <div class="search-wrap">
-                <div class="container">
-                    <Link to="#" className="search-close js-search-close"><span class="icon-close2"></span>
-                    </Link>
-                    <form action="#" method="post">
-                        <input type="text" class="form-control" placeholder="Search keyword and hit enter..." />
-                    </form>
-                </div>
-            </div>
 
             <div class="container">
                 <div class="d-flex align-items-center justify-content-between">
@@ -258,21 +258,42 @@ const PatientMedicines = ({ click }) => {
                                 <li class="active">
                                     <Link to="/patient">Home</Link></li>
                                 <li onClick={scrollToContact}>
-                                    <Link to="/"> About</Link></li>
-                                <li> <Link to="/">Contact</Link></li>
-                                <li > <Link to="/patient" >Settings</Link></li>
+                                    <span class="nav-link">ABOUT</span></li>
+                                <li > <Link to="/password-patient" >Settings</Link></li>
                             </ul>
                         </nav>
                     </div>
                     <div class="icons d-flex align-items-center">
+                        <div className="nav-item active dropdown no-arrow mx-1">
+                            {/* Add a class to the container for styling */}
+                            <div className="nav-link nav-icon-container"
+                                role="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                data-placement="bottom" onClick={handleGoBack}>
+                                {/* Back Arrow Icon */}
+                                <i className="fas fa-arrow-left" aria-hidden="true"></i>
+                                <span style={{ width: "80px" }} className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Go Back</span>
+                            </div>
+                        </div>
                         <Link to="/view-cart" className="icons-btn d-inline-block bag mr-3" >
                             <span className="icon-shopping-bag">
                                 <FontAwesomeIcon icon={faShoppingBag} />
                             </span>
                             <span className="number">{cartItems}</span>
                         </Link>
-                        <div>
-                            <button onClick={handleLogout} className="btn btn-danger ">Logout</button>
+                        <div className="nav-item active dropdown no-arrow mx-1 logout-icon">
+                            <div onClick={handleLogout}
+                                className="nav-link dropdown-toggle"
+                                role="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                data-placement="bottom">
+                                <FontAwesomeIcon icon={faSignOut} />
+                                <span className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Logout</span>
+                            </div>
                         </div>
                     </div>
 

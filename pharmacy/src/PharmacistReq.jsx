@@ -65,127 +65,108 @@ function PharmacistsRequests() {
             });
     };
 
-    return (
+    return  (
         <div id="wrapper" className="d-flex">
-            <Sidebar />
-
-            <div id="content-wrapper" className="d-flex flex-column">
-                <div id="content">
-                    <Topbar />
-
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-md-4">
-                                <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
-                                    <h2 style={{ fontSize: '2rem', color: 'blue', marginBottom: '20px' }}>Pharmacist Requests</h2>
-                                    {message && <div className="alert alert-danger">{message}</div>}
-                                    <ul>
-                                        {pendingRequests.map((request) => (
-                                            <li key={request._id} style={{ marginBottom: '10px' }}>
-                                                <button
-                                                    onClick={() => handlePharmacistClick(request)}
-                                                    className="btn btn-link"
+          <Sidebar />
+          <div id="content-wrapper" className="d-flex flex-column">
+            <div id="content">
+              <Topbar />
+              <div className="container-fluid">
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
+                      <h2 style={{ fontSize: '2rem', color: 'blue', marginBottom: '20px' }}>All Pharmacists</h2>
+                      {message && <div className="alert alert-danger">{message}</div>}
+                      {requests.map((pharmacist) => (
+                        <div key={pharmacist._id} className="card mb-3">
+                          <div className="card-body text-center">
+                            <h5 className="card-title">
+                              <strong>{pharmacist.name}</strong>
+                            </h5>
+                            <table className="table">
+                              <tbody>
+                                {Object.keys(pharmacist)
+                                  .filter(
+                                    (key) =>
+                                      key !== '_id' &&
+                                      key !== 'password' &&
+                                      key !== 'username' &&
+                                      key !== 'latestNotifications' &&
+                                      key !== 'enrolled' &&
+                                      key !== 'medicines' &&
+                                      key !== 'userType' &&
+                                      key !== 'wallet' &&
+                                      key !== 'lastAcceptedDate' &&
+                                      key !== 'name' &&
+                                      key !== '__v'
+                                  )
+                                  .map((key) => (
+                                    <tr key={key}>
+                                      <td>{key}:</td>
+                                      <td>
+                                        {key === 'idDocument' || key === 'medicalDegree' ? (
+                                          <a
+                                            href={`http://localhost:3002/uploads/${pharmacist[key].fileName}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            View {key}
+                                          </a>
+                                        ) : key === 'medicalLicenses' ? (
+                                          <ul className="list-unstyled">
+                                            {pharmacist[key].map((license, index) => (
+                                              <li key={index}>
+                                                <a
+                                                  href={`http://localhost:3002/uploads/${license.fileName}`}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
                                                 >
-                                                    {request.username}
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                                  View License {index + 1}
+                                                </a>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        ) : (
+                                          `${pharmacist[key]}`
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                            <div className="d-flex justify-content-end mt-3">
+                              <button
+                                onClick={() => handleApprove(pharmacist._id)}
+                                className="btn btn-success me-2"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleReject(pharmacist._id)}
+                                className="btn btn-danger"
+                              >
+                                Reject
+                              </button>
                             </div>
-
-                            <div className="col-md-8">
-                                <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
-                                    {selectedPharmacist && (
-                                        <div className="card" style={{ marginBottom: '20px' }}>
-                                            <div className="card-body text-center">
-                                                <h5 className="card-title">
-                                                    <strong>{selectedPharmacist.name}</strong>
-                                                </h5>
-                                                <table className="table">
-                                                    <tbody>
-                                                        {Object.keys(selectedPharmacist)
-                                                            .filter(
-                                                                (key) =>
-                                                                    key !== '_id' &&
-                                                                    key !== 'password' &&
-                                                                    key !== 'username' &&
-                                                                    key !== 'latestNotifications' &&
-                                                                    key !== 'enrolled' &&
-                                                                    key !== 'medicines' &&
-                                                                    key !== 'userType' && 
-                                                                    key !== 'wallet' &&
-                                                                    key !== 'lastAcceptedDate' &&
-                                                                    key !== 'name' && 
-                                                                    key !== '__v'
-                                                            )
-                                                            .map((key) => (
-                                                                <tr key={key}>
-                                                                    <td><strong>{key}:</strong></td>
-                                                                    <td>
-                                                                        {key === 'idDocument' || key === 'medicalDegree' ? (
-                                                                            <a
-                                                                                href={`http://localhost:3002/uploads/${selectedPharmacist[key].fileName}`}
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                            >
-                                                                                View {key}
-                                                                            </a>
-                                                                        ) : key === 'medicalLicenses' ? (
-                                                                            <ul>
-                                                                                {selectedPharmacist[key].map((license, index) => (
-                                                                                    <li key={index}>
-                                                                                        <a
-                                                                                            href={`http://localhost:3002/uploads/${license.fileName}`}
-                                                                                            target="_blank"
-                                                                                            rel="noopener noreferrer"
-                                                                                        >
-                                                                                            View License {index + 1}
-                                                                                        </a>
-                                                                                    </li>
-                                                                                ))}
-                                                                            </ul>
-                                                                        ) : (
-                                                                            `${selectedPharmacist[key]}`
-                                                                        )}
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                    </tbody>
-                                                </table>
-                                                <div className="d-flex justify-content-end mt-3">
-                                                    <button
-                                                        onClick={() => handleApprove(selectedPharmacist._id)}
-                                                        className="btn btn-success me-2"
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleReject(selectedPharmacist._id)}
-                                                        className="btn btn-danger"
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                          </div>
                         </div>
+                      ))}
                     </div>
-
-                    <footer className="sticky-footer bg-white">
-                        <div className="container my-auto">
-                            <div className="copyright text-center my-auto">
-                                <span>Copyright &copy; Your Website 2020</span>
-                            </div>
-                        </div>
-                    </footer>
+                  </div>
                 </div>
+              </div>
+    
+              <footer className="sticky-footer bg-white">
+                <div className="container my-auto">
+                  <div className="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                  </div>
+                </div>
+              </footer>
             </div>
+          </div>
         </div>
-    );
+      );
 }
 
 export default PharmacistsRequests;

@@ -1,5 +1,6 @@
 // PharmacistNavbar.js
 import React from 'react';
+import io from 'socket.io-client';
 
 import { Link, useNavigate } from 'react-router-dom';
 import PharmacistNavbar from './PharmacistNavBar'
@@ -14,6 +15,26 @@ import './css/font-awesome.min.css'; // Import Font Awesome CSS
 import './css/style.css'; // Import your custom styles
 import './css/responsive.css';
 const PharmacistDashboard = () => {
+    // const [chatRequests, setChatRequests] = useState([]);
+
+    // useEffect(() => {
+    //     // Listen for chat request notifications
+    //     socket.on('chat-request-notification', (data) => {
+    //         setChatRequests((prevRequests) => [...prevRequests, data]);
+    //     });
+
+    //     return () => {
+    //         // Clean up socket event listener when component unmounts
+    //         socket.off('chat-request-notification');
+    //     };
+    // }, []);
+
+    // // Function to handle accepting the chat request
+    // const acceptChatRequest = (patientId, roomId) => {
+    //     // Emit an event to inform the server that the request is accepted
+    //     socket.emit('accept-chat-request', { patientId, roomId });
+    //     // You can add further logic here, for example, redirecting to the chat page
+    // };
     return (
         <div>
             <PharmacistNavbar />
@@ -28,9 +49,9 @@ const PharmacistDashboard = () => {
                                 Asperiores sunt consectetur impedit nulla molestiae delectus repellat laborum dolores doloremque accusantium
                             </p>
                         </div>
-                        <div className="row">
-                            <div className="col-md-3">
-                                <Link to="/medicines" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <div className="row mx-auto">
+                            <div className="col-md-4">
+                                <Link to="/allInOneMedicine" style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <div className="box">
                                         <div className="img-box">
                                             <img src={departmentImage2} alt="Cardiology" />
@@ -46,7 +67,7 @@ const PharmacistDashboard = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <Link to="/add-med" style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <div className="box ">
                                         <div className="img-box">
@@ -63,7 +84,7 @@ const PharmacistDashboard = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <Link to="/edit-med" style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <div className="box ">
                                         <div className="img-box">
@@ -80,25 +101,54 @@ const PharmacistDashboard = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="col-md-3">
-                                <div className="box ">
-                                    <div className="img-box">
-                                        <img src={departmentImage1} alt="First Aid" />
+                        </div>
+                        <div className="row  mx-auto">
+                            <div className="col-md-6">
+                                <Link to="/prescriptions" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    <div className="box ">
+                                        <div className="img-box">
+                                            <img src={departmentImage1} alt="First Aid" />
+                                        </div>
+                                        <div className="detail-box">
+                                            <h5>
+                                                Prescreptions
+                                            </h5>
+                                            <p>
+                                                View All Prescreptions that include your medicines.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="detail-box">
-                                        <h5>
-                                            Prescreptions
-                                        </h5>
-                                        <p>
-                                            View All Prescreptions that include your medicines.
-                                        </p>
+                                </Link>
+                            </div>
+                            <div className="col-md-6">
+                                <Link to="/salesReport" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    <div className="box ">
+                                        <div className="img-box">
+                                            <img src={departmentImage1} alt="First Aid" />
+                                        </div>
+                                        <div className="detail-box">
+                                            <h5>
+                                                    Sales Report
+                                            </h5>
+                                            <p>
+                                                View Sales Report for your Medicines.
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+            {/* {chatRequests.map((request, index) => (
+                <div key={index} className="chat-request-notification">
+                    <p>New chat request from {request.patientId}</p>
+                    <button onClick={() => acceptChatRequest(request.patientId, request.roomId)}>
+                        Accept
+                    </button>
+                </div>
+            ))} */}
             <PharmacistFooter />
         </div>
     );

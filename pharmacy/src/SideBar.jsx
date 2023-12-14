@@ -95,47 +95,14 @@ const Sidebar = () => {
       {/* Heading */}
 
       <li className="nav-item">
-        <div>
           <Link
-            className={`nav-link collapsed ${isPatientsExpanded ? 'active' : ''}`}
+            className={`nav-link collapsed `}
             to="/view-patient"
             onClick={handlePatientsClick}
-            aria-expanded={isPatientsExpanded}
-            data-toggle="collapse"
-            data-target="#collapsePatients"
-            aria-controls="collapsePatients"
           >
             <i className="fas fa-fw fa-folder"></i>
             <span>Patients</span>
           </Link>
-          <div
-            id="collapsePatients"
-            className={`collapse ${isPatientsExpanded ? 'show' : ''}`}
-            aria-labelledby="headingPatients"
-            data-parent="#accordionSidebar"
-          >
-            <div className={`bg-gradient-primary py-2 collapse-inner rounded ${isPatientsExpanded ? 'expanded' : ''}`}>
-              <div className="collapse-divider"></div>
-              <Link
-                className={`collapse-item ${isHovered ? 'hovered' : ''}`}
-                to="/view-patients"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                View Patients
-              </Link>
-              <div className="collapse-divider"></div>
-              <Link
-                className={`collapse-item ${isHovered ? 'hovered' : ''}`}
-                to="/remove-patients"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                Remove Patients
-              </Link>
-            </div>
-          </div>
-        </div>
       </li>
 
       {/* Divider */}
@@ -176,20 +143,11 @@ const Sidebar = () => {
               <div className="collapse-divider"></div>
               <Link
                 className={`collapse-item ${isHovered ? 'hovered' : ''}`}
-                to="/view-pharmacists"
+                to="/view-pharmacist"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
               >
-                View Pharmacists
-              </Link>
-              <div className="collapse-divider"></div>
-              <Link
-                className={`collapse-item ${isHovered ? 'hovered' : ''}`}
-                to="/remove-pharmacists"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                Remove Pharmacists
+                Pharmacists Data
               </Link>
             </div>
           </div>
