@@ -62,10 +62,9 @@ io.on('connection', (socket) => {
     }
     activeRooms[roomId].push(userId);
     // Notify other users in the room that a new user has connected
-    socket.to(roomId).emit('user-connected', { name: user, userId, roomId });
   });
 
-  socket.on('accept-chat', async ({ user, userId, roomId }) => {
+  socket.on('accept-chat', async ({ user, userId, roomId }, acknowledgmentCallback) => {
     // Update the room with the pharmacist who accepted the chat
     // Set the room as active
     activeUsers[userId] = {
@@ -96,8 +95,12 @@ io.on('connection', (socket) => {
       console.log(userId, roomId)
       socket.to(roomId).emit('user-connected', { name: userId, userId, roomId });
       console.log(roomId)
+
+      console.log('Chat accepted');
+      acknowledgmentCallback({ success: true });
     } catch (error) {
-      console.error('Error updating room in the database:', error.message);
+      console.error('Error accepting chat:', error.message);
+      acknowledgmentCallback({ success: false, error: error.message });
     }
   });
 
