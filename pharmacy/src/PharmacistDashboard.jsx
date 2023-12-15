@@ -1,6 +1,6 @@
 // PharmacistNavbar.js
-import React from 'react';
-import io from 'socket.io-client';
+import React,{useState,useEffect} from 'react';
+import axios from 'axios';
 
 import { Link, useNavigate } from 'react-router-dom';
 import PharmacistNavbar from './PharmacistNavBar'
@@ -10,6 +10,9 @@ import departmentImage2 from './images/s2.png';
 import departmentImage3 from './images/s3.png';
 import departmentImage4 from './images/s4.png';
 
+
+import { FaComment, FaVideo } from 'react-icons/fa';
+import { Dropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css'; // Import Bootstrap CSS
 import './css/font-awesome.min.css'; // Import Font Awesome CSS
 import './css/style.css'; // Import your custom styles
@@ -17,24 +20,31 @@ import './css/responsive.css';
 const PharmacistDashboard = () => {
     // const [chatRequests, setChatRequests] = useState([]);
 
-    // useEffect(() => {
-    //     // Listen for chat request notifications
-    //     socket.on('chat-request-notification', (data) => {
-    //         setChatRequests((prevRequests) => [...prevRequests, data]);
-    //     });
+    const navigate = useNavigate();
+    const [rooms, setRooms] = useState([]);
+    useEffect(() => {
+        const fetchDoctors = async () => {
+            try {
+                const token = localStorage.getItem('pharmacistToken');
+                const response = await axios.get('http://localhost:3002/allrooms', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setRooms(response.data);
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+            }
+        };
 
-    //     return () => {
-    //         // Clean up socket event listener when component unmounts
-    //         socket.off('chat-request-notification');
-    //     };
-    // }, []);
+        fetchDoctors();
+    }, []);
+    const handleChatClick = async (e, roomId) => {
+        e.stopPropagation(); // Prevent the event from propagating to the parent elements
+        console.log(roomId)
+            navigate(`/pharmachat/${roomId}`)
 
-    // // Function to handle accepting the chat request
-    // const acceptChatRequest = (patientId, roomId) => {
-    //     // Emit an event to inform the server that the request is accepted
-    //     socket.emit('accept-chat-request', { patientId, roomId });
-    //     // You can add further logic here, for example, redirecting to the chat page
-    // };
+    }
     return (
         <div>
             <PharmacistNavbar />
@@ -128,7 +138,7 @@ const PharmacistDashboard = () => {
                                         </div>
                                         <div className="detail-box">
                                             <h5>
-                                                    Sales Report
+                                                Sales Report
                                             </h5>
                                             <p>
                                                 View Sales Report for your Medicines.
@@ -150,6 +160,35 @@ const PharmacistDashboard = () => {
                 </div>
             ))} */}
             <PharmacistFooter />
+            <div className="d-flex justify-content-end">
+                <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: '1000' }}>
+                    <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: '1000' }}>
+                        <Dropdown drop="up">
+                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                Reply to patients
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                {rooms.map((patient) => (
+                                    <Dropdown.Item key={patient._id}>
+                                        <div className="d-flex align-items-center justify-content-between">
+                                            <span>Room</span>
+                                            <span style={{ marginLeft: '10px' }}>
+                                                {/* Add chat and video icons */}
+                                                <FaComment
+                                                    style={{ marginRight: '10px', cursor: 'pointer' }}
+                                                    onClick={(e) => handleChatClick(e, patient._id)}
+                                                />
+                                            </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 };

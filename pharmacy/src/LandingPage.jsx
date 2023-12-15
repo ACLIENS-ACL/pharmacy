@@ -48,10 +48,8 @@ const LandingPage = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-
-
+            
             const type = await axios.get('http://localhost:3002/getType', {
                 params: { username: username },
             });

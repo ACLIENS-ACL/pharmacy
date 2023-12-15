@@ -661,7 +661,7 @@ function SurveyComponent() {
           });
           const formData3 = new FormData();
           formData3.append("medicalLicenses", tempFileStorage["medicalLicenses"]);
-          await axios.post(`http://localhost:3002y/upload-medical-licenses/${data["username"]}`, formData3, {
+          await axios.post(`http://localhost:3002/upload-medical-licenses/${data["username"]}`, formData3, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
