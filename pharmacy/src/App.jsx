@@ -31,7 +31,6 @@ import Prescriptions from './Prescriptions';
 import MyChat from './pharmacistchat';
 import ChatApp from './chat'
 import Patientchat from './patientchat';
-import Chatting from './pharmachatting'
 
 function App() {
   return (
@@ -48,7 +47,6 @@ function App() {
         <Route path="/patientMedicine" element={<PatientMedicines />} />
         <Route path="/medicinesadmin" element={<Medicinesadmin />} />
         <Route path="/prescriptions" element={<Prescriptions />} />
-        <Route path="/ichat" element={<Chatting />} />
         {/* <Route path="/pchat" element={<Pchatting />} /> */}
         {/* <Route path="/chat/:roomId" element={<Chat />} /> */}
         <Route path="/add-med" element={<AddMed />} />

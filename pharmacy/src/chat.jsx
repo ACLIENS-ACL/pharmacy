@@ -22,12 +22,8 @@ const ChatApp = () => {
     // Get or generate a unique user ID from the token
     const userId = token ? token.username : generateUserId();
 
-    const socket = io('http://localhost:3003', {
-        query: {
-            userId: userId,
-            roomId: roomId, // Pass the roomId to the socket creation
-        },
-    });
+    const socket = useRef(null);
+
     useEffect(() => {
         // Scroll to the bottom of the messages container
         if (messagesContainerRef.current) {
@@ -37,23 +33,29 @@ const ChatApp = () => {
 
     useEffect(() => {
         setUsername(userId);
+         socket.current = io('http://localhost:3003', {
+            query: {
+                userId: userId,
+                roomId: roomId, // Pass the roomId to the socket creation
+            },
+        });
         appendMessage('You joined', true);
-        socket.emit('patient-request', { user: userId, userId, roomId });
+        socket.current.emit('patient-request', { user: userId, userId, roomId });
         console.log("hi")
         console.log(roomId)
-        socket.on('user-connected', (data) => {
+        socket.current.on('user-connected', (data) => {
             console.log("it should")
             if (roomId === data.roomId) {
                 appendMessage(`${data.name} connected`);
             }
         });
 
-        socket.on('chat-message', (data) => {
+        socket.current.on('chat-message', (data) => {
             if (userId !== data.userId && roomId === data.roomId) {
                 appendMessage(`${data.name}: ${data.message}`);
             }
         });
-        socket.on('user-disconnected', (data) => {
+        socket.current.on('user-disconnected', (data) => {
             if (roomId === data.roomId) {
                 appendMessage(`${data.name} disconnected`);
             }
@@ -64,15 +66,15 @@ const ChatApp = () => {
         localStorage.setItem('roomId', roomId);
 
         return () => {
-            socket.disconnect();
+            socket.current.disconnect();
         };
-    }, [userId, roomId]); // Include userId and roomId in the dependency array
+    }, []); // Include userId and roomId in the dependency array
 
     const sendMessage = (e) => {
         e.preventDefault();
         const message = messageInput;
         appendMessage(`You: ${message}`, true);
-        socket.emit('send-chat-message', { message, userId, roomId });
+        socket.current.emit('send-chat-message', { message, userId, roomId });
         setMessageInput('');
     };
 
