@@ -749,6 +749,47 @@ app.post('/update-quantity', async (req, res) => {
   }
 })
 
+// Function to get the recent prescription for a patient
+async function getRecentPrescription(patientId) {
+  try {
+    // Assuming there's a date field in your MedicineModel indicating when it was prescribed
+    const recentPrescription = await MedicineModel
+      .findOne({ patientId })
+      .sort({ datePrescribed: -1 }); // Adjust this based on your actual field
+    return recentPrescription;
+  } catch (error) {
+    console.error('Error fetching recent prescription:', error);
+    return null;
+  }
+}
+
+// Endpoint to add a prescription medicine to the cart
+router.post('/patient/:id/cart', async (req, res) => {
+  const patientId = req.params.id;
+  const { cart, prescriptionMedicine } = req.body;
+
+  try {
+    // Check if prescription medicine is on a recent prescription
+    const recentPrescription = await getRecentPrescription(patientId);
+
+    if (recentPrescription && recentPrescription._id.equals(prescriptionMedicine)) {
+      // Prescription medicine is valid, update the cart
+      await PatientsModel.updateOne({ _id: patientId }, { cart: cart });
+      res.json({ message: 'Cart updated successfully' });
+    } else {
+      res.status(400).json({ message: 'Invalid prescription medicine' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while updating the cart.' });
+  }
+});
+
+// Other routes...
+
+module.exports = router;
+
+
 app.get('/change-password', async (req, res) => {
   var sess = logged.in
   var type = logged.type
