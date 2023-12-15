@@ -14,7 +14,6 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = 'random';
 
-
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -35,6 +34,102 @@ const uploadDirectory = 'uploads';
 if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
 }
+
+const activeUsers = {};
+const activeRooms = {};
+const io = require('socket.io')({
+  cors: {
+    origin: "http://localhost:5173",  // Replace with your actual frontend origin
+    methods: ["GET", "POST"]
+  }
+}).listen(3003);
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('patient-request', ({ user, userId, roomId }) => {
+    // Broadcast the patient request to all pharmacists
+    socket.broadcast.emit('patient-request', { user, userId, roomId });
+    activeUsers[userId] = {
+      socketId: socket.id,
+      name: user,
+    };
+
+    // Join the specified room
+    socket.join(roomId);
+    // Store the room in the activeRooms object
+    if (!activeRooms[roomId]) {
+      activeRooms[roomId] = [];
+    }
+    activeRooms[roomId].push(userId);
+    // Notify other users in the room that a new user has connected
+    socket.to(roomId).emit('user-connected', { name: user, userId, roomId });
+  });
+
+  socket.on('accept-chat', async ({ user, userId, roomId }) => {
+    // Update the room with the pharmacist who accepted the chat
+    // Set the room as active
+    activeUsers[userId] = {
+      socketId: socket.id,
+      name: user,
+    };
+    socket.join(roomId);
+    // Store the room in the activeRooms object
+    if (!activeRooms[roomId]) {
+      activeRooms[roomId] = [];
+    }
+    activeRooms[roomId].push(userId);
+    console.log("accept-chat");
+    console.log(user, userId, roomId, " hi");
+    // Notify the patient that a pharmacist has accepted the chat
+    try {
+      const pharma = await PharmacistsModel.findOne({ username: userId });
+      console.log(pharma)
+      const pharmaId = pharma._id;
+      const updatedRoom = await newRoomsModel.findByIdAndUpdate(
+        roomId,
+        { pharmacistId: pharmaId, isActive: true }
+      ); updatedRoom.pharmacistId = pharmaId
+      updatedRoom.save();
+      console.log(updatedRoom);
+
+      // Notify the patient that a pharmacist has accepted the chat
+      console.log(userId, roomId)
+      socket.to(roomId).emit('user-connected', { name: userId, userId, roomId });
+      console.log(roomId)
+    } catch (error) {
+      console.error('Error updating room in the database:', error.message);
+    }
+  });
+
+
+
+
+  socket.on('send-chat-message', ({ message, userId, roomId }) => {
+    console.log(message, userId, roomId, "da")
+    // Broadcast the message to all users in the room
+    if (activeUsers[userId]) {
+      socket.to(roomId).emit('chat-message', { name: activeUsers[userId].name, message, userId, roomId });
+    }
+  });
+
+  socket.on('disconnect', () => {
+    const userId = Object.keys(activeUsers).find((key) => activeUsers[key].socketId === socket.id);
+
+    if (userId) {
+      const { name, roomId } = activeUsers[userId];
+
+      // Remove the user from activeUsers
+      if (activeRooms[roomId] && !activeRooms[roomId].isActive) {
+        // The user is a patient, handle patient disconnect
+        delete activeUsers[userId];
+        activeRooms[roomId] = activeRooms[roomId].filter((id) => id !== userId);
+        socket.to(roomId).emit('user-disconnected', { name, userId, roomId });
+      }
+    }
+
+    console.log('A user disconnected');
+  });
+});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -276,12 +371,9 @@ function verifyToken(req, res, next) {
   if (!token) {
     return res.status(401).json({ message: 'Access denied. Token not provided.' });
   }
-  console.log("idkkkkis it")
 
   try {
-    console.log(secretKey)
     const decoded = jwt.verify(token.replace('Bearer ', ''), secretKey);
-    console.log(decoded)
     req.user = decoded;
     next();
   } catch (error) {
@@ -460,7 +552,7 @@ app.post('/reject-pharmacist/:id', async (req, res) => {
 });
 
 // Server-side route to reject and remove a pharmacist
-app.get('/remove-pharmacist',  async (req, res) => {
+app.get('/remove-pharmacist', async (req, res) => {
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -479,7 +571,7 @@ app.get('/remove-pharmacist',  async (req, res) => {
   }
 });
 
-app.post('/remove-pharmacist/:id',  async (req, res) => {
+app.post('/remove-pharmacist/:id', async (req, res) => {
   try {
     const pharmacistId = req.params.id;
 
@@ -515,7 +607,6 @@ app.get('/remove-patient', verifyToken, async (req, res) => {
 
 app.post('/remove-patient/:id', verifyToken, async (req, res) => {
   try {
-    console.log("of course nott")
     const patientId = req.params.id;
 
     // Remove the patient from the database
@@ -898,7 +989,6 @@ app.post('/update-quantity', verifyToken, async (req, res) => {
 app.get('/change-password', verifyToken, async (req, res) => {
   const token = req.header('Authorization');
   const username = req.user.username;
-  console.log(username)
   var sess = logged.in
   var type = logged.type
   var responseData = {
@@ -1025,7 +1115,7 @@ app.post('/place-order', verifyToken, async (req, res) => {
 
     // Save the order to the database
     await order.save();
-    patient.cart=[];
+    patient.cart = [];
     // You may want to update other information like the patient's order history
     // For example, you can add this order to the patient's order history array
 
@@ -1280,7 +1370,6 @@ const generateOTP = () => {
 
 app.post('/send-otp', async (req, res) => {
   const { username } = req.body;
-  console.log(username)
   let email;
   let userType;
   let userModel;
@@ -1316,7 +1405,7 @@ app.post('/send-otp', async (req, res) => {
 
   // Generate an OTP and store it
   const otp = generateOTP();
-  console.log("otp=",otp)
+  console.log("otp=", otp)
   otpStorage[username] = otp;
   sendOTPByEmail(email, otp);
   // Send the OTP to the user's email (you'll need to implement this)
@@ -1343,7 +1432,6 @@ app.post('/reset-password', async (req, res) => {
   const { username, newPassword } = req.body;
   try {
     let patient = await PatientsModel.updateOne({ username: username }, { password: newPassword });
-    console.log(patient,username,newPassword)
     // If the user is not found in PatientsModel, check in PharmacistsModel
     if (patient.modifiedCount === 0) {
       patient = await PharmacistsModel.updateOne({ username: username }, { password: newPassword });
@@ -1659,3 +1747,46 @@ app.post('/createRoomPharmacist', async (req, res) => {
   }
 });
 
+app.post('/createRoompp', async (req, res) => {
+  const token = req.header('Authorization');
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const decoded = jwt.verify(token.replace('Bearer ', ''), 'random');
+  const patient = await PatientsModel.findOne({ username: decoded.username });
+  const patientId = patient._id;
+
+  // Check if there is an inactive room for the patient
+  const existingRoom = await newRoomsModel.findOne({
+    patientId: patientId,
+    isActive: false
+  });
+
+  if (existingRoom) {
+    // If an inactive room exists, reuse it
+    return res.json({ roomId: existingRoom._id });
+  }
+
+  // If no inactive room is found, create a new room
+  const newRoom = await newRoomsModel.create({
+    patientId: patientId,
+    // No need to specify a pharmacistId for now
+    // Other properties for your room creation logic
+  });
+
+  // Return the room ID to the client
+  res.json({ roomId: newRoom._id });
+});
+
+app.get('/allrooms', async (req, res) => {
+  const token = req.header('Authorization');
+  console.log(token + "   tokennn")
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const decoded = jwt.verify(token.replace('Bearer ', ''), 'random');
+  await PharmacistsModel.findOne({ username: decoded.username });
+  const inactiveRooms = await newRoomsModel.find({ isActive: false });
+  console.log(inactiveRooms)
+  res.json(inactiveRooms);
+})

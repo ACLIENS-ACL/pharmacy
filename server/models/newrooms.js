@@ -1,18 +1,22 @@
 const mongoose = require('mongoose');
 
 const newroomSchema = new mongoose.Schema({
-    patientId: {
+  patientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'patients', // Assuming you have a User model for patients
+    ref: 'patients',
     required: true,
   },
   pharmacistId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'pharmacists', // Assuming you have a User model for doctors
-    required: true,
+    ref: 'pharmacists',
+  },
+  isActive: {
+    type: Boolean,
+    default: false,
   },
   // You can add other properties to your room schema if needed
 });
+
 
 const newRoom = mongoose.model('newRoom', newroomSchema);
 
