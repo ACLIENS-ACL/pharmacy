@@ -565,14 +565,18 @@ app.put('/medicines/:name', async (req, res) => {
 
 // filter medicines by medicinalUse
 app.get('/filter-medicines', async (req, res) => {
+  const medicines = [];
   try {
     // Get the medicinalUse from the request query parameters
     const { medicinalUse } = req.query;
 
     // Find all medicines that match the medicinalUse
-    const medicines = await MedicineModel.find({ medicinalUse });
-
+    if(logged.type=='patient')
+     medicines = await MedicineModel.find({ medicinalUse , isArchived: {$in:['false','null']} });
+    else 
+    medicines = await MedicineModel.find({ medicinalUse});
     // Return the matched medicines
+    
     res.json(medicines);
   } catch (error) {
     // Handle any errors
@@ -639,15 +643,19 @@ app.post('/add-medicine', upload.single('image'), async (req, res) => {
 });
 // to search for a medicine
 app.get('/search-medicine', async (req, res) => {
+  const medicines = []
   try {
     // Get the search query from the request query parameters
     const { searchQuery } = req.query;
 
     // Find all medicines that match the search query
-    const medicines = await MedicineModel.find({
-      name: { $regex: searchQuery, $options: 'i' },
+    if(logged.type=='patient'){
+     medicines = await MedicineModel.find({
+      name: { $regex: searchQuery, $options: 'i' }, isArchived: {$in:['false','null']}
     });
-
+  }
+  else medicines = await MedicineModel.find({
+    name: { $regex: searchQuery, $options: 'i' }})
     // Return the matched medicines
     res.json(medicines);
   } catch (error) {
@@ -659,9 +667,14 @@ app.get('/search-medicine', async (req, res) => {
 
 // Server-side route to view a list of all available medicines in the database
 app.get('/medicines', async (req, res) => {
+  const medicines = []
   try {
     // Find all medicines in the database
-    const medicines = await MedicineModel.find({});
+    if(logged.type=='patient')
+    medicines = await MedicineModel.find({isArchived: {$in:['false','null']}});
+  else 
+  medicines = await MedicineModel.find({})
+
     res.json(medicines);
   } catch (error) {
     // Handle any errors
@@ -670,11 +683,14 @@ app.get('/medicines', async (req, res) => {
   }
 });
 app.get('/medicinespharmacist', async (req, res) => {
+  const medicines = []
   try {
     // Find all medicines in the database
-    const medicines = await MedicineModel.find({});
+    if(logged.type=='patient')
+    medicines = await MedicineModel.find({isArchived: {$in:['false','null']}});
+  else 
+  medicines = await MedicineModel.find({})
 
-    // Return the medicines
     res.json(medicines);
   } catch (error) {
     // Handle any errors
@@ -915,7 +931,7 @@ app.put('/cancel-order/:orderId', async (req, res) => {
       const { name, quantity } = item;
       console.log(name, quantity)
       // Find the medicine in the database by ID
-      const medicine = await MedicineModel.findOne({ name: name });
+      const medicine = await MedicineModel.findOne({ name: name , isArchived: {$in:['false','null']} });
 
       if (medicine) {
         // Update the medicine's quantity
@@ -985,7 +1001,7 @@ app.put('/add-to-cart/:orderId', async (req, res) => {
     for (const item of cart) {
       const { name, quantity } = item;
       // Find the medicine in the database by ID
-      const medicine = await MedicineModel.findOne({ name: name });
+      const medicine = await MedicineModel.findOne({ name: name , isArchived: {$in:['false','null']} });
 
       if (medicine) {
         // Update the medicine's quantity
@@ -1052,7 +1068,7 @@ app.get('/update-medicine-quantities', async (req, res) => {
       const { name, quantity } = item;
 
       // Find the medicine in the database by ID
-      const medicine = await MedicineModel.findOne({ name: name });
+      const medicine = await MedicineModel.findOne({ name: name , isArchived: {$in:['false','null']}});
 
       if (medicine) {
         // Update the medicine's quantity
@@ -1290,5 +1306,38 @@ app.get('/uploads/:filename', (req, res) => {
   }
 });
 
+app.post('/archiveMedicine/:name', async (req, res) => {
+const medicineName = req.params.name;
+try {
+  const medicine = await MedicineModel.findOne({name:medicineName});
+  if(medicine){
+    if(medicine.isArchived==True)
+      return res.status(404).json({ message: 'medicine already archived' });
+    else  medicine.isArchived = True;
+  }
+} catch (error) {
+  console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+}
+})
+
+app.post('/UnarchiveMedicine/:name', async (req, res) => {
+  const medicineName = req.params.name;
+  try {
+    const medicine = await MedicineModel.findOne({name:medicineName});
+    if(medicine){
+      if(medicine.isArchived==true)
+        medicine.isArchived=false
+      else  return res.status(404).json({ message: 'medicine already not archived' });
+    }
+  } catch (error) {
+    console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+  })
+
+app.get('/viewSales/:month', async (req, res) => {
+
+})
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

@@ -44,6 +44,10 @@ const medicineSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isArchived:{
+    type:Boolean,
+     required:false,
+  },
 });
 
 const MedicineModel = mongoose.model('Medicine', medicineSchema);
