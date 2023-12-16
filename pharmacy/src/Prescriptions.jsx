@@ -63,7 +63,7 @@ function Prescriptions() {
                 // The chat room was successfully created
                 // You can redirect to the chat page or perform additional actions
                 console.log(`Chat room created with ID: ${response.data.roomId}`);
-                navigate(`/chat/ ${response.data.roomId}`)
+                navigate(`/chatdr/${response.data.roomId}`)
             } else {
                 console.error('Failed to create chat room');
             }

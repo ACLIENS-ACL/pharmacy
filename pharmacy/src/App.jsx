@@ -30,6 +30,7 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Prescriptions from './Prescriptions';
 import MyChat from './pharmacistchat';
 import ChatApp from './chat'
+import DrPchat from './pharmachatdr'
 import Patientchat from './patientchat';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
         <Route path="/edit-med" element={<EditMed />} />
         <Route path="/pharmachat/:roomId" element={<MyChat />} />
         <Route path="/chat/:roomId" element={<ChatApp />} />
+        <Route path="/chatdr/:roomId" element={<DrPchat />} />
         <Route path="/pharmacist" element={<PharmacistDashboard />} />
         <Route path="/makeReq" element={<PharmacistRegistrationForm />} />
         <Route path="/patient" element={<PatientDashboard />} />
