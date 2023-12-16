@@ -44,9 +44,14 @@ const medicineSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isArchived:{
-    type:Boolean,
-     required:false,
+  archived: {
+    type: Boolean,
+    default: false,
+  },
+  pharmacistId: {
+    type: mongoose.Schema.Types.ObjectId, // Assuming the pharmacistId is ObjectId
+    ref: 'Pharmacist', // Reference to Pharmacist model
+    
   },
 });
 

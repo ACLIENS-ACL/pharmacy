@@ -22,6 +22,7 @@ const OrderSchema = new mongoose.Schema({
   totalAmount: Number,
   deliveryAddress: String,
   paymentMethod: String,
+  
 });
 
 const OrderModel = mongoose.model('Order', OrderSchema);
