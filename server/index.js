@@ -1192,8 +1192,6 @@ app.get('/wallet-balance', verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    console.log(user)
-    console.log(user[0].wallets)
     res.json({ balance: user[0].wallets });
   } catch (error) {
     console.error('Error fetching wallet balance:', error);
@@ -1301,13 +1299,17 @@ app.get('/update-medicine-quantities', verifyToken, async (req, res) => {
 
       // Find the medicine in the database by ID
       const medicine = await MedicineModel.findOne({ name: name });
+      console.log(medicine)
 
       if (medicine) {
-        // Update the medicine's quantity
+        // Update the medicine's 
+        const sales = medicine.sales + quantity;
         const updatedQuantity = medicine.quantity - quantity;
+        medicine.sales = sales;
         medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
         if (updatedQuantity <= 0) {
           const pharmacist = await PharmacistsModel.findOne({ _id: medicine.pharmacistId });
+          console.log(pharmacist,medicine.pharmacistId)
           sendNotificationEmail(medicine.name, pharmacist.email)
           pharmacist.latestNotifications.push({
             message: `${medicine.name} is out of stock`,
