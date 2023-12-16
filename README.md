@@ -528,13 +528,13 @@ Here is a list of all the routes available in the project:
 - **GET:** `/roomsToJoin`
 
 # Tests
-![Testing doctor Requests](https://github.com/ACLIENS-ACL/clinic/blob/main/Testing%20doctor%20Requests.png)
-![Testing Adding family Members](https://github.com/ACLIENS-ACL/clinic/blob/main/Testing%20Adding%20family%20Members.png)
-![Testing health Packages](https://github.com/ACLIENS-ACL/clinic/blob/main/Testing%20health%20Packages.png)
+![Testing doctor Requests](https://github.com/ACLIENS-ACL/pharmacy/blob/main/screenshots/TestingPharmacistRequest.png)
+![Testing Adding family Members](https://github.com/ACLIENS-ACL/pharmacy/blob/main/screenshots/TestingSalesReport.png)
+![Testing health Packages](https://github.com/ACLIENS-ACL/pharmacy/blob/main/screenshots/TestingPatientOrders.png)
 
 # How to Use
   * Open two separate terminals.
-  * In the first terminal, go to the Backend folder and type the command: `npm start`
+  * In the first terminal, go to the Backend folder and type the command: `npm strt`
       ```bash
       cd server && npm start
       ```
