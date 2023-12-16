@@ -11,7 +11,7 @@ const Status = ({ isOpen,Status, onCancel}) => {
     <div className={`modal-wrapper ${isOpen ? 'show' : ''}`}>
       <div className="backdrop" onClick={handleBackdropClick}></div>
       <div className="modal-content">
-        <p>Your Status is still "{Status}"</p>
+        <p>Your Request is still "{Status}"</p>
         <button className='modal-buttons' onClick={handleBackdropClick}>Ok</button>
       </div>
     </div>

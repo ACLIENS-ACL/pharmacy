@@ -130,7 +130,6 @@ function ViewPharmacist() {
                         <th className="text-center">DOB</th>
                         <th className="text-center">Mobile Number</th>
                         <th className="text-center">Hourly Rate</th>
-                        <th className="text-center">Enrolled</th>
                         <th className="text-center">Actions</th>
                       </tr>
                     </thead>
@@ -143,7 +142,6 @@ function ViewPharmacist() {
                             <td className="text-center">{pharmacist.dob}</td>
                             <td className="text-center">{pharmacist.mobileNumber}</td>
                             <td className="text-center">{pharmacist.hourlyRate}</td>
-                            <td className="text-center">{pharmacist.enrolled}</td>
                             <td className="text-center">
                               <button
                                 className="btn btn-danger btn-sm"

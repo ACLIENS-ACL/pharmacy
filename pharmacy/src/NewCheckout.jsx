@@ -231,6 +231,7 @@ const NewCheckout = ({ click }) => {
         console.log("helloooo",orderData)
         axios
             .get('http://localhost:3002/update-medicine-quantities', { headers })
+            console.log("here i am")
         // Send a request to the server to place the order
         axios
             .post('http://localhost:3002/place-order', orderData, { headers })
