@@ -32,6 +32,7 @@ function ChangePasswor() {
     const handleChangePassword = () => {
         setError(''); // Reset any previous errors
         setSuccessMessage('');
+        console.log(currentPassword,newPassword,confirmPassword)
 
         if (!currentPassword || !newPassword || !confirmPassword) {
             setError('All fields are required.');
@@ -65,7 +66,6 @@ function ChangePasswor() {
             .then((response) => {
                 console.log("hi")
                 console.log(response.data.message)
-                console.log(response.message)
                 setSuccessMessage(response.data.message);
             })
             .catch((error) => {
@@ -79,6 +79,7 @@ function ChangePasswor() {
         axios.get('http://localhost:3002/change-password', { headers })
             .then((response) => {
                 const responseData = response.data;
+                console.log(responseData.patientRequests.password)
                 setcurrentpass(responseData.patientRequests.password);
             })
             .catch((error) => {
