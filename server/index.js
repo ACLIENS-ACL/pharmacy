@@ -1717,6 +1717,7 @@ app.post('/createRoom', verifyToken, async (req, res) => {
     const pharmacist = await PharmacistsModel.findOne({ username: username });
     const pharmacistId = pharmacist._id
     const doctorId = DoctorId
+    console.log(pharmacist,doctorId)
     // Check if a room exists with the given doctorId and PharmacistId
     const existingRoom = await RoomsModel.findOne({ doctorId, pharmacistId });
 
@@ -1725,6 +1726,7 @@ app.post('/createRoom', verifyToken, async (req, res) => {
     } else {
       // Create a new room and add it to the RoomsModel
       const newRoom = new RoomsModel({ doctorId, pharmacistId });
+      console.log(newRoom)
       await newRoom.save();
 
       res.json({ roomId: newRoom._id });
