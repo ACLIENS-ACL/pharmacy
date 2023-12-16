@@ -11,6 +11,7 @@ const RoomsModel = require('./models/rooms');
 const newRoomsModel = require('./models/newrooms');
 var session = require("express-session");
 const jwt = require('jsonwebtoken');
+const listEndpoints = require('express-list-endpoints');
 
 const secretKey = 'random';
 
@@ -688,7 +689,6 @@ app.post('/view-patient/:id', verifyToken, async (req, res) => {
   }
 });
 
-app.listen(3002, 'localhost');
 
 // Server-side route to update a medicine by ID// Server-side route to update a medicine by name
 app.put('/medicines/:name', verifyToken, async (req, res) => {
@@ -1224,20 +1224,6 @@ app.put('/add-to-cart/:orderId', async (req, res) => {
     // Find the order by its ID
     const order = await OrderModel.findById(orderId);
     const cart = order.items
-    // for (const item of cart) {
-    //   const { name, quantity } = item;
-    //   // Find the medicine in the database by ID
-    //   const medicine = await MedicineModel.findOne({ name: name });
-
-    //   if (medicine) {
-    //     // Update the medicine's quantity
-    //     const updatedQuantity = medicine.quantity + quantity;
-    //     medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
-
-    //     // Save the updated medicine
-    //     await medicine.save();
-    //   }
-    // }
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -1309,7 +1295,7 @@ app.get('/update-medicine-quantities', verifyToken, async (req, res) => {
         medicine.quantity = updatedQuantity >= 0 ? updatedQuantity : 0;
         if (updatedQuantity <= 0) {
           const pharmacist = await PharmacistsModel.findOne({ _id: medicine.pharmacistId });
-          console.log(pharmacist,medicine.pharmacistId)
+          console.log(pharmacist, medicine.pharmacistId)
           sendNotificationEmail(medicine.name, pharmacist.email)
           pharmacist.latestNotifications.push({
             message: `${medicine.name} is out of stock`,
@@ -1717,7 +1703,7 @@ app.post('/createRoom', verifyToken, async (req, res) => {
     const pharmacist = await PharmacistsModel.findOne({ username: username });
     const pharmacistId = pharmacist._id
     const doctorId = DoctorId
-    console.log(pharmacist,doctorId)
+    console.log(pharmacist, doctorId)
     // Check if a room exists with the given doctorId and PharmacistId
     const existingRoom = await RoomsModel.findOne({ doctorId, pharmacistId });
 
@@ -1826,3 +1812,6 @@ app.get('/roomsToJoin', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+app.listen(3002, 'localhost');
