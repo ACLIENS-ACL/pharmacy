@@ -39,10 +39,11 @@ const activeUsers = {};
 const activeRooms = {};
 const io = require('socket.io')({
   cors: {
-    origin: "http://localhost:5173",  // Replace with your actual frontend origin
+    origin: ["http://127.0.0.1:5174", "http://127.0.0.1:5173", "http://localhost:5174", "http://localhost:5173"],  // Replace with your actual frontend origin
     methods: ["GET", "POST"]
   }
-}).listen(3003);
+}).listen(3005);
+
 io.on('connection', (socket) => {
   console.log('A user connected');
 
@@ -104,15 +105,13 @@ io.on('connection', (socket) => {
     }
   });
 
-
-
-
   socket.on('send-chat-message', ({ message, userId, roomId }) => {
     console.log(message, userId, roomId, "da")
     // Broadcast the message to all users in the room
-    if (activeUsers[userId]) {
-      socket.to(roomId).emit('chat-message', { name: activeUsers[userId].name, message, userId, roomId });
-    }
+
+    console.log("yess");
+    socket.to(roomId).emit('chat-message', { name: userId, message, userId, roomId });
+
   });
 
   socket.on('disconnect', () => {
@@ -207,7 +206,13 @@ app.get('/pharmacist', verifyToken, async (req, res) => {
 })
 
 app.get('/patientData', verifyToken, async (req, res) => {
-  const Patient = await PatientsModel.findOne({ username: logged.username });
+  const token = req.header('Authorization');
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const decoded = jwt.verify(token.replace('Bearer ', ''), 'random');
+  const Patient = await PatientsModel.findOne({ username: decoded.username });
   // Now 'logged' contains the username from the token, and you can respond with it
   res.json({ logged: logged, patient: Patient });
 })
@@ -318,13 +323,13 @@ app.post('/register-pharmacist', async (req, res) => {
     const existingPae = await AdminsModel.findOne({ email: pharmacistData.email });
 
     if (existingPharmacist || existingPatient || existingPa) {
-      res.status(400).json({ error: 'Username already exists, Please Chose a unique username' });
+      return res.json({ message: 'Username already exists' });
     }
     else if (existingPatiente || existingPe || existingPae) {
-      res.status(400).json({ error: 'Email already registered to another user' });
+      return res.json({ message: 'An account with the same email already exists' });
     } else {
       const pharmacist = await PharmacistsModel.create(pharmacistData);
-      res.json(pharmacist);
+      return res.json({ message: 'completed' })
     }
   } catch (err) {
     res.status(400).json(err);
@@ -370,7 +375,6 @@ app.post('/login-pharmacist', (req, res) => {
 });
 function verifyToken(req, res, next) {
   const token = req.header('Authorization');
-  console.log("himeishere", token)
   if (!token) {
     return res.status(401).json({ message: 'Access denied. Token not provided.' });
   }
@@ -1086,9 +1090,12 @@ app.post('/place-order', verifyToken, async (req, res) => {
     if (!cart || !deliveryAddress || !paymentMethod) {
       return res.status(400).json({ message: 'Missing order data' });
     }
+    const token = req.header('Authorization');
+    const username = req.user.username;  // Access the username from the request object
 
-    // You can add the username from the authenticated user if available
-    const username = logged.username; // Replace with the actual username or user identification logic
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
 
     // Check if the user (patient) exists
     const patient = await PatientsModel.findOne({ username: username });
@@ -1185,6 +1192,8 @@ app.get('/wallet-balance', verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    console.log(user)
+    console.log(user[0].wallets)
     res.json({ balance: user[0].wallets });
   } catch (error) {
     console.error('Error fetching wallet balance:', error);
@@ -1268,15 +1277,21 @@ app.put('/add-to-cart/:orderId', async (req, res) => {
 
 app.get('/update-medicine-quantities', verifyToken, async (req, res) => {
   try {
-    // Assuming you pass the user's ID in the request body
-    const userId = logged.username;
+    const token = req.header('Authorization');
+    const username = req.user.username;  // Access the username from the request object
 
+    console.log(username + " - username of token");
+
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    console.log("HAHHEE")
     // Find the user in the database
-    const user = await PatientsModel.findOne({ username: userId });
+    const user = await PatientsModel.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
+    console.log(user)
     // Get the user's cart from the database
     const cart = user.cart;
 
@@ -1334,7 +1349,7 @@ const sendOTPByEmail = (toEmail, otp) => {
     from: 'acliensproject@gmail.com',
     to: toEmail, // User's email address
     subject: 'Your OTP for Password Reset',
-    text: `Your OTP for password reset is: ${otp}`,
+    text: ` Your OTP for password reset is: ${otp}`,
 
 
   };
@@ -1783,13 +1798,27 @@ app.post('/createRoompp', async (req, res) => {
 
 app.get('/allrooms', async (req, res) => {
   const token = req.header('Authorization');
-  console.log(token + "   tokennn")
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
   const decoded = jwt.verify(token.replace('Bearer ', ''), 'random');
   await PharmacistsModel.findOne({ username: decoded.username });
   const inactiveRooms = await newRoomsModel.find({ isActive: false });
-  console.log(inactiveRooms)
   res.json(inactiveRooms);
 })
+
+app.get('/roomsToJoin', async (req, res) => {
+  try {
+    const token = req.header('Authorization');
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const decoded = jwt.verify(token.replace('Bearer ', ''), 'random');
+    const doctor = await Clinicd.findOne({ username: decoded.username });
+    const rooms = await RoomsModel.find({ doctorId: doctor._id });
+    console.log(rooms);
+    res.json(rooms)
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
