@@ -76,7 +76,6 @@ const LandingPage = () => {
                 } else if (message === 'Waiting for contract') {
                     navigate('/contract');
                 } else if (message === 'Success' || message === 'success') {
-                    alert(message);
                     const decodedToken = jwtDecode(token);
                     if (decodedToken.type.toLowerCase() === 'admin') {
                         localStorage.setItem('adminToken', token);

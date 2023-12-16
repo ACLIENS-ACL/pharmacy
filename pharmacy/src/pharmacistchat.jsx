@@ -23,11 +23,16 @@ const MyChat = () => {
   const userId = token ? token.username : generateUserId();
 
   const socket = useRef(null);
-
+  useEffect(() => {
+    // Scroll to the bottom of the messages container
+    if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+}, [messages]);
 
   useEffect(() => {
     setUsername(userId);
-     socket.current = io('http://localhost:3003', {
+     socket.current = io('http://localhost:3005', {
       query: {
         userId: userId,
         roomId: roomId,

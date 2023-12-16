@@ -52,7 +52,7 @@ const Nav = () => {
         axios.get(`http://localhost:3002/patientData`, { headers })
             .then((response) => {
                 setPatient(response.data.patient)
-                console.log(response.data.patient.cart)
+                console.log(response.data.patient.cart.length)
                 setCartItems(response.data.patient.cart.length);
             })
     }, []);

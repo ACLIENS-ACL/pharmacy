@@ -99,7 +99,7 @@ const NewCheckout = ({ click }) => {
     }, [token, navigate]);
 
     useEffect(() => {
-        axios.get(`http://localhost:3002/patientData`, { headers })
+        axios.get('http://localhost:3002/patientData', { headers })
             .then((response) => {
                 setPatient(response.data.patient)
                 console.log(response.data.patient.cart)
@@ -169,31 +169,39 @@ const NewCheckout = ({ click }) => {
     const handleAddressChange = (event) => {
         setSelectedAddress(event.target.value);
     };
+    const handleNewAddressChange = (event) => {
+        setNewAddress(event.target.value);
+    };
 
-    const placeOrder = () => {
-        console.log("hello,".selectedAddress,selectedPaymentMethod)
-        if (!selectedAddress || !selectedPaymentMethod) {
+    const placeOrder = async () => {
+        console.log("hello,".selectedAddress, selectedPaymentMethod)
+        if ((newAddress == '' && !selectedAddress) || !selectedPaymentMethod) {
             alert('Please select a delivery address and payment method.');
             return;
         }
-        const orderData = {
-          cart: cartData,
-          deliveryAddress: selectedAddress,
-          paymentMethod: selectedPaymentMethod,
+        var orderData = {
+            cart: cartData,
+            deliveryAddress: selectedAddress,
+            paymentMethod: selectedPaymentMethod,
         };
-
         if (newAddress == '') {
             setErrorMessage('Please Add an Address');
         }
-        else if (!existingAddresses.includes(newAddress)) {
+        else if (newAddress != '') {
+             orderData = {
+                cart: cartData,
+                deliveryAddress: newAddress,
+                paymentMethod: selectedPaymentMethod,
+            };
             // Create a new array with the existing addresses and the new address
             const updatedAddresses = [...existingAddresses, newAddress];
             console.log(updatedAddresses)
 
             // Send the updated addresses to the backend
-            axios
+            await axios
                 .post('http://localhost:3002/add-address', { addresses: updatedAddresses }, { headers })
                 .then((response) => {
+
                     // Handle the response if needed
                 })
                 .catch((error) => {
@@ -215,14 +223,14 @@ const NewCheckout = ({ click }) => {
         }
 
         if (selectedPaymentMethod === 'wallet') {
-            console.log(walletBalance)
-            console.log(total)
             if (walletBalance < total) {
                 alert('Insufficient funds in the wallet. Please choose another payment method.');
                 return;
             }
         }
-        console.log("helloooo")
+        console.log("helloooo",orderData)
+        axios
+            .get('http://localhost:3002/update-medicine-quantities', { headers })
         // Send a request to the server to place the order
         axios
             .post('http://localhost:3002/place-order', orderData, { headers })
@@ -239,8 +247,7 @@ const NewCheckout = ({ click }) => {
                             console.error('Error updating wallet balance:', error);
                         });
                 }
-                axios
-                    .get('http://localhost:3002/update-medicine-quantities', { headers })
+                navigate('/Thankyou')
             })
             .catch((error) => {
                 console.error('Error placing the order:', error);
@@ -309,6 +316,7 @@ const NewCheckout = ({ click }) => {
                                                     id="c_diff_address"
                                                     name="c_diff_address"
                                                     placeholder="Add New Address"
+                                                    onChange={handleNewAddressChange}
                                                 />
                                             </div>
                                         </div>
@@ -401,9 +409,8 @@ const NewCheckout = ({ click }) => {
                                         )}
 
                                         <div class="form-group">
-                                            <Link to="/Thankyou">
                                             <button class="btn btn-primary btn-lg btn-block" onClick={placeOrder}>Place
-                                                Order</button></Link>
+                                                Order</button>
                                         </div>
 
                                     </div>

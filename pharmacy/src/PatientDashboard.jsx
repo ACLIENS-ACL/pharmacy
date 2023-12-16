@@ -63,7 +63,6 @@ const settings = {
 };
 const PatientDashboard = ({ click }) => {
     const [patient, setPatient] = useState([]);
-    const [cartItems, setCartItems] = useState(0);
     const navigate = useNavigate();
     const token = localStorage.getItem('patientToken');
     const headers = {
@@ -84,27 +83,8 @@ const PatientDashboard = ({ click }) => {
         axios.get(`http://localhost:3002/patientData`, { headers })
             .then((response) => {
                 setPatient(response.data.patient)
-                console.log(response.data.patient.cart)
-                setCartItems(response.data.patient.cart.length);
             })
     }, []);
-
-    const handleLogout = () => {
-        // Perform any necessary logout actions (e.g., clearing session or tokens).
-        // After logging out, navigate to the login page.
-        // Fetch admin data from the server
-        // axios.get(`http://localhost:3002/logout`, {headers})
-        //   .then((response) => {
-        //     const responseData = response.data;
-        //     if (responseData.type == "") {
-        localStorage.removeItem('token');
-        navigate('/login');
-        //   }
-        // })
-    };
-    const updateCartCount = () => {
-        return cartItems;
-      };
 
 
     return (
@@ -163,7 +143,7 @@ const PatientDashboard = ({ click }) => {
                     <div></div>
                 </div>
             </nav> */}
-<Nav  />
+            <Nav />
             <div className="site-blocks-cover" style={{
                 backgroundImage: `url( ${backgroundImage})`
             }}>
@@ -212,7 +192,7 @@ const PatientDashboard = ({ click }) => {
                 <div className="container">
                     <div className="row align-items-stretch">
                         <div className="col-lg-6 mb-5 mb-lg-0">
-                            <Link to="/orders" className="banner-1 h-100 d-flex" style={{ backgroundImage: `url(${bg_1})`,textDecoration:"none" }}>
+                            <Link to="/orders" className="banner-1 h-100 d-flex" style={{ backgroundImage: `url(${bg_1})`, textDecoration: "none" }}>
                                 <div className="banner-1-inner align-self-center">
                                     <h2>Past Orders</h2>
                                     <p>
@@ -222,7 +202,7 @@ const PatientDashboard = ({ click }) => {
                             </Link>
                         </div>
                         <div className="col-lg-6 mb-5 mb-lg-0">
-                            <Link to="/patientchat" className="banner-1 h-100 d-flex justify-content-end" style={{ backgroundImage: `url(${bg_2})`,textDecoration:"none" }}>
+                            <Link to="/patientchat" className="banner-1 h-100 d-flex justify-content-end" style={{ backgroundImage: `url(${bg_2})`, textDecoration: "none" }}>
                                 <div className="banner-1-inner ml-auto align-self-center">
                                     <h2>Chat with Pharmacist</h2>
                                     <p>

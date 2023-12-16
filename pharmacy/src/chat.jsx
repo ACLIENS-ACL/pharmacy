@@ -33,7 +33,7 @@ const ChatApp = () => {
 
     useEffect(() => {
         setUsername(userId);
-         socket.current = io('http://localhost:3003', {
+         socket.current = io('http://localhost:3005', {
             query: {
                 userId: userId,
                 roomId: roomId, // Pass the roomId to the socket creation
