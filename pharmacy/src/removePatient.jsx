@@ -52,7 +52,7 @@ function RemovePatient() {
     setFilteredPatients(filtered);
   };
 
-  
+
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
@@ -68,9 +68,9 @@ function RemovePatient() {
 
   return (
     <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <h2>Patients</h2>
       {message && <div className="alert alert-danger">{message}</div>}
       <div style={{ marginBottom: '20px' }}>
@@ -116,10 +116,10 @@ function RemovePatient() {
                     key !== 'username' &&
                     key !== 'password' &&
                     key !== 'enrolled' &&
-                    key !== '__v'&&
-                    key !== 'cart'&&
-                    key !== 'orders'&&
-                    key !== 'deliveryAddresses'&&
+                    key !== '__v' &&
+                    key !== 'cart' &&
+                    key !== 'orders' &&
+                    key !== 'deliveryAddresses' &&
                     key !== 'wallets'
                 )
                 .map((key) => (

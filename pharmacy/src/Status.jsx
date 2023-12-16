@@ -2,7 +2,7 @@
 import React from 'react';
 import './styles/style.css';
 
-const Status = ({ isOpen,Status, onCancel}) => {
+const Status = ({ isOpen, Status, onCancel }) => {
   const handleBackdropClick = () => {
     onCancel();
   };

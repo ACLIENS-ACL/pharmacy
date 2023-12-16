@@ -54,9 +54,9 @@ function ViewPharmacist() {
 
   return (
     <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <h2>Pharmacists</h2>
       {message && <div className="alert alert-danger">{message}</div>}
       <div style={{ marginBottom: '20px' }}>

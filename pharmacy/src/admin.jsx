@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBContainer, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import axios from 'axios';
@@ -17,12 +17,12 @@ function AdminDashboard() {
   }, [token, navigate]);
   useEffect(() => {
     // Fetch admin data from the server
-    axios.get(`http://localhost:3002/adminadmin`, {headers})
+    axios.get(`http://localhost:3002/adminadmin`, { headers })
       .then((response) => {
         const responseData = response.data;
 
         console.log(responseData)
-        if (responseData.username === "admin" || responseData.password ==="admin") {
+        if (responseData.username === "admin" || responseData.password === "admin") {
           setIsAdmin(true);
         } else {
           setIsAdmin(false);
@@ -30,7 +30,7 @@ function AdminDashboard() {
       })
   }, []);
 
-  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     // Perform any necessary logout actions (e.g., clearing session or tokens).
@@ -40,9 +40,9 @@ function AdminDashboard() {
 
   return (
     <MDBContainer className="mt-5">
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <MDBRow className="justify-content-center">
         {/* Existing Cards */}
         <MDBCol md="4" className="mb-4">
@@ -131,7 +131,7 @@ function AdminDashboard() {
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
-        {!isAdmin  && (
+        {!isAdmin && (
           <MDBCol md="4" className="mb-4">
             <MDBCard>
               <MDBCardBody>

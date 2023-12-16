@@ -35,16 +35,16 @@ function Prescriptions() {
                 }
             })
             .catch(error => {
-              // Handle API call errors
-              console.error('Error fetching data:', error);
-      
-              // Check the status code in the error response
-              if (error.response && error.response.status === 401) {
-                // Redirect to the login page if the token is invalid
-                navigate('/login');
-              } else {
-                // Handle other error cases as needed
-              }
+                // Handle API call errors
+                console.error('Error fetching data:', error);
+
+                // Check the status code in the error response
+                if (error.response && error.response.status === 401) {
+                    // Redirect to the login page if the token is invalid
+                    navigate('/login');
+                } else {
+                    // Handle other error cases as needed
+                }
             });
         if (Prescreptions == null) {
             navigate('/login');
@@ -95,7 +95,7 @@ function Prescriptions() {
                                 </ul>
                                 <button
                                     type="button"
-                                    className="btn btn-primary mt-3" style={{backgroundColor:"#1fab89",borderColor:"#1fab89"}}
+                                    className="btn btn-primary mt-3" style={{ backgroundColor: "#1fab89", borderColor: "#1fab89" }}
                                     onClick={() => handleChatButtonClick(prescription.doctorID)}
                                 >
                                     Chat with Doctor

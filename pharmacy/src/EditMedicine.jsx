@@ -139,8 +139,10 @@ const EditMed = () => {
           </select>
           <button
             className="btn btn-primary m-2"
-            style={{ backgroundColor: '#62d2a2' ,
-            borderColor: '#62d2a2'}} 
+            style={{
+              backgroundColor: '#62d2a2',
+              borderColor: '#62d2a2'
+            }}
             onClick={() => {
               const selectedMedicine = medicines.find(medicine => medicine._id === selectedMedicineId);
               handleSelectMedicine(selectedMedicine);
@@ -220,8 +222,10 @@ const EditMed = () => {
                   </div>
 
                   <button type="button" className="btn btn-primary"
-                    style={{ backgroundColor: '#62d2a2' ,
-                    borderColor: '#62d2a2'}} onClick={handleSaveChanges}>
+                    style={{
+                      backgroundColor: '#62d2a2',
+                      borderColor: '#62d2a2'
+                    }} onClick={handleSaveChanges}>
                     Save Changes
                   </button>
                 </form>

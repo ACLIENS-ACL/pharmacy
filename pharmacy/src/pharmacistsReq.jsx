@@ -12,7 +12,7 @@ function PharmacistsRequests() {
     axios.get('http://localhost:3001/pharmacist-requests')
       .then((response) => {
         const responseData = response.data;
-        console.log(responseData.pharmacistRequests+" dasmlm")
+        console.log(responseData.pharmacistRequests + " dasmlm")
         if (responseData.userType === 'admin' && responseData.sessi === true) {
           setRequests(responseData.pharmacistRequests);
         } else {
@@ -24,7 +24,7 @@ function PharmacistsRequests() {
         setMessage('An error occurred while fetching pharmacist requests.');
       });
   }, [navigate]);
-  
+
   const pendingRequests = requests.filter((request) => request.enrolled === 'pending');
   console.log(pendingRequests)
 
@@ -54,7 +54,7 @@ function PharmacistsRequests() {
       });
   };
 
-  
+
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
@@ -70,9 +70,9 @@ function PharmacistsRequests() {
 
   return (
     <div className="page-container" style={{ boxSizing: 'border-box', padding: '20px' }}>
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <h2 style={{ fontSize: '2rem', color: 'blue', marginBottom: '20px' }}>Pharmacist Requests</h2>
       {message && <div className="alert alert-danger">{message}</div>}
       <ul>

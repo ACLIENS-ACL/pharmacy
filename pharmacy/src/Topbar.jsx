@@ -33,7 +33,7 @@ const Topbar = () => {
     // })
   };
   const handleGoBack = () => {
-      navigate(-1); // This will go back to the previous page
+    navigate(-1); // This will go back to the previous page
   };
   return (
     <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">

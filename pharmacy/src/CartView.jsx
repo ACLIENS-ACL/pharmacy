@@ -12,12 +12,12 @@ function CartView() {
     setCartItems(updatedCart);
     axios
       .post('http://localhost:3001/remove-item', { cart: updatedCart })
-      .then((response) => {})
+      .then((response) => { })
       .catch((error) => {
         console.error('Error removing item:', error);
       });
   };
-  
+
   useEffect(() => {
     // Fetch admin data from the server
     axios.get(`http://localhost:3001/patient`)
@@ -43,7 +43,7 @@ function CartView() {
 
       axios
         .post('http://localhost:3001/update-quantity', { cart: updatedCart })
-        .then((response) => {})
+        .then((response) => { })
         .catch((error) => {
           console.error('Error updating quantity:', error);
         });
@@ -115,7 +115,7 @@ function CartView() {
       border: '1px solid #007BFF',
       backgroundColor: '#007BFF',
       color: '#fff',
-      marginRight:'2px'
+      marginRight: '2px'
     },
     removeButton: {
       marginTop: '10px',

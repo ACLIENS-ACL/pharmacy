@@ -4,10 +4,10 @@ export const json = {
   "logo": "https://api.surveyjs.io/private/Surveys/files?name=09b0ee2a-d256-4376-b328-8be12d868f14",
   "logoWidth": "auto",
   "logoHeight": "96",
-  "completedHtml": "<div style=\"max-width:540px;text-align:left;margin:0px auto 16px auto;border: 1px solid rgba(0,0,0,0.25);padding:40px 48px 48px 48px;background-color:#fff;\">\n\n<h4>Thank you for completing your {userType} registration form.</h4>\n<br>\n<p>Dear {firstname-for-complete-page},\n<br>\nYour information has been successfully received, and we look forward to providing you with the highest level of care. \n<br><br>\n {additionalMessage} \n<br><br>\nIf you have any questions, please don't hesitate to reach out to our office. Our team is here to assist you every step of the way.\n<br><br>\nWarm regards,\n<br>\nCentral Hospital.</p>\n\n</div>",    "pages": [
+  "completedHtml": "<div style=\"max-width:540px;text-align:left;margin:0px auto 16px auto;border: 1px solid rgba(0,0,0,0.25);padding:40px 48px 48px 48px;background-color:#fff;\">\n\n<h4>Thank you for completing your {userType} registration form.</h4>\n<br>\n<p>Dear {firstname-for-complete-page},\n<br>\nYour information has been successfully received, and we look forward to providing you with the highest level of care. \n<br><br>\n {additionalMessage} \n<br><br>\nIf you have any questions, please don't hesitate to reach out to our office. Our team is here to assist you every step of the way.\n<br><br>\nWarm regards,\n<br>\nCentral Hospital.</p>\n\n</div>", "pages": [
     {
       "name": "page0",
-      "elements":[
+      "elements": [
         {
           "type": "dropdown",
           "name": "userType",
@@ -50,7 +50,7 @@ export const json = {
               "minWidth": "256px",
               "startWithNewLine": false,
               "title": "Gender",
-              "choices": [ "Male", "Female" ],
+              "choices": ["Male", "Female"],
               "choicesOrder": "random",
               "placeholder": "",
               "allowClear": false
@@ -112,7 +112,7 @@ export const json = {
               "isRequired": true,
               "startWithNewLine": false,
               "title": "Relationship",
-              "choices": [ "Family Member", "Friend", "Partner", "Work Colleague" ],
+              "choices": ["Family Member", "Friend", "Partner", "Work Colleague"],
               "choicesOrder": "random",
               "placeholder": "",
               "allowClear": false
@@ -160,7 +160,7 @@ export const json = {
               "startWithNewLine": false,
               "title": "Password",
             },
-          
+
           ],
           "title": "Login Credentials",
           "width": "100%",
@@ -169,7 +169,7 @@ export const json = {
         {
           "type": "panel",
           "name": "professional-experience",
-           "visibleIf": "{userType} == 'Pharmacist'",
+          "visibleIf": "{userType} == 'Pharmacist'",
 
           "elements": [
             {
@@ -212,7 +212,7 @@ export const json = {
               "accept": ".pdf,.jpg,.jpeg,.png",
               "isRequired": true,
               "multiple": true,
-              "storeDataAsText":false
+              "storeDataAsText": false
 
             },
             {
@@ -221,7 +221,7 @@ export const json = {
               "title": "ID Document",
               "accept": ".pdf,.jpg,.jpeg,.png",
               "isRequired": true,
-              "storeDataAsText":false
+              "storeDataAsText": false
             },
             {
               "type": "file",
@@ -229,10 +229,10 @@ export const json = {
               "title": "Medical Degree",
               "accept": ".pdf,.jpg,.jpeg,.png",
               "isRequired": true,
-              "storeDataAsText":false
+              "storeDataAsText": false
 
             }
-          
+
           ],
           "title": "Professional Experience",
           "width": "100%",

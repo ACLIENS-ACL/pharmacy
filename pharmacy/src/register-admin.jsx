@@ -59,20 +59,20 @@ function RegistrationForm() {
       };
 
       const result = await axios.post('http://localhost:3001/register-admin', adminData);
-console.log(result.data.message)
+      console.log(result.data.message)
       if (result.data.message === 'Admin added successfully') {
         setMessage('Admin registered successfully.');
-      } else if(result.data.message === 'Username already exists') {
+      } else if (result.data.message === 'Username already exists') {
         console.log("dsad")
         setMessage('Username Already Exists');
-      }else if(result.data.message === 'Email already registered to another user') {
+      } else if (result.data.message === 'Email already registered to another user') {
         setMessage('Email already registered to another user');
       }
     } catch (error) {
       setMessage('An error occurred. Please try again later.');
     }
   };
-  
+
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
@@ -85,7 +85,7 @@ console.log(result.data.message)
         }
       })
   };
-  
+
   const logoutButtonStyle = {
     position: 'absolute',
     top: '20px',
@@ -94,7 +94,7 @@ console.log(result.data.message)
 
   return (
     <MDBContainer className="vh-100 d-flex justify-content-center align-items-center">
-    <button onClick={handleLogout} className="btn btn-danger" style={logoutButtonStyle}>
+      <button onClick={handleLogout} className="btn btn-danger" style={logoutButtonStyle}>
         Logout
       </button>
       <MDBRow>

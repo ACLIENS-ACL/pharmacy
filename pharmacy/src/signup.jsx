@@ -118,7 +118,7 @@
 //         }
 //       });
 //   };
-  
+
 
 //   const formStyle = {
 //     background: 'linear-gradient(to bottom right, rgba(240, 147, 251, 1), rgba(245, 87, 108, 1))',
@@ -631,7 +631,7 @@ function SurveyComponent() {
       // Make an Axios call to check if the username and email already exist
       try {
         const response = await axios.post('http://localhost:3002/register-pharmacist', userData);
-       
+
         // Check the response for any error and set the appropriate error message
         if (response.data.message == "Username already exists") {
           errors["username"] = response.data.message;

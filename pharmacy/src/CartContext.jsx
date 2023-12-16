@@ -20,7 +20,7 @@ const CartProvider = ({ children }) => {
         console.error(error);
       });
   }, []);
-  
+
   useEffect(() => {
     updateCartItems();
   }, []); // Run once on component mount

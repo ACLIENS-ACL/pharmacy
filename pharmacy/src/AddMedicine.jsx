@@ -121,7 +121,7 @@ const AddMed = () => {
       <PharmacistNavbar />
       <div className="container mt-5 mb-5">
         <h1 className="mb-4 d-flex justify-content-center"
-            style={{ color: '#62d2a2' }} >Add Medicine</h1>
+          style={{ color: '#62d2a2' }} >Add Medicine</h1>
         <div className="row ">
           <div className="col-md-8 mx-auto">
             <form onSubmit={handleSubmit}>

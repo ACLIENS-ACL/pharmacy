@@ -1,5 +1,5 @@
 // PharmacistNavbar.js
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -42,7 +42,7 @@ const PharmacistDashboard = () => {
     const handleChatClick = async (e, roomId) => {
         e.stopPropagation(); // Prevent the event from propagating to the parent elements
         console.log(roomId)
-            navigate(`/pharmachat/${roomId}`)
+        navigate(`/pharmachat/${roomId}`)
 
     }
     return (

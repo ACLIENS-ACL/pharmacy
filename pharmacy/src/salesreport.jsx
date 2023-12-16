@@ -84,7 +84,7 @@ function SalesReport() {
     <div>
       <PharmacistNavbar />
       <div className="container mt-4">
-      <h1 className="text-center text-black font-weight-bold p-4 mb-4 mx-auto">Medicines Sales Report</h1>
+        <h1 className="text-center text-black font-weight-bold p-4 mb-4 mx-auto">Medicines Sales Report</h1>
 
         <div className="row mb-4">
           <div className="col-md-4">

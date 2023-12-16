@@ -28,10 +28,10 @@ function App() {
   const [userType, setUserType] = useState('patient');
   const navigate = useNavigate();
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     console.log(username)
     console.log(userType)
-    e.preventDefault();    
+    e.preventDefault();
     const type = await axios.get('http://localhost:3001/getType', {
       params: { username: username },
     });

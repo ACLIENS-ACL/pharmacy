@@ -97,7 +97,7 @@ const ChangePassword = () => {
     return (
         <div>
             <PharmacistNavbar />
-            <div className="container mt-5" style={{marginBottom:"50px"}}>
+            <div className="container mt-5" style={{ marginBottom: "50px" }}>
                 <div className="card w-50 mx-auto p-4">
                     {error && <div className="alert alert-danger">{error}</div>}
                     {successMessage && <div className="alert alert-success">{successMessage}</div>}
@@ -130,10 +130,10 @@ const ChangePassword = () => {
                         />
                     </div>
                     <button onClick={handleChangePassword} className="btn btn-primary"
-                  style={{
-                    backgroundColor: '#62d2a2',
-                    borderColor: '#62d2a2'
-                  }}>
+                        style={{
+                            backgroundColor: '#62d2a2',
+                            borderColor: '#62d2a2'
+                        }}>
                         Change Password
                     </button>
                 </div>

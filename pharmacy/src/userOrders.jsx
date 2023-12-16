@@ -51,10 +51,10 @@ function UserOrders() {
         //   // Redirect to login page if not a patient
         //   navigate('/login');
         // } else {
-          // Fetch the user's orders when the component loads
-          const ordersResponse = await axios.get(`http://localhost:3002/user-orders`, {headers})
-          setOrders(ordersResponse.data);
-          setLoading(false);
+        // Fetch the user's orders when the component loads
+        const ordersResponse = await axios.get(`http://localhost:3002/user-orders`, { headers })
+        setOrders(ordersResponse.data);
+        setLoading(false);
         // }
       } catch (error) {
         console.error('Error fetching user orders:', error);
@@ -67,7 +67,7 @@ function UserOrders() {
 
   useEffect(() => {
     // Fetch the user's orders when the component loads
-    axios.get(`http://localhost:3002/user-orders`, {headers})
+    axios.get(`http://localhost:3002/user-orders`, { headers })
       .then((response) => {
         setOrders(response.data);
         console.log(response.data)
@@ -87,7 +87,7 @@ function UserOrders() {
       const confirmation = window.confirm("Do you want to add this order back to your cart?");
       if (confirmation) {
         // Send a request to the server to add the order back to the cart
-        axios.put(`http://localhost:3002/add-to-cart/${orderId}`, {headers})
+        axios.put(`http://localhost:3002/add-to-cart/${orderId}`, { headers })
           .then(() => {
             // Remove the canceled order from the local state
             setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
@@ -97,7 +97,7 @@ function UserOrders() {
           });
       } else {
         // Send a request to the server to cancel the order
-        axios.put(`http://localhost:3002/cancel-order/${orderId}`, {headers})
+        axios.put(`http://localhost:3002/cancel-order/${orderId}`, { headers })
           .then(() => {
             // Remove the canceled order from the local state
             setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
@@ -119,7 +119,7 @@ function UserOrders() {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
     // Fetch admin data from the server
-    axios.get(`http://localhost:3002/logout`, {headers})
+    axios.get(`http://localhost:3002/logout`, { headers })
       .then((response) => {
         const responseData = response.data;
         if (responseData.type == "") {
@@ -130,9 +130,9 @@ function UserOrders() {
 
   return (
     <div style={containerStyle}>
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <h2>Your Orders</h2>
       {orders.length > 0 ? (
         <ul>

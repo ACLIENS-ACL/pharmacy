@@ -49,7 +49,7 @@ const LandingPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            
+
             const type = await axios.get('http://localhost:3002/getType', {
                 params: { username: username },
             });
@@ -112,14 +112,14 @@ const LandingPage = () => {
     const handleNext = () => {
         setActiveIndex((prevIndex) => (prevIndex === 2 ? 0 : prevIndex + 1));
     };
-    
+
     return (
         <div className="hero_area">
-        <Status
-            isOpen={showConfirmation}
-            Status={Statusv}
-            onCancel={() => setShowConfirmation(false)}
-        />
+            <Status
+                isOpen={showConfirmation}
+                Status={Statusv}
+                onCancel={() => setShowConfirmation(false)}
+            />
             {/* Header Section */}
             <div className="hero_area">
                 <div className="hero_bg_box" style={{

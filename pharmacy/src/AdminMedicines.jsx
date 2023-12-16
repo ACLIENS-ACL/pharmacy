@@ -133,7 +133,7 @@ function Medicinesadmin() {
 
                     <div className="container-fluid">
                         <div>
-                            <div className="site-section" style={{  marginBottom: "40px" }}>
+                            <div className="site-section" style={{ marginBottom: "40px" }}>
                                 <div class="container">
                                     <div className="row">
                                         <div className="col-lg-10 align-self-center" style={{ marginLeft: "80px", height: "20px" }}>
@@ -187,7 +187,7 @@ function Medicinesadmin() {
                             </div>
 
 
-                            <div className="pagination d-flex justify-content-center col-md-12 text-center " style={{  fontSize: '30px', padding: '20px 0' }}>
+                            <div className="pagination d-flex justify-content-center col-md-12 text-center " style={{ fontSize: '30px', padding: '20px 0' }}>
                                 <span style={{ marginRight: '10px' }}>Pages:</span>
                                 <ul className="pagination-list d-flex" style={{ listStyleType: 'none', padding: 0 }}>
                                     {Array.from({ length: totalPages }).map((_, index) => (

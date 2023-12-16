@@ -53,7 +53,7 @@ const PatientDashboard = ({ click }) => {
             // Check if a room already exists with the current patient and clicked doctor
             try {
                 const response = await axios.post(`http://localhost:3002/createRoompp`,
-                {},  { headers });
+                    {}, { headers });
                 console.log("hi,", response);
                 navigate(`/chat/${response.data.roomId}`);
             } catch (error) {
@@ -61,12 +61,12 @@ const PatientDashboard = ({ click }) => {
                 console.error("Error fetching data:", error);
             }
         };
-    
+
         fetchData(); // Call the async function
-    
+
         // Specify an empty dependency array to run the effect only once
     }, [navigate, headers]);
-    
+
     return (
         <div>
             <Nav />

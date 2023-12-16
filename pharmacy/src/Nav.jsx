@@ -51,6 +51,7 @@ const Nav = () => {
     useEffect(() => {
         axios.get(`http://localhost:3002/patientData`, { headers })
             .then((response) => {
+                console.log(token)
                 setPatient(response.data.patient)
                 console.log(response.data.patient.cart.length)
                 setCartItems(response.data.patient.cart.length);

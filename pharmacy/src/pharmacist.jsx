@@ -23,9 +23,9 @@ function PharmacistDashboard() {
   };
   return (
     <MDBContainer className="mt-5">
-    <div className="d-flex justify-content-end mb-2">
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div className="d-flex justify-content-end mb-2">
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <MDBRow className="justify-content-center">
         <MDBCol md="4" className="mb-4">
           <MDBCard>

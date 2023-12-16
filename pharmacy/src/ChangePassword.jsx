@@ -32,7 +32,7 @@ function ChangePasswo() {
     Authorization: `Bearer ${token}`,
   };
   useEffect(() => {
-    if (token == null ) {
+    if (token == null) {
       navigate('/login');
     }
   }, [token, navigate]);

@@ -33,7 +33,7 @@ const ChatApp = () => {
 
     useEffect(() => {
         setUsername(userId);
-         socket.current = io('http://localhost:3005', {
+        socket.current = io('http://localhost:3005', {
             query: {
                 userId: userId,
                 roomId: roomId, // Pass the roomId to the socket creation
@@ -142,8 +142,8 @@ const ChatApp = () => {
     // Your component using the styles
     return (
         <div>
-        <Nav />
-            <div className="container mt-4" style={{width:"600px"}}>
+            <Nav />
+            <div className="container mt-4" style={{ width: "600px" }}>
                 <div ref={messagesContainerRef} className="border p-3 mb-3" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                     {messages.map((message, index) => (
                         <div
@@ -169,7 +169,7 @@ const ChatApp = () => {
                     </div>
                 </form>
             </div>
-      <Footer />
+            <Footer />
         </div>
     );
 

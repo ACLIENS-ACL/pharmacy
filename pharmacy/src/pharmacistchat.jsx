@@ -26,13 +26,13 @@ const MyChat = () => {
   useEffect(() => {
     // Scroll to the bottom of the messages container
     if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
-}, [messages]);
+  }, [messages]);
 
   useEffect(() => {
     setUsername(userId);
-     socket.current = io('http://localhost:3005', {
+    socket.current = io('http://localhost:3005', {
       query: {
         userId: userId,
         roomId: roomId,
@@ -43,7 +43,7 @@ const MyChat = () => {
     console.log('Before calling acceptChat'); // Add this line
     acceptChat({ user: userId, userId, roomId });
     console.log('After calling acceptChat'); // Add this line
-  
+
 
     socket.current.on('chat-message', (data) => {
       if (userId !== data.userId && roomId === data.roomId) {
@@ -67,18 +67,18 @@ const MyChat = () => {
 
   const acceptChat = ({ user, userId, roomId }) => {
     console.log('Before socket.emit');
-  
+
     socket.current.emit('accept-chat', { user, userId, roomId }, (acknowledgment) => {
-        if (acknowledgment.success) {
-          console.log('Chat accepted');
-        } else {
-          console.error('Failed to accept chat:', acknowledgment.error);
-        }
-      });
-      
+      if (acknowledgment.success) {
+        console.log('Chat accepted');
+      } else {
+        console.error('Failed to accept chat:', acknowledgment.error);
+      }
+    });
+
   };
-  
-  
+
+
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -104,9 +104,8 @@ const MyChat = () => {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`mb-2 p-3 rounded ${
-                message.isYourMessage ? 'bg-success text-white' : 'bg-info text-white'
-              }`}
+              className={`mb-2 p-3 rounded ${message.isYourMessage ? 'bg-success text-white' : 'bg-info text-white'
+                }`}
             >
               {message.content}
             </div>

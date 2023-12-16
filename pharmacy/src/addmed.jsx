@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,7 +72,7 @@ const AddMed = () => {
     axios.get(`http://localhost:3001/add-medicine`)
       .then((response) => {
         const responseData = response.data;
-        console.log(responseData.type,responseData.in)
+        console.log(responseData.type, responseData.in)
         if (responseData.type !== "pharmacist" || responseData.in !== true) {
           navigate('/login')
         }
@@ -95,7 +95,7 @@ const AddMed = () => {
         ...prevState,
         image: file,
       }));
-    }else if (name === 'price' || name === 'quantity') {
+    } else if (name === 'price' || name === 'quantity') {
       // Ensure that the value is a non-negative number
       const numericValue = parseFloat(value);
       if (!isNaN(numericValue) && numericValue >= 0) {
@@ -114,7 +114,7 @@ const AddMed = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const formData = new FormData();
     formData.append('name', medicine.name);
     formData.append('activeIngredients', medicine.activeIngredients.join(', '));
@@ -124,7 +124,7 @@ const AddMed = () => {
     formData.append('isPrescriptionRequired', medicine.isPrescriptionRequired);
     formData.append('description', medicine.description);
     formData.append('image', medicine.image); // Append the image file
-  
+
     try {
       if (medicine.price <= 0 || medicine.quantity <= 0) {
         setErrorMessage('Price and quantity must be greater than 0.');
@@ -154,7 +154,7 @@ const AddMed = () => {
       console.error(error);
     }
   };
-  
+
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing session or tokens).
     // After logging out, navigate to the login page.
@@ -167,12 +167,12 @@ const AddMed = () => {
         }
       })
   };
-  
+
   return (
     <div style={addMedContainerStyle}>
-    <div style={logoutButtonStyle}>
-      <button onClick={handleLogout} className="btn btn-danger">Logout</button>
-    </div>
+      <div style={logoutButtonStyle}>
+        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+      </div>
       <h1 style={{ margin: '20px', gridColumn: 'span 2' }}>Add Medicine</h1>
       <form onSubmit={handleSubmit} style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         <div style={formColumnStyle}>
@@ -216,19 +216,19 @@ const AddMed = () => {
             </label>
             <input type="number" id="quantity" name="quantity" value={medicine.quantity} onChange={handleChange} required />
           </div>
-        <div style={{ ...formColumnStyle, marginBottom: '20px' }}>
-          <label style={labelStyle} htmlFor="image">
-            Medicine Image:
-          </label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*" // Specify that only image files are allowed
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div style={{ ...formColumnStyle, marginBottom: '20px' }}>
+            <label style={labelStyle} htmlFor="image">
+              Medicine Image:
+            </label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*" // Specify that only image files are allowed
+              onChange={handleChange}
+              required
+            />
+          </div>
           <div style={{ ...formColumnStyle, marginBottom: '20px' }}>
             <label style={labelStyle} htmlFor="isPrescriptionRequired">
               Prescription Required:

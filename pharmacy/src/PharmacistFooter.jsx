@@ -7,7 +7,7 @@ import './css/style.css'; // Import your custom styles
 import './css/responsive.css';
 const PharmacistFooter = () => {
     return (
-        <footer className="footer_section" style={{backgroundColor: "#1fab89"}}>
+        <footer className="footer_section" style={{ backgroundColor: "#1fab89" }}>
             <div className="container">
                 <div className="footer-info">
                     <p>

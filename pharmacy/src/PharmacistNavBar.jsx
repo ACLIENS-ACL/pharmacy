@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'; // Import Bootstrap CSS
 import './css/font-awesome.min.css'; // Import Font Awesome CSS
 import './css/style.css'; // Import your custom styles
 import './css/responsive.css'; // Import your responsive styles
-import { FaWallet,FaSignOutAlt } from 'react-icons/fa';
+import { FaWallet, FaSignOutAlt } from 'react-icons/fa';
 
 const PharmacistNavbar = () => {
     const [notifications, setNotifications] = useState([]); // New state for notifications
@@ -208,7 +208,7 @@ const PharmacistNavbar = () => {
                                         </h6>
                                     </div>
                                 </li>
-                                
+
                                 <li className="nav-item active dropdown no-arrow mx-1">
                                     <div onClick={handleLogout}
                                         className="nav-link dropdown-toggle"
@@ -217,7 +217,7 @@ const PharmacistNavbar = () => {
                                         aria-haspopup="true"
                                         aria-expanded="false"
                                         data-placement="bottom">
-                                        <FaSignOutAlt/>
+                                        <FaSignOutAlt />
                                         <span className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Logout</span>
                                     </div>
                                 </li>

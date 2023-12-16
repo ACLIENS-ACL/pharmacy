@@ -65,7 +65,7 @@ function AddAddressForm() {
       });
   }, []);
 
-  
+
   useEffect(() => {
     // Fetch admin data from the server
     axios.get(`http://localhost:3001/patient`)
@@ -81,7 +81,7 @@ function AddAddressForm() {
     event.preventDefault();
 
     // Check if the new address already exists
-    if(newAddress==''){
+    if (newAddress == '') {
       setErrorMessage('Please Add an Address');
     }
     else if (!existingAddresses.includes(newAddress)) {

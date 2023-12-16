@@ -23,7 +23,7 @@ function ChangePasswor() {
         if (token === null) {
             navigate('/login');
         }
-    }, [token, navigate]);const validatePassword = (password) => {
+    }, [token, navigate]); const validatePassword = (password) => {
         // Password must contain at least one capital letter, one small letter, one special character, and one number.
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return passwordPattern.test(password);
@@ -96,44 +96,44 @@ function ChangePasswor() {
                     <Topbar />
 
                     <div className="container-fluid">
-            <div className="container mt-5" style={{marginBottom:"50px"}}>
-                <div className="card w-50 mx-auto p-4">
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    {successMessage && <div className="alert alert-success">{successMessage}</div>}
-                    <h2 className="mb-4">Change Password</h2>
-                    <div className="mb-3">
-                        <input
-                            type="password"
-                            className="form-control"
-                            placeholder="Current Password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            type="password"
-                            className="form-control"
-                            placeholder="New Password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            type="password"
-                            className="form-control"
-                            placeholder="Confirm New Password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                    </div>
-                    <button onClick={handleChangePassword} className="btn btn-primary"
-                  >
-                        Change Password
-                    </button>
-                </div>
-            </div>
+                        <div className="container mt-5" style={{ marginBottom: "50px" }}>
+                            <div className="card w-50 mx-auto p-4">
+                                {error && <div className="alert alert-danger">{error}</div>}
+                                {successMessage && <div className="alert alert-success">{successMessage}</div>}
+                                <h2 className="mb-4">Change Password</h2>
+                                <div className="mb-3">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        placeholder="Current Password"
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        placeholder="New Password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        placeholder="Confirm New Password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                </div>
+                                <button onClick={handleChangePassword} className="btn btn-primary"
+                                >
+                                    Change Password
+                                </button>
+                            </div>
+                        </div>
 
                         <footer className="sticky-footer bg-white">
                             <div className="container my-auto">

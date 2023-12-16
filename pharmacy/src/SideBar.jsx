@@ -95,14 +95,14 @@ const Sidebar = () => {
       {/* Heading */}
 
       <li className="nav-item">
-          <Link
-            className={`nav-link collapsed `}
-            to="/view-patient"
-            onClick={handlePatientsClick}
-          >
-            <i className="fas fa-fw fa-folder"></i>
-            <span>Patients</span>
-          </Link>
+        <Link
+          className={`nav-link collapsed `}
+          to="/view-patient"
+          onClick={handlePatientsClick}
+        >
+          <i className="fas fa-fw fa-folder"></i>
+          <span>Patients</span>
+        </Link>
       </li>
 
       {/* Divider */}

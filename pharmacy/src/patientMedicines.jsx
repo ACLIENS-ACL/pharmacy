@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingBag,faSignOut } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingBag, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { animateScroll as scroll } from 'react-scroll';
 import Footer from './Footer';
 import Nav from './Nav';
@@ -235,71 +235,71 @@ const PatientMedicines = ({ click }) => {
     useEffect(() => {
         filterMedicines(searchQuery, medicinalUse);
     }, [searchQuery, medicinalUse, medicines]);
-  
+
     const handleGoBack = () => {
         navigate(-1); // This will go back to the previous page
     };
 
     return (
         <div>
-        <div class="site-navbar py-2">
+            <div class="site-navbar py-2">
 
 
-            <div class="container">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="logo">
-                        <div class="site-logo">
-                            <Link to="/patient" class="js-logo-clone">Pharma</Link>
-                        </div>
-                    </div>
-                    <div class="main-nav d-none d-lg-block">
-                        <nav class="site-navigation text-right text-md-center" role="navigation">
-                            <ul class="site-menu js-clone-nav d-none d-lg-block">
-                                <li class="active">
-                                    <Link to="/patient">Home</Link></li>
-                                <li onClick={scrollToContact}>
-                                    <span class="nav-link">ABOUT</span></li>
-                                <li > <Link to="/password-patient" >Settings</Link></li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div class="icons d-flex align-items-center">
-                        <div className="nav-item active dropdown no-arrow mx-1">
-                            {/* Add a class to the container for styling */}
-                            <div className="nav-link nav-icon-container"
-                                role="button"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false"
-                                data-placement="bottom" onClick={handleGoBack}>
-                                {/* Back Arrow Icon */}
-                                <i className="fas fa-arrow-left" aria-hidden="true"></i>
-                                <span style={{ width: "80px" }} className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Go Back</span>
+                <div class="container">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="logo">
+                            <div class="site-logo">
+                                <Link to="/patient" class="js-logo-clone">Pharma</Link>
                             </div>
                         </div>
-                        <Link to="/view-cart" className="icons-btn d-inline-block bag mr-3" >
-                            <span className="icon-shopping-bag">
-                                <FontAwesomeIcon icon={faShoppingBag} />
-                            </span>
-                            <span className="number">{cartItems}</span>
-                        </Link>
-                        <div className="nav-item active dropdown no-arrow mx-1 logout-icon">
-                            <div onClick={handleLogout}
-                                className="nav-link dropdown-toggle"
-                                role="button"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false"
-                                data-placement="bottom">
-                                <FontAwesomeIcon icon={faSignOut} />
-                                <span className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Logout</span>
+                        <div class="main-nav d-none d-lg-block">
+                            <nav class="site-navigation text-right text-md-center" role="navigation">
+                                <ul class="site-menu js-clone-nav d-none d-lg-block">
+                                    <li class="active">
+                                        <Link to="/patient">Home</Link></li>
+                                    <li onClick={scrollToContact}>
+                                        <span class="nav-link">ABOUT</span></li>
+                                    <li > <Link to="/password-patient" >Settings</Link></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="icons d-flex align-items-center">
+                            <div className="nav-item active dropdown no-arrow mx-1">
+                                {/* Add a class to the container for styling */}
+                                <div className="nav-link nav-icon-container"
+                                    role="button"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    data-placement="bottom" onClick={handleGoBack}>
+                                    {/* Back Arrow Icon */}
+                                    <i className="fas fa-arrow-left" aria-hidden="true"></i>
+                                    <span style={{ width: "80px" }} className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Go Back</span>
+                                </div>
+                            </div>
+                            <Link to="/view-cart" className="icons-btn d-inline-block bag mr-3" >
+                                <span className="icon-shopping-bag">
+                                    <FontAwesomeIcon icon={faShoppingBag} />
+                                </span>
+                                <span className="number">{cartItems}</span>
+                            </Link>
+                            <div className="nav-item active dropdown no-arrow mx-1 logout-icon">
+                                <div onClick={handleLogout}
+                                    className="nav-link dropdown-toggle"
+                                    role="button"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    data-placement="bottom">
+                                    <FontAwesomeIcon icon={faSignOut} />
+                                    <span className={`hover-text ${isHovered ? 'visible' : 'hidden'}`}>Logout</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-        </div>
             <div className="site-section" style={{ backgroundColor: '#e6f7ff', marginBottom: "80px" }}>
                 <div class="container">
                     <div className="row">
@@ -347,8 +347,8 @@ const PatientMedicines = ({ click }) => {
                                 <a href={`shop-single.html?id=${medicine._id}`}>{medicine.name}</a>
                             </h3>
                             {medicine.quantity === 0 && (
-                                <div style={{width:"200px"}}>
-                                    <p style={{ color: 'red' , fontWeight: 'bold'}}>Out of Stock</p>
+                                <div style={{ width: "200px" }}>
+                                    <p style={{ color: 'red', fontWeight: 'bold' }}>Out of Stock</p>
                                     {medicine.activeIngredients.length > 0 && (
                                         <p style={{ color: 'green', fontWeight: 'bold' }}>
                                             Alternatives:{' '}
