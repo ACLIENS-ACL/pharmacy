@@ -1005,10 +1005,10 @@ app.get('/change-password', verifyToken, async (req, res) => {
   }
   try {
     var viewPatient;
-    if (responseData.userType == 'admin') {
+    if (req.user.type == 'admin') {
       viewPatient = await AdminsModel.findOne({ username: username });
     }
-    else if (responseData.userType == 'pharmacist') {
+    else if (req.user.type == 'pharmacist') {
       viewPatient = await PharmacistsModel.findOne({ username: username });
     }
     else {
@@ -1023,13 +1023,14 @@ app.get('/change-password', verifyToken, async (req, res) => {
 });
 
 app.post('/update-password', verifyToken, async (req, res) => {
+  const token = req.header('Authorization');
   const { password } = req.body;
-  const username = logged.username;
+  const username = req.user.username;
   try {
-    if (logged.type == 'admin') {
+    if (req.user.type == 'admin') {
       await AdminsModel.updateOne({ username: username }, { password: password });
     }
-    else if (logged.type == 'pharmacist') {
+    else if (req.user.type == 'pharmacist') {
       await PharmacistsModel.updateOne({ username: username }, { password: password });
     }
     else {
