@@ -102,8 +102,6 @@ These practices contribute to a consistent and organized codebase, making it eas
     
     * Jwt-decode
     
-    * PeerJs
-    
     * Socket.io-client
   
 </details>
