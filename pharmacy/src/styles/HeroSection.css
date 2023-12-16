@@ -1,0 +1,21 @@
+/* HeroSection.css */
+
+.site-blocks-cover {
+    background-size: cover;
+    background-position: center;
+    height: 500px; /* Adjust the height as needed */
+  }
+  
+  .site-blocks-cover .site-block-cover-content {
+    color: #fff; /* Adjust text color as needed */
+  }
+  
+  .site-blocks-cover h2.sub-title {
+    font-size: 1.5rem; /* Adjust font size as needed */
+  }
+  
+  .site-blocks-cover h1 {
+    font-size: 3rem; /* Adjust font size as needed */
+  }
+  
+  
